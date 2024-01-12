@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
   m_Name: 6
   m_EditorClassIdentifier: 
-  unitName: 6
-  cost: 6
-  hp: 6
-  mp: 6
-  attackDamage: 6
-  armor: 6
-  abilityName: 
+  UnitName: 
+  Cost: 0
+  Hp: 6
+  Mp: 0
+  AttackDamage: 0
+  Armor: 0
+  UnitSprite: {fileID: -750702305, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  AbilityName: 

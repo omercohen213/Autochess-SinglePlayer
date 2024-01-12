@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Unit : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class Unit : MonoBehaviour
     public int Mp { get; private set; }
     public int AttackDamage { get; private set; }
     public string UnitName { get; private set; }
+    public Sprite UnitSprite { get; private set; }
 
     public void Start()
     {
@@ -26,10 +28,11 @@ public class Unit : MonoBehaviour
     // Set the unit's properties based on unitData
     public void SetUnitData(UnitData unitData)
     {
-        UnitName = unitData.unitName;
-        Cost = unitData.cost;
-        Hp = unitData.hp;
-        Mp = unitData.mp;
-        AttackDamage = unitData.attackDamage;
+        UnitName = unitData.UnitName;
+        Cost = unitData.Cost;
+        Hp = unitData.Hp;
+        Mp = unitData.Mp;
+        AttackDamage = unitData.AttackDamage;
+        UnitSprite = unitData.UnitSprite;
     }
 }

@@ -1,13 +1,10 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
-    [SerializeField] private GameObject _shopUnitPrefab;
-    [SerializeField] private Transform _shopUnitsParent;
+    [SerializeField] private Transform _shopUnitsTransform;
 
-    private GameObject[] _shopUnitsGo;
     private readonly int SHOP_SIZE = 5;
     private readonly int REROLL_COST = 1;
     private readonly int XP_COST = 4;
@@ -18,30 +15,19 @@ public class Shop : MonoBehaviour
     private void Start()
     {
         _player = Player.Instance;
-        _shopUnitsGo = new GameObject[SHOP_SIZE];
-
-        // Add shop units objects and call BuyUnit on click
-        for (int i = 0; i < SHOP_SIZE; i++)
-        {
-            _shopUnitsGo[i] = Instantiate(_shopUnitPrefab, _shopUnitsParent.GetChild(i).transform);
-            TextMeshProUGUI shopUnitHp = _shopUnitsGo[i].transform.Find("Hp").GetComponent<TextMeshProUGUI>();
-            shopUnitHp.text = _shopUnitsGo[i].GetComponent<Unit>().Hp.ToString();
-
-            int currentIndex = i;
-            _shopUnitsGo[i].GetComponent<Button>().onClick.AddListener(() => BuyUnit(currentIndex));
-        }
+        RerollUnits();
     }
 
     // Buy unit from the shop and set it inactive
     public void BuyUnit(int pos)
     {
-        // check bench limit
-        Unit unit = _shopUnitsGo[pos].GetComponent<Unit>();
-        if (CanAfford(unit.Cost))
+        GameObject unitGo = _shopUnitsTransform.GetChild(pos).GetChild(0).gameObject;
+        Unit unit = unitGo.GetComponent<Unit>();
+        if (CanAfford(unit.Cost) && _player.UnitsBench.IsFull() == false)
         {
             _player.PayGold(unit.Cost);
             _player.UnitsBench.AddUnit(unit);
-            _shopUnitsGo[pos].SetActive(false);
+            unitGo.SetActive(false);
         }
     }
 
@@ -81,25 +67,26 @@ public class Shop : MonoBehaviour
     private void RerollUnits()
     {
         // Clear current shop units
-        for (int i = 0; i < SHOP_SIZE; i++)
+        for (int i = 0; i < _shopUnitsTransform.childCount; i++)
         {
-            _shopUnitsGo[i].SetActive(false);
+            _shopUnitsTransform.GetChild(i).GetChild(0).gameObject.SetActive(false);
         }
 
         // Randomly select new units from the UnitsDatabase
-        for (int i = 0; i < SHOP_SIZE; i++)
+        for (int i = 0; i < _shopUnitsTransform.childCount; i++)
         {
             UnitData randomUnitData = GetRandomUnitData();
+            GameObject unitGo = _shopUnitsTransform.GetChild(i).GetChild(0).gameObject;
             if (randomUnitData != null)
             {
-                _shopUnitsGo[i].GetComponent<Unit>().SetUnitData(randomUnitData);
+                unitGo.GetComponent<Unit>().SetUnitData(randomUnitData);             
 
                 // Update the visual representation
-                TextMeshProUGUI shopUnitHp = _shopUnitsGo[i].transform.Find("Hp").GetComponent<TextMeshProUGUI>();
-                shopUnitHp.text = _shopUnitsGo[i].GetComponent<Unit>().Hp.ToString();
+                TextMeshProUGUI shopUnitHp = unitGo.transform.Find("Hp").GetComponent<TextMeshProUGUI>();
+                shopUnitHp.text = unitGo.GetComponent<Unit>().Hp.ToString();
 
                 // Make the shop unit active
-                _shopUnitsGo[i].SetActive(true);
+                unitGo.SetActive(true);
             }
         }
     }

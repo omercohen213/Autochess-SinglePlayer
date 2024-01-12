@@ -6,8 +6,18 @@ using UnityEngine;
 public class UnitsDatabase : ScriptableObject
 {
     public List<UnitData> Units;
+
+    // Public reference to the instance of UnitsDatabase
+    public static UnitsDatabase Instance;
+
+    private void OnEnable()
+    {
+        // Assign the instance when the scriptable object is loaded
+        Instance = this;
+    }
+
     public UnitData GetUnitByName(string name)
     {
-        return Units.Find(unit => unit.unitName == name);
+        return Units.Find(unit => unit.UnitName == name);
     }
 }
