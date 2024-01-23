@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
+    private List<int> _xpTable;
 
     public static GameManager Instance
     {
@@ -26,5 +28,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        _xpTable = new List<int> { 0, 0, 2, 6, 10, 20, 36, 56, 80, 100 };
+    }
+
+    public int GetXpToLevelUp(int lvl)
+    {
+        return _xpTable[lvl];
     }
 }

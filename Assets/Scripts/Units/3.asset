@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
   m_Name: 3
   m_EditorClassIdentifier: 
+  Id: 3
   UnitName: 
-  Cost: 0
+  Cost: 3
   Hp: 3
   Mp: 0
   AttackDamage: 0
   Armor: 0
   UnitSprite: {fileID: -797394571, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  UnitShopImage: {fileID: 0}
   AbilityName: 

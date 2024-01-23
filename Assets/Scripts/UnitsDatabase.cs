@@ -16,8 +16,9 @@ public class UnitsDatabase : ScriptableObject
         Instance = this;
     }
 
-    public UnitData GetUnitByName(string name)
+    public UnitData FindUnitById(int id)
     {
-        return Units.Find(unit => unit.UnitName == name);
+        return Units.Find(unit => unit.Id == id);
     }
+
 }

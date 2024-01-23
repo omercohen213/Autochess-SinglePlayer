@@ -5,7 +5,7 @@ public class Shop : MonoBehaviour
 {
     [SerializeField] private Transform _shopUnitsTransform;
 
-    private readonly int SHOP_SIZE = 5;
+    //private readonly int SHOP_SIZE = 5;
     private readonly int REROLL_COST = 1;
     private readonly int XP_COST = 4;
     private Player _player;
@@ -21,13 +21,13 @@ public class Shop : MonoBehaviour
     // Buy unit from the shop and set it inactive
     public void BuyUnit(int pos)
     {
-        GameObject unitGo = _shopUnitsTransform.GetChild(pos).GetChild(0).gameObject;
-        Unit unit = unitGo.GetComponent<Unit>();
-        if (CanAfford(unit.Cost) && _player.UnitsBench.IsFull() == false)
+        GameObject shopUnitGo = _shopUnitsTransform.GetChild(pos).GetChild(0).gameObject;
+        ShopUnit shopUnit = shopUnitGo.GetComponent<ShopUnit>();
+        if (CanAfford(shopUnit.Cost) && !_player.UnitsBench.IsFull())
         {
-            _player.PayGold(unit.Cost);
-            _player.UnitsBench.AddUnit(unit);
-            unitGo.SetActive(false);
+            _player.PayGold(shopUnit.Cost);
+            _player.UnitsBench.AddUnitToBench(shopUnit);
+            shopUnitGo.SetActive(false);
         }
     }
 
@@ -54,11 +54,12 @@ public class Shop : MonoBehaviour
     // Check if player can afford paying goldToPay
     private bool CanAfford(int goldToPay)
     {
-        if (_player.Gold + goldToPay > 0)
+        if (_player.Gold >= goldToPay)
             return true;
         else
         {
             Debug.Log("Cannot afford!");
+            Debug.Log("Player gold: " + _player.Gold + " Unit cost: " + goldToPay);
             return false;
         }
     }
@@ -76,17 +77,18 @@ public class Shop : MonoBehaviour
         for (int i = 0; i < _shopUnitsTransform.childCount; i++)
         {
             UnitData randomUnitData = GetRandomUnitData();
-            GameObject unitGo = _shopUnitsTransform.GetChild(i).GetChild(0).gameObject;
+            Transform shopUnitParent = _shopUnitsTransform.GetChild(i);
+            GameObject shopUnitGo = shopUnitParent.GetChild(0).gameObject;
             if (randomUnitData != null)
             {
-                unitGo.GetComponent<Unit>().SetUnitData(randomUnitData);             
+                shopUnitGo.GetComponent<ShopUnit>().SetShopUnitData(randomUnitData.Id);
 
                 // Update the visual representation
-                TextMeshProUGUI shopUnitHp = unitGo.transform.Find("Hp").GetComponent<TextMeshProUGUI>();
-                shopUnitHp.text = unitGo.GetComponent<Unit>().Hp.ToString();
+                TextMeshProUGUI shopUnitCost = shopUnitGo.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
+                shopUnitCost.text = shopUnitGo.GetComponent<ShopUnit>().Cost.ToString();
 
-                // Make the shop unit active
-                unitGo.SetActive(true);
+                // Make the shop unit gameobject active
+                shopUnitGo.SetActive(true);
             }
         }
     }
@@ -104,7 +106,5 @@ public class Shop : MonoBehaviour
             Debug.LogWarning("UnitsDatabase is empty.");
             return null;
         }
-    }
-
-
+    }    
 }
