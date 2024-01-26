@@ -33,10 +33,6 @@ public class Player : MonoBehaviour
         PlayerName = "Spite";
         Lvl = 1;
     }
-    private void Start()
-    {
-        
-    }
 
     // Decrease gold by amount
     public void PayGold(int amount)
@@ -44,6 +40,7 @@ public class Player : MonoBehaviour
         Gold -= amount;
         UIManager.Instance.UpdateGoldUI();
     }
+
 
     // Add gold by amount
     public void GainGold(int amount)

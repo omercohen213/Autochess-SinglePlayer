@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
     private List<int> _xpTable;
 
+    private static GameManager _instance;
     public static GameManager Instance
     {
         get
@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         _xpTable = new List<int> { 0, 0, 2, 6, 10, 20, 36, 56, 80, 100 };
+    }
+    private void Start()
+    {
+        
     }
 
     public int GetXpToLevelUp(int lvl)

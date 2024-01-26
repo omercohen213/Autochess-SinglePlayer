@@ -1,21 +1,53 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Shop : MonoBehaviour
 {
     [SerializeField] private Transform _shopUnitsTransform;
+    [SerializeField] private UnitsDatabase _unitsDatabase;
 
     //private readonly int SHOP_SIZE = 5;
     private readonly int REROLL_COST = 1;
     private readonly int XP_COST = 4;
     private Player _player;
 
-    [SerializeField] private UnitsDatabase _unitsDatabase;
+    private static Shop _instance;
+    public static Shop Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<Shop>();
+            }
+            return _instance;
+        }
+    }
+
+    [SerializeField] private GameObject _unitSellField;
+    public GameObject UnitSellField { get => _unitSellField; set => _unitSellField = value; }
+
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
         _player = Player.Instance;
         RerollUnits();
+        if (_unitSellField != null)
+        {
+            _unitSellField.SetActive(false);
+        }
     }
 
     // Buy unit from the shop and set it inactive
@@ -26,7 +58,7 @@ public class Shop : MonoBehaviour
         if (CanAfford(shopUnit.Cost) && !_player.UnitsBench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
-            _player.UnitsBench.AddUnitToBench(shopUnit);
+            _player.UnitsBench.AddUnitToBench(shopUnit.UnitData.Id);
             shopUnitGo.SetActive(false);
         }
     }
@@ -81,7 +113,7 @@ public class Shop : MonoBehaviour
             GameObject shopUnitGo = shopUnitParent.GetChild(0).gameObject;
             if (randomUnitData != null)
             {
-                shopUnitGo.GetComponent<ShopUnit>().SetShopUnitData(randomUnitData.Id);
+                shopUnitGo.GetComponent<ShopUnit>().SetUnitData(randomUnitData.Id);
 
                 // Update the visual representation
                 TextMeshProUGUI shopUnitCost = shopUnitGo.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
@@ -90,6 +122,31 @@ public class Shop : MonoBehaviour
                 // Make the shop unit gameobject active
                 shopUnitGo.SetActive(true);
             }
+        }
+    }
+    
+    public void SellUnit(Unit unit)
+    {
+        _player.GainGold(unit.Cost);
+        _player.UnitsBench.RemoveUnit(unit as BoardUnit);
+        Debug.Log("Sold for + " + unit.Cost);
+    }
+
+    public void ActivateUnitSellField()
+    {
+        // Enable the unitSellField
+        if (_unitSellField != null)
+        {
+            _unitSellField.SetActive(true);
+        }
+    }
+
+    public void DisableUnitSellField()
+    {
+        // Enable the unitSellField
+        if (_unitSellField != null)
+        {
+            _unitSellField.SetActive(false);
         }
     }
 
@@ -106,5 +163,5 @@ public class Shop : MonoBehaviour
             Debug.LogWarning("UnitsDatabase is empty.");
             return null;
         }
-    }    
+    }
 }

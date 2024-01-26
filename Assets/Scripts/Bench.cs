@@ -8,53 +8,57 @@ public class Bench : MonoBehaviour
 
     [SerializeField] private List<BoardUnit> _benchUnits; // Units on bench
     [SerializeField] private Transform _benchTransform;
-    [SerializeField] private GameObject _unitPrefab;
+    [SerializeField] private GameObject _boardUnitPrefab; // For the instantiation when adding to bench
 
-    private readonly int BENCH_SIZE = 9;
+    private readonly int BENCH_SIZE = 10;
 
     public void Awake()
     {
         _benchUnits = new List<BoardUnit>();
     }
 
-    // Add a unit to the bench
-    public void AddUnitToBench(ShopUnit shopUnit)
+    // Create a boardUnit and add it to the bench
+    public void AddUnitToBench(int unitId)
     {
-        BoardUnit unit = CreateUnitOnBoard(shopUnit);
+        BoardUnit unit = BoardUnit.CreateBoardUnit(_boardUnitPrefab, _benchTransform, unitId);
         _benchUnits.Add(unit);
         ShowUnitOnBench(unit);
     }
 
-    // Show the unit in the bench visually
+    // Show the unit visually on the bench
     private void ShowUnitOnBench(BoardUnit unit)
     {
-        /*for (int i = 0; i < _benchTransform.childCount; i++)
+        Transform emptyBenchSlot = FindEmptyBenchSlot();
+        if (emptyBenchSlot != null)
         {
-            GameObject benchUnitGo = _benchTransform.GetChild(i).GetChild(0).gameObject;
-            if (!benchUnitGo.activeSelf)
-            {
-                SpriteRenderer unitSpriteRenderer = benchUnitGo.GetComponent<SpriteRenderer>();
-                unitSpriteRenderer.sprite = unit.UnitSprite;
-                Unit benchUnit = unitSpriteRenderer.GetComponent<Unit>();
-                benchUnit.SetUnitData(unit);
-                benchUnitGo.SetActive(true);
-                return;
-            }
-        }*/
-
-        for (int i = 0; i < _benchTransform.childCount; i++)
-        {
-            Transform benchUnitParent = _benchTransform.GetChild(i);
-            if (benchUnitParent.childCount == 0)
-            {
-                SpriteRenderer unitSpriteRenderer = unit.GetComponent<SpriteRenderer>();
-                unitSpriteRenderer.sprite = unit.UnitSprite;
-                unit.transform.SetParent(benchUnitParent);
-                unit.transform.position = benchUnitParent.position;
-                return;
-            }
+            SpriteRenderer unitSpriteRenderer = unit.GetComponent<SpriteRenderer>();
+            unitSpriteRenderer.sprite = unit.UnitSprite;
+            unit.transform.SetParent(emptyBenchSlot);
+            unit.transform.position = emptyBenchSlot.position;
         }
     }
+
+    // Returns an empty bench slot transform
+    private Transform FindEmptyBenchSlot()
+    {
+        // Go over the bench slots
+        for (int i = 0; i < BENCH_SIZE; i++)
+        {
+            string benchSlotName = "BenchSlot";
+            GameObject benchSlotGo = GameObject.Find(benchSlotName + (i + 1));
+
+            if (benchSlotGo != null)
+            {
+                // Check if there is a unit in slot
+                if (benchSlotGo.transform.childCount == 0)
+                {
+                    return benchSlotGo.transform;
+                }
+            }
+        }
+        return null;
+    }
+
     // Check if bench exceeds max units limit
     public bool IsFull()
     {
@@ -70,6 +74,7 @@ public class Bench : MonoBehaviour
     public void RemoveUnit(BoardUnit unit)
     {
         _benchUnits.Remove(unit);
+        unit.DestroyUnit();
     }
 
     // Print all unit names
@@ -81,13 +86,5 @@ public class Bench : MonoBehaviour
             str += unit.UnitName;
         }
         return str;
-    }
-
-    public BoardUnit CreateUnitOnBoard(ShopUnit shopUnit)
-    {
-        GameObject unitGo = Instantiate(_unitPrefab, _benchTransform);
-        BoardUnit unit = unitGo.GetComponent<BoardUnit>();
-        unit.SetUnitData(shopUnit.UnitData);
-        return unit;
     }
 }

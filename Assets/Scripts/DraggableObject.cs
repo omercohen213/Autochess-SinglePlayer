@@ -16,7 +16,7 @@ public class DraggableObject : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
 
             // Start dragging if collider was hit
-            if (hit.collider != null && hit.collider.gameObject == this.gameObject)
+            if (hit.collider != null && hit.collider.gameObject == gameObject)
             {
                 StartDragging(mousePosition);
             }
@@ -39,6 +39,10 @@ public class DraggableObject : MonoBehaviour
     {
         isDragging = true;
         offset = transform.position - mousePosition;
+
+        // Invoke the OnDragStarted action to allow custom implementation if event was subscribed
+        DragEvents.InvokeDragStarted(gameObject);
+
     }
 
     // Change position of the draggableObject to the mouse position
@@ -48,11 +52,11 @@ public class DraggableObject : MonoBehaviour
         transform.position = new Vector3(mousePosition.x + offset.x, mousePosition.y + offset.y, transform.position.z);
     }
 
-    // Invoke the OnDragStopped action for each draggableObject to allow custom implementation
     private void StopDragging()
     {
         isDragging = false;
 
+        // Invoke the OnDragStarted action to allow custom implementation if event was subscribed
         DragEvents.InvokeDragStopped(gameObject, transform.position);
     }
 }

@@ -1,12 +1,10 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BoardUnit : MonoBehaviour
+public class BoardUnit : Unit
 {
-    [SerializeField] private string unitName;
-    public string UnitName { get => unitName; private set => unitName = value; }
-
     [SerializeField] private int hp;
     public int Hp { get => hp; private set => hp = value; }
 
@@ -21,12 +19,19 @@ public class BoardUnit : MonoBehaviour
 
     private void OnEnable()
     {
+        DragEvents.OnDragStarted += HandleDragStarted;
         DragEvents.OnDragStopped += HandleDragStopped;
     }
 
     private void OnDisable()
     {
+        DragEvents.OnDragStarted += HandleDragStarted;
         DragEvents.OnDragStopped -= HandleDragStopped;
+    }
+
+    private void HandleDragStarted(GameObject sender)
+    {
+        Shop.Instance.ActivateUnitSellField();
     }
 
     // Implement behavior for this BoardUnit when dragging stops
@@ -34,8 +39,36 @@ public class BoardUnit : MonoBehaviour
     {
         if (sender == gameObject)
         {
-            Debug.Log($"Unit at {transform.position} was dragged to {finalPosition}");
+            if (IsOnUnitSellField(gameObject, finalPosition))
+            {
+                Shop.Instance.SellUnit(this);
+            }
+            Shop.Instance.DisableUnitSellField();
         }
+    }
+
+    private bool IsOnUnitSellField(GameObject sender, Vector3 finalPosition)
+    {
+        // Create a layer mask to ignore the layer of the BoardUnit
+        int layerMask = 1 << LayerMask.NameToLayer("Shop");
+
+        // Perform the raycast with the layer mask
+        RaycastHit2D hit = Physics2D.Raycast(finalPosition, Vector2.zero, Mathf.Infinity, layerMask);
+
+        if (hit.collider != null && hit.collider.gameObject == Shop.Instance.UnitSellField)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    // Gets a prefab and 
+    public static BoardUnit CreateBoardUnit(GameObject boardUnitPrefab, Transform parent, int unitId)
+    {
+        GameObject unitGo = Instantiate(boardUnitPrefab, parent);
+        BoardUnit boardUnit = unitGo.GetComponent<BoardUnit>();
+        boardUnit.SetUnitData(unitId);
+        return boardUnit;
     }
 
     public void Attack(BoardUnit target)
@@ -50,12 +83,17 @@ public class BoardUnit : MonoBehaviour
     }
 
     // Set the unit's properties based on unitData
-    public void SetUnitData(UnitData unitData)
+    public override void SetUnitData(int id)
     {
-        UnitName = unitData.UnitName;
-        Hp = unitData.Hp;
-        Mp = unitData.Mp;
-        AttackDamage = unitData.AttackDamage;
-        UnitSprite = unitData.UnitSprite;
+        base.SetUnitData(id);
+        Hp = UnitData.Hp;
+        Mp = UnitData.Mp;
+        AttackDamage = UnitData.AttackDamage;
+        UnitSprite = UnitData.UnitSprite;
+    }
+
+    public void DestroyUnit()
+    {
+        Destroy(gameObject);
     }
 }
