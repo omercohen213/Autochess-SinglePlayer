@@ -13,8 +13,8 @@ public class UnitData : ScriptableObject
     public int Mp;
     public int AttackDamage;
     public int Armor;
-    public Sprite UnitSprite;
-    public Image UnitShopImage;
+    public Sprite Sprite;
+    public Image ShopImage;
 
     [Header("Ability Data")]
     public string AbilityName;

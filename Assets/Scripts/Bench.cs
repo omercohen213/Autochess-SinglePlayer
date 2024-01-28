@@ -5,54 +5,69 @@ using UnityEngine;
 
 public class Bench : MonoBehaviour
 {
-
-    [SerializeField] private List<BoardUnit> _benchUnits; // Units on bench
-    [SerializeField] private Transform _benchTransform;
-    [SerializeField] private GameObject _boardUnitPrefab; // For the instantiation when adding to bench
+    [SerializeField] private List<BoardUnit> _units; // Units on bench
+    [SerializeField] private Transform _benchSlotPrefab;
 
     private readonly int BENCH_SIZE = 10;
+    private readonly int BENCH_COLUMNS = 2;
+    private readonly float BENCHSLOT_SPACING = -1.2f; // Space between two benchSlots in the Y axis
 
     public void Awake()
     {
-        _benchUnits = new List<BoardUnit>();
+        _units = new List<BoardUnit>();
     }
 
-    // Create a boardUnit and add it to the bench
-    public void AddUnitToBench(int unitId)
+    private void Start()
     {
-        BoardUnit unit = BoardUnit.CreateBoardUnit(_boardUnitPrefab, _benchTransform, unitId);
-        _benchUnits.Add(unit);
-        ShowUnitOnBench(unit);
-    }
-
-    // Show the unit visually on the bench
-    private void ShowUnitOnBench(BoardUnit unit)
-    {
-        Transform emptyBenchSlot = FindEmptyBenchSlot();
-        if (emptyBenchSlot != null)
+        Vector3 pos = transform.position; // Set initial position
+        for (int i = 0; i < BENCH_COLUMNS; i++)
         {
-            SpriteRenderer unitSpriteRenderer = unit.GetComponent<SpriteRenderer>();
-            unitSpriteRenderer.sprite = unit.UnitSprite;
-            unit.transform.SetParent(emptyBenchSlot);
-            unit.transform.position = emptyBenchSlot.position;
+            for (int j = 0; j < BENCH_SIZE / BENCH_COLUMNS; j++)
+            {
+                Transform benchSlotTransform = Instantiate(_benchSlotPrefab, pos, Quaternion.identity, transform);
+                benchSlotTransform.gameObject.AddComponent<BenchSlot>();
+                benchSlotTransform.GetComponent<BenchSlot>().SetPosition(i, j);
+                benchSlotTransform.gameObject.name = $"BenchSlot ({i},{j})";
+                pos += new Vector3(0f, BENCHSLOT_SPACING); // Space out the benchSlots in the Y axis
+            }
+            pos += new Vector3(BENCHSLOT_SPACING, 5f); // Space out in the X axis and Y axis for the second column
         }
     }
 
-    // Returns an empty bench slot transform
-    private Transform FindEmptyBenchSlot()
+    // Create a boardUnit and add it to the bench
+    public void AddUnitToBench(BoardUnit unit)
+    {
+        _units.Add(unit);
+        BenchSlot benchSlot = FindEmptyBenchSlot();
+        benchSlot.IsTaken = true;
+        unit.CurrentBenchSlot = benchSlot;
+        ShowUnitOnBench(unit, benchSlot);
+    }
+
+    // Show the unit visually on the bench
+    private void ShowUnitOnBench(BoardUnit unit, BenchSlot benchSlot)
+    {
+        if (benchSlot != null)
+        {
+            SpriteRenderer unitSpriteRenderer = unit.GetComponent<SpriteRenderer>();
+            unitSpriteRenderer.sprite = unit.UnitSprite;
+            unit.transform.SetParent(benchSlot.transform);
+            unit.transform.position = benchSlot.transform.position;
+        }
+    }
+
+    // Returns the first empty benchSlot 
+    private BenchSlot FindEmptyBenchSlot()
     {
         // Go over the bench slots
         for (int i = 0; i < BENCH_SIZE; i++)
         {
-            string benchSlotName = "BenchSlot";
-            GameObject benchSlotGo = GameObject.Find(benchSlotName + (i + 1));
-
-            if (benchSlotGo != null)
+            if (transform.GetChild(i).TryGetComponent<BenchSlot>(out var benchSlot))
             {
                 // Check if there is a unit in slot
-                if (benchSlotGo.transform.childCount == 0)
+                if (!benchSlot.IsTaken)
                 {
-                    return benchSlotGo.transform;
+                    return benchSlot;
                 }
             }
         }
@@ -62,7 +77,7 @@ public class Bench : MonoBehaviour
     // Check if bench exceeds max units limit
     public bool IsFull()
     {
-        if (_benchUnits.Count >= BENCH_SIZE)
+        if (_units.Count >= BENCH_SIZE)
         {
             Debug.Log("Units bench is full!");
             return true;
@@ -73,18 +88,20 @@ public class Bench : MonoBehaviour
     // Remove a unit from the bench
     public void RemoveUnit(BoardUnit unit)
     {
-        _benchUnits.Remove(unit);
-        unit.DestroyUnit();
+        _units.Remove(unit);
+        unit.CurrentBenchSlot.IsTaken = false;
+        unit.CurrentBenchSlot = null;
     }
 
     // Print all unit names
-    public string PrintUnitsOnBench()
+    public override string ToString()
     {
         string str = "";
-        foreach (BoardUnit unit in _benchUnits)
+        foreach (BoardUnit unit in _units)
         {
             str += unit.UnitName;
         }
         return str;
+
     }
 }

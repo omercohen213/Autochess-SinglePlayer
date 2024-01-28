@@ -1,7 +1,5 @@
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class BoardUnit : Unit
 {
@@ -16,6 +14,11 @@ public class BoardUnit : Unit
 
     [SerializeField] private Sprite unitSprite;
     public Sprite UnitSprite { get => unitSprite; private set => unitSprite = value; }
+
+    private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
+    public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
+
+    private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
 
     private void OnEnable()
     {
@@ -34,27 +37,42 @@ public class BoardUnit : Unit
         Shop.Instance.ActivateUnitSellField();
     }
 
-    // Implement behavior for this BoardUnit when dragging stops
+    // Handles a behavior when this unit is stopped being dragged at final position
     private void HandleDragStopped(GameObject sender, Vector3 finalPosition)
     {
         if (sender == gameObject)
         {
-            if (IsOnUnitSellField(gameObject, finalPosition))
+            //  Place on board
+            if (IsDraggedOnBoard(finalPosition))
+            {
+                Board.Instance.PlaceUnitOnBoard(this, _currentHex);
+            }
+
+            // Sell unit
+            else if (IsDraggedOnSellField(finalPosition))
             {
                 Shop.Instance.SellUnit(this);
+                Destroy(gameObject);
             }
+
+            //else if (isDraggedOnBenchSpot()){
+
+
+            // Return to its bench position
+            else
+            {
+                ReturnToBench();
+            }
+
             Shop.Instance.DisableUnitSellField();
         }
     }
 
-    private bool IsOnUnitSellField(GameObject sender, Vector3 finalPosition)
+    // Checks if the unit collides with the unit sell field
+    private bool IsDraggedOnSellField(Vector3 finalPosition)
     {
-        // Create a layer mask to ignore the layer of the BoardUnit
-        int layerMask = 1 << LayerMask.NameToLayer("Shop");
-
-        // Perform the raycast with the layer mask
-        RaycastHit2D hit = Physics2D.Raycast(finalPosition, Vector2.zero, Mathf.Infinity, layerMask);
-
+        int layerMask = 1 << LayerMask.NameToLayer("Shop"); // Create a layer mask to ignore the layer of the BoardUnit      
+        RaycastHit2D hit = Physics2D.Raycast(finalPosition, Vector2.zero, Mathf.Infinity, layerMask); // Perform the raycast with the layer mask
         if (hit.collider != null && hit.collider.gameObject == Shop.Instance.UnitSellField)
         {
             return true;
@@ -62,13 +80,26 @@ public class BoardUnit : Unit
         return false;
     }
 
-    // Gets a prefab and 
-    public static BoardUnit CreateBoardUnit(GameObject boardUnitPrefab, Transform parent, int unitId)
+    // Checks if the unit collides with a board hex and assigns to current hex
+    private bool IsDraggedOnBoard(Vector3 finalPosition)
     {
-        GameObject unitGo = Instantiate(boardUnitPrefab, parent);
-        BoardUnit boardUnit = unitGo.GetComponent<BoardUnit>();
-        boardUnit.SetUnitData(unitId);
-        return boardUnit;
+        int layerMask = 1 << LayerMask.NameToLayer("Board"); // Create a layer mask to ignore the layer of the BoardUnit   
+        RaycastHit2D hit = Physics2D.Raycast(finalPosition, Vector2.zero, Mathf.Infinity, layerMask); // Convert the finalPosition to screen space
+
+        if (hit.collider != null && hit.collider.CompareTag("Hex"))
+        {
+            _currentHex = hit.collider.gameObject.GetComponent<Hex>();
+            return true;
+        }
+        return false;
+    }
+
+    private void ReturnToBench()
+    {
+        if (_currentBenchSlot != null)
+        {
+            transform.position = _currentBenchSlot.transform.position;
+        }
     }
 
     public void Attack(BoardUnit target)
@@ -89,11 +120,6 @@ public class BoardUnit : Unit
         Hp = UnitData.Hp;
         Mp = UnitData.Mp;
         AttackDamage = UnitData.AttackDamage;
-        UnitSprite = UnitData.UnitSprite;
-    }
-
-    public void DestroyUnit()
-    {
-        Destroy(gameObject);
+        UnitSprite = UnitData.Sprite;
     }
 }

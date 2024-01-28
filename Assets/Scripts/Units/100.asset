@@ -19,6 +19,6 @@ MonoBehaviour:
   Mp: 0
   AttackDamage: 0
   Armor: 0
-  UnitSprite: {fileID: 917393639, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
-  UnitShopImage: {fileID: 0}
+  Sprite: {fileID: 1346157962, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  ShopImage: {fileID: 0}
   AbilityName: 

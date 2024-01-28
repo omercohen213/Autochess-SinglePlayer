@@ -1,11 +1,13 @@
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UI.CanvasScaler;
 
 public class Shop : MonoBehaviour
 {
     [SerializeField] private Transform _shopUnitsTransform;
     [SerializeField] private UnitsDatabase _unitsDatabase;
+    [SerializeField] private GameObject _boardUnitPrefab; // For the instantiation when unit is bought
 
     //private readonly int SHOP_SIZE = 5;
     private readonly int REROLL_COST = 1;
@@ -58,9 +60,20 @@ public class Shop : MonoBehaviour
         if (CanAfford(shopUnit.Cost) && !_player.UnitsBench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
-            _player.UnitsBench.AddUnitToBench(shopUnit.UnitData.Id);
+            BoardUnit unit = CreateBoardUnit(shopUnit.UnitData.Id);
+            _player.UnitsBench.AddUnitToBench(unit);
             shopUnitGo.SetActive(false);
         }
+    }
+
+    // Create an instance of a unit on scene and set its data according to the id
+    private BoardUnit CreateBoardUnit(int id)
+    {
+        Transform benchTransform = _player.UnitsBench.transform;
+        GameObject unitGo = Instantiate(_boardUnitPrefab, benchTransform);
+        BoardUnit boardUnit = unitGo.GetComponent<BoardUnit>();
+        boardUnit.SetUnitData(id);
+        return boardUnit;
     }
 
     // Buy reroll on button click
@@ -125,6 +138,7 @@ public class Shop : MonoBehaviour
         }
     }
     
+    // Sell unit and remove it from bench
     public void SellUnit(Unit unit)
     {
         _player.GainGold(unit.Cost);
@@ -132,6 +146,7 @@ public class Shop : MonoBehaviour
         Debug.Log("Sold for + " + unit.Cost);
     }
 
+    // Set unit sell field active
     public void ActivateUnitSellField()
     {
         // Enable the unitSellField
@@ -141,9 +156,9 @@ public class Shop : MonoBehaviour
         }
     }
 
+    // Set Unit sell field disabled
     public void DisableUnitSellField()
     {
-        // Enable the unitSellField
         if (_unitSellField != null)
         {
             _unitSellField.SetActive(false);

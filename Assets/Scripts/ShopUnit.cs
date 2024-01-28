@@ -11,7 +11,7 @@ public class ShopUnit : Unit, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("OnPointerDown");
+        //Debug.Log("OnPointerDown");
 
     }
 
@@ -34,6 +34,6 @@ public class ShopUnit : Unit, IPointerDownHandler
     public override void SetUnitData(int id)
     {
         base.SetUnitData(id);
-        UnitImage = UnitData.UnitShopImage;
+        UnitImage = UnitData.ShopImage;
     }
 }
