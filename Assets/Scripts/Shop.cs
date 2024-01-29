@@ -142,7 +142,7 @@ public class Shop : MonoBehaviour
     public void SellUnit(Unit unit)
     {
         _player.GainGold(unit.Cost);
-        _player.UnitsBench.RemoveUnit(unit as BoardUnit);
+        _player.UnitsBench.RemoveUnitFromBench(unit as BoardUnit);
         Debug.Log("Sold for + " + unit.Cost);
     }
 

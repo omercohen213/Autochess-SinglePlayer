@@ -1,3 +1,5 @@
+using System.Net.Http.Headers;
+using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,7 +20,13 @@ public class BoardUnit : Unit
     private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
     public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
 
+    private Player _owner;
     private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
+
+    private void Start()
+    {
+        _owner = Player.Instance; // TEMPORARY
+    }
 
     private void OnEnable()
     {
@@ -42,64 +50,59 @@ public class BoardUnit : Unit
     {
         if (sender == gameObject)
         {
-            //  Place on board
-            if (IsDraggedOnBoard(finalPosition))
+            GameObject objDraggedOn = GetDragPosition(finalPosition);
+            string objTag = objDraggedOn != null ? objDraggedOn.tag : null;
+            if (objTag == null)
             {
-                Board.Instance.PlaceUnitOnBoard(this, _currentHex);
+                _owner.UnitsBench.ReturnUnitToBench(this);
+                Debug.Log("nl");
             }
-
-            // Sell unit
-            else if (IsDraggedOnSellField(finalPosition))
-            {
-                Shop.Instance.SellUnit(this);
-                Destroy(gameObject);
-            }
-
-            //else if (isDraggedOnBenchSpot()){
-
-
-            // Return to its bench position
             else
             {
-                ReturnToBench();
+                switch (objTag)
+                {
+                    // Sell Unit
+                    case "SellField":
+                        Shop.Instance.SellUnit(this);
+                        Destroy(gameObject);
+                        break;
+
+                    // Place on board
+                    case "Hex":
+                        Hex hexDraggedOn = objDraggedOn.GetComponent<Hex>();
+                        _owner.UnitsBench.RemoveUnitFromBench(this);
+                        Board.Instance.PlaceUnitOnBoard(this, hexDraggedOn);
+                        break;
+
+                    // Place on another bench slot
+                    case "BenchSlot":
+                        Debug.Log("ss");
+                        BenchSlot benchSlotDraggedOn = objDraggedOn.GetComponent<BenchSlot>();
+                        _owner.UnitsBench.ChangeBenchSlot(this, benchSlotDraggedOn);
+                        break;
+                    // Return to bench
+                    default:
+                        _owner.UnitsBench.ReturnUnitToBench(this);
+                        break;
+                }
             }
-
-            Shop.Instance.DisableUnitSellField();
         }
+        Shop.Instance.DisableUnitSellField();
     }
 
-    // Checks if the unit collides with the unit sell field
-    private bool IsDraggedOnSellField(Vector3 finalPosition)
+    private GameObject GetDragPosition(Vector3 finalPosition)
     {
-        int layerMask = 1 << LayerMask.NameToLayer("Shop"); // Create a layer mask to ignore the layer of the BoardUnit      
+        int shopLayer = LayerMask.NameToLayer("Shop");
+        int boardLayer = LayerMask.NameToLayer("Board");
+        int benchLayer = LayerMask.NameToLayer("Bench");
+
+        int layerMask = (1 << shopLayer) | (1 << boardLayer) | (1 << benchLayer); // Create a layer mask to ignore the BoardUnit collider
         RaycastHit2D hit = Physics2D.Raycast(finalPosition, Vector2.zero, Mathf.Infinity, layerMask); // Perform the raycast with the layer mask
-        if (hit.collider != null && hit.collider.gameObject == Shop.Instance.UnitSellField)
+        if (hit.collider != null)
         {
-            return true;
+            return hit.collider.gameObject;
         }
-        return false;
-    }
-
-    // Checks if the unit collides with a board hex and assigns to current hex
-    private bool IsDraggedOnBoard(Vector3 finalPosition)
-    {
-        int layerMask = 1 << LayerMask.NameToLayer("Board"); // Create a layer mask to ignore the layer of the BoardUnit   
-        RaycastHit2D hit = Physics2D.Raycast(finalPosition, Vector2.zero, Mathf.Infinity, layerMask); // Convert the finalPosition to screen space
-
-        if (hit.collider != null && hit.collider.CompareTag("Hex"))
-        {
-            _currentHex = hit.collider.gameObject.GetComponent<Hex>();
-            return true;
-        }
-        return false;
-    }
-
-    private void ReturnToBench()
-    {
-        if (_currentBenchSlot != null)
-        {
-            transform.position = _currentBenchSlot.transform.position;
-        }
+        return null;
     }
 
     public void Attack(BoardUnit target)

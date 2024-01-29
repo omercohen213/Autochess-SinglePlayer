@@ -19,11 +19,12 @@ public class Bench : MonoBehaviour
 
     private void Start()
     {
-        Vector3 pos = transform.position; // Set initial position
+        Vector3 pos = transform.position; // Set initial benchSlot position
         for (int i = 0; i < BENCH_COLUMNS; i++)
         {
             for (int j = 0; j < BENCH_SIZE / BENCH_COLUMNS; j++)
             {
+                // Create benchSlot
                 Transform benchSlotTransform = Instantiate(_benchSlotPrefab, pos, Quaternion.identity, transform);
                 benchSlotTransform.gameObject.AddComponent<BenchSlot>();
                 benchSlotTransform.GetComponent<BenchSlot>().SetPosition(i, j);
@@ -74,6 +75,32 @@ public class Bench : MonoBehaviour
         return null;
     }
 
+    // Change the bench slot of unit to given one
+    public void ChangeBenchSlot(BoardUnit unit, BenchSlot benchSlot)
+    {
+        unit.CurrentBenchSlot.IsTaken = false;
+        unit.CurrentBenchSlot = benchSlot;
+        benchSlot.IsTaken = true;
+        unit.transform.position = unit.CurrentBenchSlot.transform.position;
+        unit.transform.SetParent(benchSlot.transform);
+    }
+
+    // Set unit's position back to the first empty bench slot
+    public void ReturnUnitToBench(BoardUnit unit)
+    {
+        if (unit.CurrentBenchSlot != null)
+        {
+            unit.transform.position = unit.CurrentBenchSlot.transform.position;
+        }
+        else
+        {
+            BenchSlot benchSlot = FindEmptyBenchSlot();
+            unit.CurrentBenchSlot = benchSlot;
+            unit.transform.position = benchSlot.transform.position;
+            benchSlot.IsTaken = true;
+        }
+    }
+
     // Check if bench exceeds max units limit
     public bool IsFull()
     {
@@ -86,11 +113,14 @@ public class Bench : MonoBehaviour
     }
 
     // Remove a unit from the bench
-    public void RemoveUnit(BoardUnit unit)
+    public void RemoveUnitFromBench(BoardUnit unit)
     {
+        if (unit.CurrentBenchSlot != null)
+        {
+            unit.CurrentBenchSlot.IsTaken = false;
+            unit.CurrentBenchSlot = null;
+        }
         _units.Remove(unit);
-        unit.CurrentBenchSlot.IsTaken = false;
-        unit.CurrentBenchSlot = null;
     }
 
     // Print all unit names

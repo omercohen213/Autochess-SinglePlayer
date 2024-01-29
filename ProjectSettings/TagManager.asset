@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Hex
+  - BenchSlot
+  - SellField
   layers:
   - Default
   - TransparentFX
@@ -14,8 +16,8 @@ TagManager:
   - UI
   - Unit
   - Board
+  - Bench
   - Shop
-  - 
   - 
   - 
   - 
