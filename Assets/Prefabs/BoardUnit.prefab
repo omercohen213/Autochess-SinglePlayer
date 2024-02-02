@@ -13,10 +13,9 @@ GameObject:
   - component: {fileID: 2407412931012563249}
   - component: {fileID: 2407412931012563246}
   - component: {fileID: 2407412931012563247}
-  - component: {fileID: 3588547166631392189}
   m_Layer: 6
   m_Name: BoardUnit
-  m_TagString: Untagged
+  m_TagString: DraggableObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -115,10 +114,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: 
   unitData: {fileID: 0}
-  hp: 0
-  mp: 0
-  attackDamage: 0
+  _maxHp: 0
+  _maxMp: 0
+  _baseAttackDamage: 0
   unitSprite: {fileID: 74893781, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  AttackDamage: 0
+  _isOnBoard: 0
+  _currentHex: {fileID: 0}
+  _currentBenchSlot: {fileID: 0}
 --- !u!61 &2407412931012563247
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -145,15 +148,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.0085449, y: 1.0268555}
   m_EdgeRadius: 0
---- !u!114 &3588547166631392189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2407412931012563253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be4899e35347fda4ba04f46dd1d150f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

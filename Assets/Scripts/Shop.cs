@@ -57,11 +57,11 @@ public class Shop : MonoBehaviour
     {
         GameObject shopUnitGo = _shopUnitsTransform.GetChild(pos).GetChild(0).gameObject;
         ShopUnit shopUnit = shopUnitGo.GetComponent<ShopUnit>();
-        if (CanAfford(shopUnit.Cost) && !_player.UnitsBench.IsFull())
+        if (CanAfford(shopUnit.Cost) && !_player.Bench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
             BoardUnit unit = CreateBoardUnit(shopUnit.UnitData.Id);
-            _player.UnitsBench.AddUnitToBench(unit);
+            _player.Bench.AddUnitToBench(unit);
             shopUnitGo.SetActive(false);
         }
     }
@@ -69,10 +69,12 @@ public class Shop : MonoBehaviour
     // Create an instance of a unit on scene and set its data according to the id
     private BoardUnit CreateBoardUnit(int id)
     {
-        Transform benchTransform = _player.UnitsBench.transform;
+        Transform benchTransform = _player.Bench.transform;
         GameObject unitGo = Instantiate(_boardUnitPrefab, benchTransform);
         BoardUnit boardUnit = unitGo.GetComponent<BoardUnit>();
         boardUnit.SetUnitData(id);
+        SpriteRenderer unitSpriteRenderer = boardUnit.GetComponent<SpriteRenderer>();
+        unitSpriteRenderer.sprite = boardUnit.UnitSprite;
         return boardUnit;
     }
 
@@ -137,12 +139,19 @@ public class Shop : MonoBehaviour
             }
         }
     }
-    
+
     // Sell unit and remove it from bench
-    public void SellUnit(Unit unit)
+    public void SellUnit(BoardUnit unit)
     {
+        if (unit.IsOnBoard)
+        {
+            Board.Instance.RemoveUnitFromBoard(unit);
+        }
+        else
+        {
+            _player.Bench.RemoveUnitFromBench(unit);
+        }
         _player.GainGold(unit.Cost);
-        _player.UnitsBench.RemoveUnitFromBench(unit as BoardUnit);
         Debug.Log("Sold for + " + unit.Cost);
     }
 

@@ -6,6 +6,9 @@ public class Hex : MonoBehaviour
     public int X { get; private set; }
     public int Y { get; private set; }
 
+    private bool _isTaken;
+    public bool IsTaken { get => _isTaken; set => _isTaken = value; }
+
     // Method to set the row and column of the hex
     public void SetPosition(int row, int column)
     {

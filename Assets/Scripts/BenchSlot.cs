@@ -8,7 +8,7 @@ public class BenchSlot : MonoBehaviour
     public int Column { get; private set; }
     public int Row { get; private set; }
 
-    private bool _isTaken;
+    public bool _isTaken;
     public bool IsTaken { get => _isTaken; set => _isTaken = value; }
 
     private void Start()

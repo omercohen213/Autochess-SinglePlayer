@@ -6,15 +6,24 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "New Unit Data", menuName = "Game/Unit Data")]
 public class UnitData : ScriptableObject
 {
+
+    [Header("Base Unit Data")]
     public int Id;
     public string UnitName;
     public int Cost;
-    public int Hp;
-    public int Mp;
-    public int AttackDamage;
-    public int Armor;
-    public Sprite Sprite;
+
+    [Header("ShopUnit Data")]
     public Image ShopImage;
+
+    [Header("BoardUnit Data")]
+    public int MaxHp;
+    public int MaxMp;
+    public int BaseAttackDamage;
+    public int BaseArmor;
+    public Sprite Sprite; 
+
+    [Header("Traits Data")]
+    public List<Trait> Traits;
 
     [Header("Ability Data")]
     public string AbilityName;

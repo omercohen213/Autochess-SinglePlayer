@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
@@ -5,104 +6,96 @@ using UnityEngine;
 
 public class BoardUnit : Unit
 {
-    [SerializeField] private int hp;
-    public int Hp { get => hp; private set => hp = value; }
-
-    [SerializeField] private int mp;
-    public int Mp { get => mp; private set => mp = value; }
-
-    [SerializeField] private int attackDamage;
-    public int AttackDamage { get => attackDamage; private set => attackDamage = value; }
-
-    [SerializeField] private Sprite unitSprite;
-    public Sprite UnitSprite { get => unitSprite; private set => unitSprite = value; }
-
-    private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
-    public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
-
     private Player _owner;
-    private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
+    [SerializeField] private int _maxHp;
+    [SerializeField] private int _maxMp;
+    [SerializeField] private int _baseAttackDamage;
+    [SerializeField] private Sprite unitSprite;
+    public int AttackDamage; //{ get => _attackDamage; set => _attackDamage = value; }
+    public bool _isOnBoard;
+    public Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
+    public BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
+    public Dictionary<Trait, int> TraitStages = new();
+    public List<int> Stages = new();
 
+    public Player Owner { get => _owner; private set => _owner = value; }
+    public int MaxHp { get => _maxHp; private set => _maxHp = value; }
+    public int MaxMp { get => _maxMp; private set => _maxMp = value; }
+    public int BaseAttackDamage { get => _baseAttackDamage; private set => _baseAttackDamage = value; }
+    public Sprite UnitSprite { get => unitSprite; private set => unitSprite = value; }
+    public bool IsOnBoard { get => _isOnBoard; set => _isOnBoard = value; }
+    public Hex CurrentHex { get => _currentHex; set => _currentHex = value; }
+    public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
     private void Start()
     {
         _owner = Player.Instance; // TEMPORARY
+        AttackDamage = _baseAttackDamage;
+        
+        // Initialize all traits with stage 0
+        foreach (var trait in Traits)
+        {
+            TraitStages.Add(trait, 0); 
+        }
     }
 
-    private void OnEnable()
-    {
-        DragEvents.OnDragStarted += HandleDragStarted;
-        DragEvents.OnDragStopped += HandleDragStopped;
-    }
-
-    private void OnDisable()
-    {
-        DragEvents.OnDragStarted += HandleDragStarted;
-        DragEvents.OnDragStopped -= HandleDragStopped;
-    }
-
-    private void HandleDragStarted(GameObject sender)
+    public void HandleDragStarted()
     {
         Shop.Instance.ActivateUnitSellField();
     }
 
     // Handles a behavior when this unit is stopped being dragged at final position
-    private void HandleDragStopped(GameObject sender, Vector3 finalPosition)
+    public void HandleDragStopped(GameObject objDraggedOn)
     {
-        if (sender == gameObject)
+        string objTag = objDraggedOn != null ? objDraggedOn.tag : null;
+
+        // The unit was not dragged on a game object - return unit to its current bench or hex
+        if (objTag == null)
         {
-            GameObject objDraggedOn = GetDragPosition(finalPosition);
-            string objTag = objDraggedOn != null ? objDraggedOn.tag : null;
-            if (objTag == null)
+            if (IsOnBoard)
             {
-                _owner.UnitsBench.ReturnUnitToBench(this);
-                Debug.Log("nl");
+                Board.Instance.PlaceUnitOnBoard(this, _currentHex);
             }
             else
             {
-                switch (objTag)
-                {
-                    // Sell Unit
-                    case "SellField":
-                        Shop.Instance.SellUnit(this);
-                        Destroy(gameObject);
-                        break;
-
-                    // Place on board
-                    case "Hex":
-                        Hex hexDraggedOn = objDraggedOn.GetComponent<Hex>();
-                        _owner.UnitsBench.RemoveUnitFromBench(this);
-                        Board.Instance.PlaceUnitOnBoard(this, hexDraggedOn);
-                        break;
-
-                    // Place on another bench slot
-                    case "BenchSlot":
-                        Debug.Log("ss");
-                        BenchSlot benchSlotDraggedOn = objDraggedOn.GetComponent<BenchSlot>();
-                        _owner.UnitsBench.ChangeBenchSlot(this, benchSlotDraggedOn);
-                        break;
-                    // Return to bench
-                    default:
-                        _owner.UnitsBench.ReturnUnitToBench(this);
-                        break;
-                }
+                _owner.Bench.PutUnitOnBenchSlot(this, _currentBenchSlot);
             }
         }
-        Shop.Instance.DisableUnitSellField();
-    }
-
-    private GameObject GetDragPosition(Vector3 finalPosition)
-    {
-        int shopLayer = LayerMask.NameToLayer("Shop");
-        int boardLayer = LayerMask.NameToLayer("Board");
-        int benchLayer = LayerMask.NameToLayer("Bench");
-
-        int layerMask = (1 << shopLayer) | (1 << boardLayer) | (1 << benchLayer); // Create a layer mask to ignore the BoardUnit collider
-        RaycastHit2D hit = Physics2D.Raycast(finalPosition, Vector2.zero, Mathf.Infinity, layerMask); // Perform the raycast with the layer mask
-        if (hit.collider != null)
+        else
         {
-            return hit.collider.gameObject;
+            switch (objTag)
+            {
+                // Sell Unit
+                case "SellField":
+                    Shop.Instance.SellUnit(this);
+                    Destroy(gameObject);
+                    break;
+
+                // Place on board
+                case "Hex":
+                    Hex hexDraggedOn = objDraggedOn.GetComponent<Hex>();
+                    Board.Instance.PlaceUnitOnBoard(this, hexDraggedOn);
+                    break;
+
+                // Place on another bench slot
+                case "BenchSlot":
+                    BenchSlot benchSlotDraggedOn = objDraggedOn.GetComponent<BenchSlot>();
+                    _owner.Bench.PutUnitOnBenchSlot(this, benchSlotDraggedOn);
+                    break;
+                // Return unit to its current bench or hex
+                default:
+                    if (IsOnBoard)
+                    {
+                        Board.Instance.PlaceUnitOnBoard(this, CurrentHex);
+                    }
+                    else
+                    {
+                        _owner.Bench.PutUnitOnBenchSlot(this, _currentBenchSlot);
+                    }
+                    break;
+            }
+
         }
-        return null;
+        Shop.Instance.DisableUnitSellField();
     }
 
     public void Attack(BoardUnit target)
@@ -120,9 +113,9 @@ public class BoardUnit : Unit
     public override void SetUnitData(int id)
     {
         base.SetUnitData(id);
-        Hp = UnitData.Hp;
-        Mp = UnitData.Mp;
-        AttackDamage = UnitData.AttackDamage;
+        MaxHp = UnitData.MaxHp;
+        MaxMp = UnitData.MaxMp;
+        BaseAttackDamage = UnitData.BaseAttackDamage;
         UnitSprite = UnitData.Sprite;
     }
 }

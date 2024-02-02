@@ -6,12 +6,16 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
-    public int Hp { get; private set; }
-    public int Gold { get; private set; }
-    public int Xp { get; private set; }
-    public int Lvl { get; private set; }
+    public int Hp;
+    public int Gold;
+    public int Xp;
+    public int Lvl;
     public string PlayerName { get; private set; }
-    public Bench UnitsBench { get; private set; }
+
+    [SerializeField] public Bench Bench;
+    public List<BoardUnit> BoardUnits;
+    public List<Trait> ActiveTraits; 
+
 
     private void Awake()
     {
@@ -20,18 +24,13 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
         Instance = this;
-       
-        GameObject playerBenchObject = GameObject.Find("PlayerBench");
-
-        // Check if the GameObject was found
-        if (playerBenchObject != null)
-            UnitsBench = playerBenchObject.GetComponent<Bench>();
-        else Debug.LogError("No Object of name PlayerBench found");
 
         Hp = 100;
         Gold = 10;
         PlayerName = "Spite";
         Lvl = 1;
+
+        ActiveTraits= new();
     }
 
     // Decrease gold by amount
@@ -72,5 +71,18 @@ public class Player : MonoBehaviour
     private void OnLevelUp()
     {
         UIManager.Instance.UpdatePlayerLvlUI();
+    }
+
+    public List<BoardUnit> GetUnitsWithTrait(Trait trait)
+    {
+        List<BoardUnit> unitsWithTrait = new ();
+        foreach (BoardUnit unit in BoardUnits)
+        {
+            if (unit.Traits.Contains(trait))
+            {
+                unitsWithTrait.Add(unit);
+            }
+        }
+        return unitsWithTrait;
     }
 }

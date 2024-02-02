@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: 0
   m_EditorClassIdentifier: 
   Id: 0
-  UnitName: 
+  UnitName: Knight
   Cost: 0
-  Hp: 0
-  Mp: 0
-  AttackDamage: 0
-  Armor: 0
-  Sprite: {fileID: 74893781, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
   ShopImage: {fileID: 0}
+  MaxHp: 0
+  MaxMp: 0
+  BaseAttackDamage: 10
+  BaseArmor: 0
+  Sprite: {fileID: 74893781, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  Traits:
+  - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}
   AbilityName: 

@@ -42,19 +42,8 @@ public class Bench : MonoBehaviour
         BenchSlot benchSlot = FindEmptyBenchSlot();
         benchSlot.IsTaken = true;
         unit.CurrentBenchSlot = benchSlot;
-        ShowUnitOnBench(unit, benchSlot);
-    }
-
-    // Show the unit visually on the bench
-    private void ShowUnitOnBench(BoardUnit unit, BenchSlot benchSlot)
-    {
-        if (benchSlot != null)
-        {
-            SpriteRenderer unitSpriteRenderer = unit.GetComponent<SpriteRenderer>();
-            unitSpriteRenderer.sprite = unit.UnitSprite;
-            unit.transform.SetParent(benchSlot.transform);
-            unit.transform.position = benchSlot.transform.position;
-        }
+        unit.transform.SetParent(benchSlot.transform);
+        unit.transform.position = benchSlot.transform.position;
     }
 
     // Returns the first empty benchSlot 
@@ -76,29 +65,45 @@ public class Bench : MonoBehaviour
     }
 
     // Change the bench slot of unit to given one
-    public void ChangeBenchSlot(BoardUnit unit, BenchSlot benchSlot)
+    public void PutUnitOnBenchSlot(BoardUnit unit, BenchSlot benchSlot)
     {
-        unit.CurrentBenchSlot.IsTaken = false;
-        unit.CurrentBenchSlot = benchSlot;
-        benchSlot.IsTaken = true;
-        unit.transform.position = unit.CurrentBenchSlot.transform.position;
-        unit.transform.SetParent(benchSlot.transform);
-    }
-
-    // Set unit's position back to the first empty bench slot
-    public void ReturnUnitToBench(BoardUnit unit)
-    {
-        if (unit.CurrentBenchSlot != null)
+        // Bench slot is taken
+        if (benchSlot.IsTaken)
         {
-            unit.transform.position = unit.CurrentBenchSlot.transform.position;
+            // Unit is on board- return it to its current hex on board
+            if (unit.IsOnBoard)
+            {
+                Board.Instance.PlaceUnitOnBoard(unit, unit.CurrentHex);
+                return;
+            }
+            // Unit is already on bench- return it to its current bench slot
+            else
+            {
+                benchSlot = unit.CurrentBenchSlot;
+            }
         }
+
+        // Bench slot is empty
         else
         {
-            BenchSlot benchSlot = FindEmptyBenchSlot();
+            // Unit is on board- remove it from board and add to bench on given bench slot
+            if (unit.IsOnBoard)
+            {               
+                Board.Instance.RemoveUnitFromBoard(unit);
+                _units.Add(unit);
+            }
+            // Unit is already on bench- change its bench slot to given one
+            else
+            {
+                unit.CurrentBenchSlot.IsTaken = false;
+            }
             unit.CurrentBenchSlot = benchSlot;
-            unit.transform.position = benchSlot.transform.position;
             benchSlot.IsTaken = true;
         }
+
+        // Change to the given bench slot
+        unit.transform.position = unit.CurrentBenchSlot.transform.position;
+        unit.transform.SetParent(benchSlot.transform);
     }
 
     // Check if bench exceeds max units limit

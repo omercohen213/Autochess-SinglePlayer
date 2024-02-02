@@ -1,12 +1,15 @@
+using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-
     [SerializeField] private TextMeshProUGUI _goldText;
     [SerializeField] private TextMeshProUGUI _xpText;
     [SerializeField] private TextMeshProUGUI _lvlText;
+    [SerializeField] private TraitTracker _traitTracker;
 
     private static UIManager _instance;
     public static UIManager Instance
@@ -33,36 +36,32 @@ public class UIManager : MonoBehaviour
         UpdateXpUI();
     }
 
-    // Update current gold text on change
+    // Update current gold text
     public void UpdateGoldUI()
     {
         _goldText.text = Player.Instance.Gold.ToString() + "$";
     }
 
-    // Update current xp text on change
+    // Update current xp text
     public void UpdateXpUI()
     {
         _xpText.text = Player.Instance.Xp.ToString() + "/" + GameManager.Instance.GetXpToLevelUp(Player.Instance.Lvl).ToString();
     }
 
-    // Update current lvl text on change
+    // Update current lvl text
     public void UpdatePlayerLvlUI()
     {
         _lvlText.text = Player.Instance.Lvl.ToString();
     }
 
 
-    /* public void ShowUIEntityStats(GameObject gameObject)
-     {
-         Entity entity = gameObject.GetComponent<Entity>();
-         _activeTarget = entity;
-         _isTargetActive = true;
-     }
-     public void UpdateUIEntityStats()
-     {
-         _entityStats.SetActive(true);
-         _hpText.text = _activeTarget.Hp + " / " + _activeTarget.MaxHp;
-         float hpRatio = (float)_activeTarget.Hp / _activeTarget.MaxHp;
-         _hpBar.localScale = new Vector3(hpRatio, 1, 1);
-     }*/
+    public void UpdateTraitUI(Trait trait, int currentStage, int unitCount, int lastUnitCount)
+    {
+        if (unitCount == 1 && lastUnitCount == 0)
+        {
+            _traitTracker.AddTrait(trait, currentStage, unitCount);
+        }
+    }
+
+    
 }
