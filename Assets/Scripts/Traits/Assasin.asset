@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 072c25c0c0a69b24087c5f9ca38950e3, type: 3}
-  m_Name: Beast
+  m_Script: {fileID: 11500000, guid: a958faebb30f7cb4db3112972aa30d0e, type: 3}
+  m_Name: Assasin
   m_EditorClassIdentifier: 
-  traitName: Beast
+  traitName: Assasin
   traitDescription: 
-  BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  traitSprite: {fileID: 21300000, guid: 748ae8b33df036b46a86e0387f1602cf, type: 3}
-  _unitNumNeeded: 020000000400000006000000
+  BackgroundColor: {r: 1, g: 0.8163534, b: 0, a: 0}
+  traitSprite: {fileID: 21300000, guid: cee9dbe90b270c944ae1dabf41c93b10, type: 3}
+  _unitNumNeeded: 01000000030000000500000007000000

@@ -15,10 +15,13 @@ MonoBehaviour:
   Id: 2
   UnitName: 
   Cost: 2
-  Hp: 2
-  Mp: 0
-  AttackDamage: 0
-  Armor: 0
-  Sprite: {fileID: -797394571, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
   ShopImage: {fileID: 0}
+  MaxHp: 0
+  MaxMp: 0
+  BaseAttackDamage: 0
+  BaseArmor: 0
+  Sprite: {fileID: -797394571, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  Traits:
+  - {fileID: 11400000, guid: ceb29ad378042744eaa8a06ec19db335, type: 2}
+  - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}
   AbilityName: 

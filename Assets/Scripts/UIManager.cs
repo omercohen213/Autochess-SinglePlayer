@@ -57,10 +57,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateTraitUI(Trait trait, int currentStage, int unitCount, int lastUnitCount)
     {
-        if (unitCount == 1 && lastUnitCount == 0)
-        {
-            _traitTracker.AddTrait(trait, currentStage, unitCount);
-        }
+       _traitTracker.UpdateTraits(trait, currentStage , unitCount, lastUnitCount);
     }
 
     

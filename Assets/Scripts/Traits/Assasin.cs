@@ -5,12 +5,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
-[CreateAssetMenu(fileName = "New Trait", menuName = "Game/Traits/Beast")]
+[CreateAssetMenu(fileName = "New Trait", menuName = "Game/Traits/Assasin")]
 
-// Give attackDamage buff to all units with this trait
-public class Beast : Trait
+public class Assasin : Trait
 {
-    private readonly int[] damageBuff = new int[] {0,5, 10, 20 };
+    private readonly int[] damageBuff = new int[] { 0, 5, 10, 20 };
 
     // Update the trait stage according to the current stage
     public override void UpdateTrait(List<BoardUnit> unitsWithTrait, BoardUnit lastUnit, int currentStage, int lastStage)
@@ -57,7 +56,7 @@ public class Beast : Trait
             // Sum up the damage according to the stage diff between the unit and the board 
             for (int i = lastUnitStage; i < currentStage; i++)
             {
-                totalDamageToAdd += damageBuff[i+1];
+                totalDamageToAdd += damageBuff[i + 1];
             }
             unit.AttackDamage += totalDamageToAdd;
         }
@@ -68,7 +67,7 @@ public class Beast : Trait
     {
         foreach (BoardUnit unit in unitsWithTrait)
         {
-            unit.AttackDamage -= damageBuff[currentStage+1];
+            unit.AttackDamage -= damageBuff[currentStage + 1];
         }
     }
 
