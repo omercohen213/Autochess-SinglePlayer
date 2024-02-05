@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class ShopUnit : Unit, IPointerDownHandler
 {   
-    public Image UnitImage { get; private set; }
+    public Sprite UnitImage { get; private set; }
 
     public void OnPointerDown(PointerEventData eventData)
     {

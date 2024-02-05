@@ -13,9 +13,9 @@ public class UnitData : ScriptableObject
     public int Cost;
 
     [Header("ShopUnit Data")]
-    public Image ShopImage;
+    public Sprite ShopImage;
 
-    [Header("BoardUnit Data")]
+    [Header("GameUnit Data")]
     public int MaxHp;
     public int MaxMp;
     public int BaseAttackDamage;

@@ -44,7 +44,7 @@ public class DragManager : MonoBehaviour
     {
         isDragging = true;
 
-        hit.collider.gameObject.TryGetComponent(out BoardUnit unit);
+        hit.collider.gameObject.TryGetComponent(out GameUnit unit);
         if (unit != null)
         {
             unit.HandleDragStarted();
@@ -63,7 +63,7 @@ public class DragManager : MonoBehaviour
     {
         isDragging = false;
 
-        hit.collider.gameObject.TryGetComponent(out BoardUnit unit);
+        hit.collider.gameObject.TryGetComponent(out GameUnit unit);
         if (unit != null)
         {
             GameObject objDraggedOn = GetObjectDraggedOn(hit.collider.gameObject.transform.position, hit.collider.gameObject);

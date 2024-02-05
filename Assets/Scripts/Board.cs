@@ -1,3 +1,4 @@
+using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ public class Board : MonoBehaviour
     }
 
     // Place the unit on board
-    public void PlaceUnitOnBoard(BoardUnit unit, Hex hex)
+    public void PlaceUnitOnBoard(GameUnit unit, Hex hex)
     {
         // Unit is already on board
         if (unit.IsOnBoard)
@@ -81,7 +82,7 @@ public class Board : MonoBehaviour
             else
             {
                 unit.Owner.Bench.RemoveUnitFromBench(unit);
-                unit.Owner.BoardUnits.Add(unit);
+                unit.Owner.GameUnits.Add(unit);
                 unit.CurrentHex = hex;
                 hex.IsTaken = true;
                 unit.IsOnBoard = true;
@@ -93,7 +94,7 @@ public class Board : MonoBehaviour
         unit.transform.position = hex.transform.position;
     }
 
-    public void RemoveUnitFromBoard(BoardUnit unit)
+    public void RemoveUnitFromBoard(GameUnit unit)
     {
         if (unit.CurrentHex != null)
         {
@@ -101,26 +102,31 @@ public class Board : MonoBehaviour
             unit.CurrentHex = null;
         }
         unit.IsOnBoard = false;
-        unit.Owner.BoardUnits.Remove(unit);
+        unit.Owner.GameUnits.Remove(unit);
         UpdateBoardTraits(unit);
     }
 
     // Update traits to owner's board
-    private void UpdateBoardTraits(BoardUnit unit)
+    private void UpdateBoardTraits(GameUnit unit)
     {
-        foreach (Trait trait in unit.Traits)
+        // Update traits only if there is no same unit on board
+        if (!unit.Owner.IsSameUnitOnBoard(unit))
         {
-            List<BoardUnit> unitsWithTrait = unit.Owner.GetUnitsWithTrait(trait);
-            int unitCount = unitsWithTrait.Count;
-            int currentTraitStage = GetBoardTraitStage(trait, unitCount);
+            foreach (Trait trait in unit.Traits)
+            {
+                List<GameUnit> unitsWithTrait = unit.Owner.GetUnitsWithTrait(trait);
+                int unitCount = unitsWithTrait.Count;
+                int currentTraitStage = GetBoardTraitStage(trait, unitCount);
 
-            // Get last trait stage according to the unit addition or removal from board
-            int lastTraitStage = unit.IsOnBoard ? GetBoardTraitStage(trait, unitCount - 1) : GetBoardTraitStage(trait, unitCount + 1);
-            trait.UpdateTrait(unitsWithTrait, unit, currentTraitStage, lastTraitStage);
-            int lastUnitCount = unit.IsOnBoard ? unitCount-1 : unitCount + 1;
-            UIManager.Instance.UpdateTraitUI(trait, currentTraitStage, unitCount, lastUnitCount);
-        }
+                // Get last trait stage according to the unit addition or removal from board
+                int lastTraitStage = unit.IsOnBoard ? GetBoardTraitStage(trait, unitCount - 1) : GetBoardTraitStage(trait, unitCount + 1);
+                trait.UpdateTrait(unitsWithTrait, unit, currentTraitStage, lastTraitStage);
+                int lastUnitCount = unit.IsOnBoard ? unitCount - 1 : unitCount + 1;
+                UIManager.Instance.UpdateTraitUI(trait, currentTraitStage, unitCount, lastUnitCount);
+            }
+        }      
     }
+    
 
     // Get the stage of the trait according to how many units are on board
     public int GetBoardTraitStage(Trait trait, int unitCount)

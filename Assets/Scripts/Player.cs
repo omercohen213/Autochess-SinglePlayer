@@ -1,37 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public static Player Instance { get; private set; }
     public int Hp;
     public int Gold;
     public int Xp;
     public int Lvl;
-    public string PlayerName { get; private set; }
+    public string PlayerName { get; protected set; }
 
-    [SerializeField] public Bench Bench;
-    public List<BoardUnit> BoardUnits;
+    public Bench Bench;
+    public List<GameUnit> GameUnits;
     public List<Trait> ActiveTraits; 
-
-
-    private void Awake()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-        }
-        Instance = this;
-
-        Hp = 100;
-        Gold = 10;
-        PlayerName = "Spite";
-        Lvl = 1;
-
-        ActiveTraits= new();
-    }
 
     // Decrease gold by amount
     public void PayGold(int amount)
@@ -73,16 +56,33 @@ public class Player : MonoBehaviour
         UIManager.Instance.UpdatePlayerLvlUI();
     }
 
-    public List<BoardUnit> GetUnitsWithTrait(Trait trait)
+    public List<GameUnit> GetUnitsWithTrait(Trait trait)
     {
-        List<BoardUnit> unitsWithTrait = new ();
-        foreach (BoardUnit unit in BoardUnits)
+        List<GameUnit> unitsWithTrait = new ();
+        foreach (GameUnit unit in GameUnits)
         {
-            if (unit.Traits.Contains(trait))
+            if (unit.Traits.Contains(trait) && !unitsWithTrait.Any(u => u.Equals(unit)))
             {
                 unitsWithTrait.Add(unit);
             }
         }
         return unitsWithTrait;
+    }
+
+    // Check if there is the same unit already on board
+    public bool IsSameUnitOnBoard(GameUnit unit)
+    {
+        List<GameUnit> temp = new(GameUnits);
+        temp.Remove(unit);
+
+        foreach (GameUnit playerUnit in temp)
+        {
+            if (playerUnit.Equals(unit) && playerUnit.IsOnBoard)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

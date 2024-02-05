@@ -4,31 +4,35 @@ using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class BoardUnit : Unit
+public class GameUnit : Unit
 {
     private Player _owner;
     [SerializeField] private int _maxHp;
     [SerializeField] private int _maxMp;
     [SerializeField] private int _baseAttackDamage;
-    [SerializeField] private Sprite unitSprite;
+    [SerializeField] private Sprite _unitSprite;
+    [SerializeField] private GameObject _starPrefab;
+    [SerializeField] private Transform _starsParent;
     public int AttackDamage; //{ get => _attackDamage; set => _attackDamage = value; }
     public bool _isOnBoard;
     public Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
     public BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
     public Dictionary<Trait, int> TraitStages = new();
     public List<int> Stages = new();
+    public int starLevel;
 
     public Player Owner { get => _owner; private set => _owner = value; }
     public int MaxHp { get => _maxHp; private set => _maxHp = value; }
     public int MaxMp { get => _maxMp; private set => _maxMp = value; }
     public int BaseAttackDamage { get => _baseAttackDamage; private set => _baseAttackDamage = value; }
-    public Sprite UnitSprite { get => unitSprite; private set => unitSprite = value; }
+    public Sprite UnitSprite { get => _unitSprite; private set => _unitSprite = value; }
     public bool IsOnBoard { get => _isOnBoard; set => _isOnBoard = value; }
     public Hex CurrentHex { get => _currentHex; set => _currentHex = value; }
     public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
+
     private void Start()
     {
-        _owner = Player.Instance; // TEMPORARY
+        _owner = LocalPlayer.Instance;
         AttackDamage = _baseAttackDamage;
         
         // Initialize all traits with stage 0
@@ -36,6 +40,8 @@ public class BoardUnit : Unit
         {
             TraitStages.Add(trait, 0); 
         }
+        starLevel = 1;
+        Instantiate(_starPrefab, _starsParent);
     }
 
     public void HandleDragStarted()
@@ -98,7 +104,12 @@ public class BoardUnit : Unit
         Shop.Instance.DisableUnitSellField();
     }
 
-    public void Attack(BoardUnit target)
+    public void StarUp()
+    {
+        Instantiate(_starPrefab, _starsParent);
+    }
+
+    public void Attack(GameUnit target)
     {
         // Implement attack logic
     }
@@ -117,5 +128,10 @@ public class BoardUnit : Unit
         MaxMp = UnitData.MaxMp;
         BaseAttackDamage = UnitData.BaseAttackDamage;
         UnitSprite = UnitData.Sprite;
+    }
+
+    public bool Equals(GameUnit other)
+    {
+        return UnitData.Id == other.UnitData.Id;
     }
 }

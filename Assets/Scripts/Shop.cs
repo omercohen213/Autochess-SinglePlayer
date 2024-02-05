@@ -1,13 +1,13 @@
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.UI.CanvasScaler;
+using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
     [SerializeField] private Transform _shopUnitsTransform;
     [SerializeField] private UnitsDatabase _unitsDatabase;
-    [SerializeField] private GameObject _boardUnitPrefab; // For the instantiation when unit is bought
+    [SerializeField] private GameObject _gameUnitPrefab; // For the instantiation when unit is bought
 
     //private readonly int SHOP_SIZE = 5;
     private readonly int REROLL_COST = 1;
@@ -44,7 +44,7 @@ public class Shop : MonoBehaviour
 
     private void Start()
     {
-        _player = Player.Instance;
+        _player = LocalPlayer.Instance;
         RerollUnits();
         if (_unitSellField != null)
         {
@@ -60,22 +60,22 @@ public class Shop : MonoBehaviour
         if (CanAfford(shopUnit.Cost) && !_player.Bench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
-            BoardUnit unit = CreateBoardUnit(shopUnit.UnitData.Id);
+            GameUnit unit = CreateGameUnit(shopUnit.UnitData.Id);
             _player.Bench.AddUnitToBench(unit);
             shopUnitGo.SetActive(false);
         }
     }
 
     // Create an instance of a unit on scene and set its data according to the id
-    private BoardUnit CreateBoardUnit(int id)
+    private GameUnit CreateGameUnit(int id)
     {
         Transform benchTransform = _player.Bench.transform;
-        GameObject unitGo = Instantiate(_boardUnitPrefab, benchTransform);
-        BoardUnit boardUnit = unitGo.GetComponent<BoardUnit>();
-        boardUnit.SetUnitData(id);
-        SpriteRenderer unitSpriteRenderer = boardUnit.GetComponent<SpriteRenderer>();
-        unitSpriteRenderer.sprite = boardUnit.UnitSprite;
-        return boardUnit;
+        GameObject unitGo = Instantiate(_gameUnitPrefab, benchTransform);
+        GameUnit gameUnit = unitGo.GetComponent<GameUnit>();
+        gameUnit.SetUnitData(id);
+        SpriteRenderer unitSpriteRenderer = gameUnit.GetComponent<SpriteRenderer>();
+        unitSpriteRenderer.sprite = gameUnit.UnitSprite;
+        return gameUnit;
     }
 
     // Buy reroll on button click
@@ -123,16 +123,18 @@ public class Shop : MonoBehaviour
         // Randomly select new units from the UnitsDatabase
         for (int i = 0; i < _shopUnitsTransform.childCount; i++)
         {
-            UnitData randomUnitData = GetRandomUnitData();
+            UnitData unitData = GetRandomUnitData();
             Transform shopUnitParent = _shopUnitsTransform.GetChild(i);
             GameObject shopUnitGo = shopUnitParent.GetChild(0).gameObject;
-            if (randomUnitData != null)
+            if (unitData != null)
             {
-                shopUnitGo.GetComponent<ShopUnit>().SetUnitData(randomUnitData.Id);
+                shopUnitGo.GetComponent<ShopUnit>().SetUnitData(unitData.Id);
 
                 // Update the visual representation
                 TextMeshProUGUI shopUnitCost = shopUnitGo.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
                 shopUnitCost.text = shopUnitGo.GetComponent<ShopUnit>().Cost.ToString();
+                Image shopUnitImage = shopUnitGo.transform.GetComponent<Image>();
+                shopUnitImage.sprite = unitData.ShopImage;
 
                 // Make the shop unit gameobject active
                 shopUnitGo.SetActive(true);
@@ -141,7 +143,7 @@ public class Shop : MonoBehaviour
     }
 
     // Sell unit and remove it from bench
-    public void SellUnit(BoardUnit unit)
+    public void SellUnit(GameUnit unit)
     {
         if (unit.IsOnBoard)
         {

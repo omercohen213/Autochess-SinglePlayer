@@ -39,19 +39,21 @@ public class UIManager : MonoBehaviour
     // Update current gold text
     public void UpdateGoldUI()
     {
-        _goldText.text = Player.Instance.Gold.ToString() + "$";
+        _goldText.text = LocalPlayer.Instance.Gold.ToString() + "$";
     }
 
     // Update current xp text
     public void UpdateXpUI()
     {
-        _xpText.text = Player.Instance.Xp.ToString() + "/" + GameManager.Instance.GetXpToLevelUp(Player.Instance.Lvl).ToString();
+        _xpText.text = LocalPlayer.Instance.Xp.ToString() + "/" 
+            + GameManager.Instance.GetXpToLevelUp(LocalPlayer.Instance.Lvl).ToString();
+
     }
 
     // Update current lvl text
     public void UpdatePlayerLvlUI()
     {
-        _lvlText.text = Player.Instance.Lvl.ToString();
+        _lvlText.text = LocalPlayer.Instance.Lvl.ToString();
     }
 
 

@@ -13,7 +13,7 @@ public class Beast : Trait
     private readonly int[] damageBuff = new int[] {0,5, 10, 20 };
 
     // Update the trait stage according to the current stage
-    public override void UpdateTrait(List<BoardUnit> unitsWithTrait, BoardUnit lastUnit, int currentStage, int lastStage)
+    public override void UpdateTrait(List<GameUnit> unitsWithTrait, GameUnit lastUnit, int currentStage, int lastStage)
     {
         // Update the stage for each unit with this trait on board
         if (currentStage > lastStage)
@@ -40,16 +40,16 @@ public class Beast : Trait
         }
 
         // Set the current stage of the trait for each unit
-        foreach (BoardUnit unitWithTrait in unitsWithTrait)
+        foreach (GameUnit unitWithTrait in unitsWithTrait)
         {
             unitWithTrait.TraitStages[this] = currentStage;
         }
     }
 
     // Add buff to units 
-    public override void StageUp(List<BoardUnit> unitsWithTrait, int currentStage)
+    public override void StageUp(List<GameUnit> unitsWithTrait, int currentStage)
     {
-        foreach (BoardUnit unit in unitsWithTrait)
+        foreach (GameUnit unit in unitsWithTrait)
         {
             int totalDamageToAdd = 0;
             int lastUnitStage = unit.TraitStages[this];
@@ -64,16 +64,16 @@ public class Beast : Trait
     }
 
     // Remove buff from units
-    public override void StageDown(List<BoardUnit> unitsWithTrait, int currentStage)
+    public override void StageDown(List<GameUnit> unitsWithTrait, int currentStage)
     {
-        foreach (BoardUnit unit in unitsWithTrait)
+        foreach (GameUnit unit in unitsWithTrait)
         {
             unit.AttackDamage -= damageBuff[currentStage+1];
         }
     }
 
     // Set the damage buff of the current stage to unit
-    private void EnableTraitForUnit(BoardUnit unit, int currentStage)
+    private void EnableTraitForUnit(GameUnit unit, int currentStage)
     {
         int totalDamageToAdd = 0;
         for (int i = 0; i < currentStage; i++)
@@ -84,7 +84,7 @@ public class Beast : Trait
     }
 
     // Set the damage buff for the unit to 0
-    private void DisableTraitForUnit(BoardUnit unit, int lastStage)
+    private void DisableTraitForUnit(GameUnit unit, int lastStage)
     {
         int totalDamageToRemove = 0;
         for (int i = lastStage; i > 0; i--)

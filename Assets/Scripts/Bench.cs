@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Bench : MonoBehaviour
 {
-    [SerializeField] private List<BoardUnit> _units; // Units on bench
+    [SerializeField] private List<GameUnit> _units; // Units on bench
     [SerializeField] private Transform _benchSlotPrefab;
 
     private readonly int BENCH_SIZE = 10;
@@ -14,7 +14,7 @@ public class Bench : MonoBehaviour
 
     public void Awake()
     {
-        _units = new List<BoardUnit>();
+        _units = new List<GameUnit>();
     }
 
     private void Start()
@@ -35,8 +35,8 @@ public class Bench : MonoBehaviour
         }
     }
 
-    // Create a boardUnit and add it to the bench
-    public void AddUnitToBench(BoardUnit unit)
+    // Create a gameUnit and add it to the bench
+    public void AddUnitToBench(GameUnit unit)
     {
         _units.Add(unit);
         BenchSlot benchSlot = FindEmptyBenchSlot();
@@ -65,7 +65,7 @@ public class Bench : MonoBehaviour
     }
 
     // Change the bench slot of unit to given one
-    public void PutUnitOnBenchSlot(BoardUnit unit, BenchSlot benchSlot)
+    public void PutUnitOnBenchSlot(GameUnit unit, BenchSlot benchSlot)
     {
         // Bench slot is taken
         if (benchSlot.IsTaken)
@@ -118,7 +118,7 @@ public class Bench : MonoBehaviour
     }
 
     // Remove a unit from the bench
-    public void RemoveUnitFromBench(BoardUnit unit)
+    public void RemoveUnitFromBench(GameUnit unit)
     {
         if (unit.CurrentBenchSlot != null)
         {
@@ -132,7 +132,7 @@ public class Bench : MonoBehaviour
     public override string ToString()
     {
         string str = "";
-        foreach (BoardUnit unit in _units)
+        foreach (GameUnit unit in _units)
         {
             str += unit.UnitName;
         }

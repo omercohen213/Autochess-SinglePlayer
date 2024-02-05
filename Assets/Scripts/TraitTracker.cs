@@ -12,6 +12,18 @@ public class TraitTracker : MonoBehaviour
     [SerializeField] private GameObject _traitPrefab;
     [SerializeField] private GameObject _stageTextPrefab;
 
+    private Color InactiveColor = new(50 / 255f, 50 / 255f, 50 / 255f);
+    private Color Bronze = new(80 / 255f, 60 / 255f, 20 / 255f);
+    private Color Silver = new(128 / 255f, 128 / 255f, 128 / 255f);
+    private Color Gold = new(255 / 255f, 200 / 255f, 20 / 255f);
+    private Color Platinum = new(120 / 255f, 230 / 255f, 220 / 255f);
+    private Color[] stagesColors;
+
+    private void Start()
+    {
+        stagesColors = new Color[] { InactiveColor, Bronze, Silver, Gold, Platinum };
+    }
+
     public void UpdateTraits(Trait trait, int currentStage, int unitCount, int lastUnitCount)
     {
         // Unit was added to board with trait for the first time 
@@ -26,6 +38,7 @@ public class TraitTracker : MonoBehaviour
             {
                 SetTraitUIActive(trait);
             }
+            SetBackgroundImageColor(trait, currentStage);
         }
 
         else if (unitCount >= 1)
@@ -40,8 +53,10 @@ public class TraitTracker : MonoBehaviour
                     if (IsTraitActive(trait, unitCount) && activeTraitTransform == null)
                     {
                         SetTraitUIActive(trait);
+
                     }
                 }
+                SetBackgroundImageColor(trait, currentStage);
             }
 
             // A unit was removed
@@ -54,6 +69,7 @@ public class TraitTracker : MonoBehaviour
             }
 
             UpdateUnitCount(trait, unitCount, currentStage);
+            SetBackgroundImageColor(trait, currentStage);
         }
 
         // A unit was removed and there are no more units with this trait on board
@@ -100,6 +116,7 @@ public class TraitTracker : MonoBehaviour
         {
             traitTransform.SetParent(_activeTraitsTransform);
             SetColorAlpha(traitTransform, 1f);
+
         }
         else Debug.LogWarning("No object of name " + trait.name);
     }
@@ -136,10 +153,8 @@ public class TraitTracker : MonoBehaviour
         Transform traitTransform = _inactiveTraitsTransform.Find(trait.name);
         if (traitTransform == null)
         {
-            Debug.Log("active");
             traitTransform = _activeTraitsTransform.Find(trait.name);
         }
-        Debug.Log("inactive");
 
         if (traitTransform != null)
         {
@@ -150,7 +165,6 @@ public class TraitTracker : MonoBehaviour
                 if (unitCountTransform.TryGetComponent<TextMeshProUGUI>(out var unitCountText))
                 {
                     unitCountText.text = unitCount.ToString();
-                    Debug.Log("text "+ unitCountText.text + " unitcount " + unitCount.ToString());
                 }
                 else
                 {
@@ -188,34 +202,82 @@ public class TraitTracker : MonoBehaviour
 
     }
 
-    // Set the alpha color of the image to 1
+    // Set the color alpha of the trait image and background image
     private void SetColorAlpha(Transform traitTransform, float alpha)
     {
-        Debug.Log(traitTransform.gameObject.name);
         Color color;
 
         // Image
-
-        if (traitTransform.Find("Image").TryGetComponent<Image>(out var image))
+        Transform imageTransform = traitTransform.Find("Image");
+        if (imageTransform != null)
         {
-            color = image.color;
-            image.color = new Color(color.r, color.g, color.b, alpha);
+            if (imageTransform.TryGetComponent<Image>(out var image))
+            {
+                color = image.color;
+                image.color = new Color(color.r, color.g, color.b, alpha);
+            }
+            else
+            {
+                Debug.Log("Missing image component");
+            }
         }
         else
         {
             Debug.Log("Missing trait image object");
+
         }
-
         // Background Image
-
-        if (traitTransform.Find("ImageBackground").TryGetComponent<Image>(out var backgroundImage))
+        Transform bgImageTransform = traitTransform.Find("BackgroundImage");
+        if (bgImageTransform != null)
         {
-            color = backgroundImage.color;
-            backgroundImage.color = new Color(color.r, color.g, color.b, alpha);
+            if (bgImageTransform.TryGetComponent<Image>(out var backgroundImage))
+            {
+                color = backgroundImage.color;
+                backgroundImage.color = new Color(color.r, color.g, color.b, alpha);
+            }
+            else
+            {
+                Debug.Log("Missing background image component");
+            }
         }
         else
         {
             Debug.Log("Missing trait background image object");
+        }
+
+    }
+
+
+    // Set Backgrond image color according to the current stage
+    private void SetBackgroundImageColor(Trait trait, int currentStage)
+    {
+        Transform traitTransform = _inactiveTraitsTransform.Find(trait.name);
+        if (traitTransform == null)
+        {
+            traitTransform = _activeTraitsTransform.Find(trait.name);
+        }
+
+        if (traitTransform != null)
+        {
+            Transform bgImageTransform = traitTransform.Find("BackgroundImage");
+            if (bgImageTransform != null)
+            {
+                if (bgImageTransform.TryGetComponent<Image>(out var backgroundImage))
+                {
+                    backgroundImage.color = stagesColors[currentStage];
+                    Debug.Log(stagesColors[currentStage].ToString());
+                }
+                else
+                {
+                    Debug.Log("Missing background image component");
+                }
+            }
+            else
+            {
+                Debug.Log("Missing background image object");
+
+            }
+
         }
     }
 
