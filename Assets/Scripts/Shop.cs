@@ -7,7 +7,6 @@ public class Shop : MonoBehaviour
 {
     [SerializeField] private Transform _shopUnitsTransform;
     [SerializeField] private UnitsDatabase _unitsDatabase;
-    [SerializeField] private GameObject _gameUnitPrefab; // For the instantiation when unit is bought
 
     //private readonly int SHOP_SIZE = 5;
     private readonly int REROLL_COST = 1;
@@ -60,23 +59,10 @@ public class Shop : MonoBehaviour
         if (CanAfford(shopUnit.Cost) && !_player.Bench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
-            GameUnit unit = CreateGameUnit(shopUnit.UnitData.Id);
-            _player.Bench.AddUnitToBench(unit);
+            _player.Bench.CreateGameUnit(shopUnit.UnitData.Id, 1); // can change to shopUnit.UnitData.StarLevel
             shopUnitGo.SetActive(false);
         }
-    }
-
-    // Create an instance of a unit on scene and set its data according to the id
-    private GameUnit CreateGameUnit(int id)
-    {
-        Transform benchTransform = _player.Bench.transform;
-        GameObject unitGo = Instantiate(_gameUnitPrefab, benchTransform);
-        GameUnit gameUnit = unitGo.GetComponent<GameUnit>();
-        gameUnit.SetUnitData(id);
-        SpriteRenderer unitSpriteRenderer = gameUnit.GetComponent<SpriteRenderer>();
-        unitSpriteRenderer.sprite = gameUnit.UnitSprite;
-        return gameUnit;
-    }
+    } 
 
     // Buy reroll on button click
     public void OnRerollClick()
@@ -158,12 +144,24 @@ public class Shop : MonoBehaviour
     }
 
     // Set unit sell field active
-    public void ActivateUnitSellField()
+    public void ActivateUnitSellField(int unitCost)
     {
         // Enable the unitSellField
         if (_unitSellField != null)
         {
             _unitSellField.SetActive(true);
+            Transform textTransform = _unitSellField.transform.Find("Text");
+            if (textTransform != null)
+            {
+                if (textTransform.TryGetComponent<TextMeshPro>(out var text))
+                {
+                    text.text = "Sell for " + unitCost + "g";
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Missing text transform");
+            }
         }
     }
 

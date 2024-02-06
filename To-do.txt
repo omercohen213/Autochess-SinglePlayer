@@ -1,7 +1,10 @@
-- star up units (shop)
+- star up units
+- add behavior for each gameunit
 - shop unit probability
 - board unit limit
 - forbid units placement on opponent's board 
 - board unit hover
+- trait hover
+- trait placement according to stage
 
 - OBJECT POOLING

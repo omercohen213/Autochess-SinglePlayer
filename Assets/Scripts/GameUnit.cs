@@ -40,13 +40,11 @@ public class GameUnit : Unit
         {
             TraitStages.Add(trait, 0); 
         }
-        starLevel = 1;
-        Instantiate(_starPrefab, _starsParent);
     }
 
     public void HandleDragStarted()
     {
-        Shop.Instance.ActivateUnitSellField();
+        Shop.Instance.ActivateUnitSellField(Cost);
     }
 
     // Handles a behavior when this unit is stopped being dragged at final position
@@ -106,6 +104,8 @@ public class GameUnit : Unit
 
     public void StarUp()
     {
+        // *** instantiate correct amount of stars and override in child gameunit for unique behavior
+        Instantiate(_starPrefab, _starsParent);
         Instantiate(_starPrefab, _starsParent);
     }
 

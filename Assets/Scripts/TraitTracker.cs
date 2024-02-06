@@ -12,16 +12,16 @@ public class TraitTracker : MonoBehaviour
     [SerializeField] private GameObject _traitPrefab;
     [SerializeField] private GameObject _stageTextPrefab;
 
-    private Color InactiveColor = new(50 / 255f, 50 / 255f, 50 / 255f);
-    private Color Bronze = new(80 / 255f, 60 / 255f, 20 / 255f);
-    private Color Silver = new(128 / 255f, 128 / 255f, 128 / 255f);
-    private Color Gold = new(255 / 255f, 200 / 255f, 20 / 255f);
-    private Color Platinum = new(120 / 255f, 230 / 255f, 220 / 255f);
+    private readonly Color INACTIVE_COLOR = new(50 / 255f, 50 / 255f, 50 / 255f);
+    private readonly Color BRONZE = new(80 / 255f, 60 / 255f, 20 / 255f);
+    private readonly Color SILVER = new(128 / 255f, 128 / 255f, 128 / 255f);
+    private readonly Color GOLD = new(255 / 255f, 200 / 255f, 20 / 255f);
+    private readonly Color PLATINUM = new(120 / 255f, 230 / 255f, 220 / 255f);
     private Color[] stagesColors;
 
     private void Start()
     {
-        stagesColors = new Color[] { InactiveColor, Bronze, Silver, Gold, Platinum };
+        stagesColors = new Color[] { INACTIVE_COLOR, BRONZE, SILVER, GOLD, PLATINUM };
     }
 
     public void UpdateTraits(Trait trait, int currentStage, int unitCount, int lastUnitCount)

@@ -1,16 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Bench : MonoBehaviour
 {
     [SerializeField] private List<GameUnit> _units; // Units on bench
+    [SerializeField] private GameObject _gameUnitPrefab;
     [SerializeField] private Transform _benchSlotPrefab;
+
 
     private readonly int BENCH_SIZE = 10;
     private readonly int BENCH_COLUMNS = 2;
     private readonly float BENCHSLOT_SPACING = -1.2f; // Space between two benchSlots in the Y axis
+    private readonly int UNIT_STAR_UP_COUNT = 3;
 
     public void Awake()
     {
@@ -18,6 +23,12 @@ public class Bench : MonoBehaviour
     }
 
     private void Start()
+    {
+        CreateBench();
+    }
+
+    // Create bench and bench slot objects
+    private void CreateBench()
     {
         Vector3 pos = transform.position; // Set initial benchSlot position
         for (int i = 0; i < BENCH_COLUMNS; i++)
@@ -35,6 +46,19 @@ public class Bench : MonoBehaviour
         }
     }
 
+    // Create an instance of a unit on scene and set its data according to the id
+    public void CreateGameUnit(int id, int starLevel)
+    {
+        GameObject unitGo = Instantiate(_gameUnitPrefab, transform);
+        GameUnit gameUnit = unitGo.GetComponent<GameUnit>();
+        gameUnit.SetUnitData(id);
+        SpriteRenderer unitSpriteRenderer = gameUnit.GetComponent<SpriteRenderer>();
+        unitSpriteRenderer.sprite = gameUnit.UnitSprite;
+        AddUnitToBench(gameUnit);
+        gameUnit.StarUp();
+        CheckStarUp(gameUnit, starLevel);
+    }
+
     // Create a gameUnit and add it to the bench
     public void AddUnitToBench(GameUnit unit)
     {
@@ -45,6 +69,53 @@ public class Bench : MonoBehaviour
         unit.transform.SetParent(benchSlot.transform);
         unit.transform.position = benchSlot.transform.position;
     }
+
+    // Check if there are enough of the same unit on bench to star it up
+    private void CheckStarUp(GameUnit unit, int starLevel)
+    {
+        int sameUnitsCount = SameUnitsCount(unit);
+        if (sameUnitsCount >= UNIT_STAR_UP_COUNT)
+        {
+            RemoveAllUnitsOfKind(unit);
+            CreateGameUnit(unit.UnitData.Id, starLevel+1);
+        }        
+    }
+
+    private void RemoveAllUnitsOfKind(GameUnit unit)
+    {
+        List<GameUnit> unitsToRemove = new List<GameUnit>();
+
+        // Collect units to remove
+        foreach (GameUnit gameUnit in _units)
+        {
+            if (gameUnit.Equals(unit))
+            {
+                unitsToRemove.Add(gameUnit);
+            }
+        }
+
+        // Remove collected units
+        foreach (GameUnit unitToRemove in unitsToRemove)
+        {
+            RemoveUnitFromBench(unitToRemove);
+            Destroy(unitToRemove.gameObject);
+        }
+    }
+
+    // Returns the count of same units on bench as unit
+    private int SameUnitsCount(GameUnit unit)
+    {
+        int count = 0;
+        foreach (GameUnit gameUnit in _units)
+        {
+            if (gameUnit.Equals(unit))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
 
     // Returns the first empty benchSlot 
     private BenchSlot FindEmptyBenchSlot()
@@ -88,7 +159,7 @@ public class Bench : MonoBehaviour
         {
             // Unit is on board- remove it from board and add to bench on given bench slot
             if (unit.IsOnBoard)
-            {               
+            {
                 Board.Instance.RemoveUnitFromBoard(unit);
                 _units.Add(unit);
             }

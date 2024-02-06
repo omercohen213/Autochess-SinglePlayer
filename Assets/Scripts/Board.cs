@@ -29,8 +29,13 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
-        Vector3 pos = transform.position; // Set initial hex position
+        CreateBoard();
+    }
 
+    // Create board and hexes objects
+    private void CreateBoard()
+    {
+        Vector3 pos = transform.position; // Set initial hex position
         for (int i = 0; i < _COLUMNS; i++)
         {
             // Shift odd numbered columns position 
