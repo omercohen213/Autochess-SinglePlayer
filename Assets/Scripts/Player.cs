@@ -13,8 +13,13 @@ public class Player : MonoBehaviour
     public string PlayerName { get; protected set; }
 
     public Bench Bench;
-    public List<GameUnit> GameUnits;
-    public List<Trait> ActiveTraits; 
+    public List<GameUnit> BoardUnits;
+    public List<Trait> ActiveTraits;
+
+    private void Start()
+    {
+        BoardUnits = new();
+    }
 
     // Decrease gold by amount
     public void PayGold(int amount)
@@ -59,7 +64,7 @@ public class Player : MonoBehaviour
     public List<GameUnit> GetUnitsWithTrait(Trait trait)
     {
         List<GameUnit> unitsWithTrait = new ();
-        foreach (GameUnit unit in GameUnits)
+        foreach (GameUnit unit in BoardUnits)
         {
             if (unit.Traits.Contains(trait) && !unitsWithTrait.Any(u => u.Equals(unit)))
             {
@@ -72,7 +77,7 @@ public class Player : MonoBehaviour
     // Check if there is the same unit already on board
     public bool IsSameUnitOnBoard(GameUnit unit)
     {
-        List<GameUnit> temp = new(GameUnits);
+        List<GameUnit> temp = new(BoardUnits);
         temp.Remove(unit);
 
         foreach (GameUnit playerUnit in temp)

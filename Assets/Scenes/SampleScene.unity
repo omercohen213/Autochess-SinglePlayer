@@ -1668,7 +1668,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &499579226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5081,7 +5081,7 @@ MonoBehaviour:
   Xp: 2
   Lvl: 1
   Bench: {fileID: 1113772982}
-  GameUnits: []
+  BoardUnits: []
   ActiveTraits: []
 --- !u!1 &1986880674
 GameObject:

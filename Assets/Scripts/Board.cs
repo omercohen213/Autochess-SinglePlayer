@@ -56,7 +56,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    // Place the unit on board
+    // Place the unit on an hex on board
     public void PlaceUnitOnBoard(GameUnit unit, Hex hex)
     {
         // Unit is already on board
@@ -87,7 +87,7 @@ public class Board : MonoBehaviour
             else
             {
                 unit.Owner.Bench.RemoveUnitFromBench(unit);
-                unit.Owner.GameUnits.Add(unit);
+                unit.Owner.BoardUnits.Add(unit);
                 unit.CurrentHex = hex;
                 hex.IsTaken = true;
                 unit.IsOnBoard = true;
@@ -99,6 +99,7 @@ public class Board : MonoBehaviour
         unit.transform.position = hex.transform.position;
     }
 
+    // Remove a unit from board
     public void RemoveUnitFromBoard(GameUnit unit)
     {
         if (unit.CurrentHex != null)
@@ -107,7 +108,7 @@ public class Board : MonoBehaviour
             unit.CurrentHex = null;
         }
         unit.IsOnBoard = false;
-        unit.Owner.GameUnits.Remove(unit);
+        unit.Owner.BoardUnits.Remove(unit);
         UpdateBoardTraits(unit);
     }
 
@@ -132,7 +133,6 @@ public class Board : MonoBehaviour
         }      
     }
     
-
     // Get the stage of the trait according to how many units are on board
     public int GetBoardTraitStage(Trait trait, int unitCount)
     {

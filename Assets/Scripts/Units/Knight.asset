@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
-  m_Name: 0
+  m_Name: Knight
   m_EditorClassIdentifier: 
   Id: 0
   UnitName: Knight

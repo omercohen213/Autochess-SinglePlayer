@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Bench : MonoBehaviour
 {
@@ -51,12 +50,13 @@ public class Bench : MonoBehaviour
     {
         GameObject unitGo = Instantiate(_gameUnitPrefab, transform);
         GameUnit gameUnit = unitGo.GetComponent<GameUnit>();
+        //unitGo.AddComponent<Knight>();
         gameUnit.SetUnitData(id);
+        gameUnit.Owner = LocalPlayer.Instance;
         SpriteRenderer unitSpriteRenderer = gameUnit.GetComponent<SpriteRenderer>();
         unitSpriteRenderer.sprite = gameUnit.UnitSprite;
+        gameUnit.SetUnitStarLevel(starLevel);
         AddUnitToBench(gameUnit);
-        gameUnit.StarUp();
-        CheckStarUp(gameUnit, starLevel);
     }
 
     // Create a gameUnit and add it to the bench
@@ -68,29 +68,40 @@ public class Bench : MonoBehaviour
         unit.CurrentBenchSlot = benchSlot;
         unit.transform.SetParent(benchSlot.transform);
         unit.transform.position = benchSlot.transform.position;
+        CheckStarUp(unit, unit.StarLevel);
     }
 
-    // Check if there are enough of the same unit on bench to star it up
+    // Check if there are enough of the same unit to star it up
     private void CheckStarUp(GameUnit unit, int starLevel)
     {
         int sameUnitsCount = SameUnitsCount(unit);
         if (sameUnitsCount >= UNIT_STAR_UP_COUNT)
         {
-            RemoveAllUnitsOfKind(unit);
-            CreateGameUnit(unit.UnitData.Id, starLevel+1);
-        }        
+            RemoveAllUnitsOfKind(unit, starLevel);
+            CreateGameUnit(unit.UnitData.Id, starLevel + 1);
+        }
     }
 
-    private void RemoveAllUnitsOfKind(GameUnit unit)
+    // Remove all units same as unit with same star level
+    private void RemoveAllUnitsOfKind(GameUnit unit, int starLevel)
     {
-        List<GameUnit> unitsToRemove = new List<GameUnit>();
+        List<GameUnit> unitsToRemove = new();
 
-        // Collect units to remove
-        foreach (GameUnit gameUnit in _units)
+        // Bench units
+        foreach (GameUnit benchUnit in _units)
         {
-            if (gameUnit.Equals(unit))
+            if (benchUnit.Equals(unit) && benchUnit.StarLevel == starLevel)
             {
-                unitsToRemove.Add(gameUnit);
+                unitsToRemove.Add(benchUnit);
+            }
+        }
+
+        // Board units
+        foreach (GameUnit boardUnit in unit.Owner.BoardUnits)
+        {
+            if (boardUnit.Equals(unit) && boardUnit.StarLevel == starLevel)
+            {
+                unitsToRemove.Add(boardUnit);
             }
         }
 
@@ -98,17 +109,29 @@ public class Bench : MonoBehaviour
         foreach (GameUnit unitToRemove in unitsToRemove)
         {
             RemoveUnitFromBench(unitToRemove);
+            Board.Instance.RemoveUnitFromBoard(unitToRemove);
             Destroy(unitToRemove.gameObject);
         }
     }
 
-    // Returns the count of same units on bench as unit
+    // Returns the count of same units and same star level as unit
     private int SameUnitsCount(GameUnit unit)
     {
         int count = 0;
-        foreach (GameUnit gameUnit in _units)
+
+        // Bench Units
+        foreach (GameUnit benchUnit in _units)
         {
-            if (gameUnit.Equals(unit))
+            if (benchUnit.Equals(unit) && benchUnit.StarLevel == unit.StarLevel)
+            {
+                count++;
+            }
+        }
+
+        // Board units
+        foreach (GameUnit boardUnit in unit.Owner.BoardUnits)
+        {
+            if (boardUnit.Equals(unit) && boardUnit.StarLevel == unit.StarLevel)
             {
                 count++;
             }

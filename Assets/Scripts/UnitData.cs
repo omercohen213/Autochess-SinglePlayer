@@ -6,7 +6,6 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "New Unit Data", menuName = "Game/Unit Data")]
 public class UnitData : ScriptableObject
 {
-
     [Header("Base Unit Data")]
     public int Id;
     public string UnitName;
@@ -24,8 +23,4 @@ public class UnitData : ScriptableObject
 
     [Header("Traits Data")]
     public List<Trait> Traits;
-
-    [Header("Ability Data")]
-    public string AbilityName;
-    // Add any other ability-related properties
 }

@@ -16,7 +16,7 @@ public class LocalPlayer : Player
         Instance = this;
 
         Hp = 100;
-        Gold = 10;
+        Gold = 100;
         PlayerName = "Spite";
         Lvl = 1;
 

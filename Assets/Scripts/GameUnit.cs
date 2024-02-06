@@ -18,10 +18,10 @@ public class GameUnit : Unit
     public Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
     public BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
     public Dictionary<Trait, int> TraitStages = new();
-    public List<int> Stages = new();
-    public int starLevel;
+    public List<int> _Stages = new();
+    public int StarLevel;
 
-    public Player Owner { get => _owner; private set => _owner = value; }
+    public Player Owner { get => _owner; set => _owner = value; }
     public int MaxHp { get => _maxHp; private set => _maxHp = value; }
     public int MaxMp { get => _maxMp; private set => _maxMp = value; }
     public int BaseAttackDamage { get => _baseAttackDamage; private set => _baseAttackDamage = value; }
@@ -34,11 +34,11 @@ public class GameUnit : Unit
     {
         _owner = LocalPlayer.Instance;
         AttackDamage = _baseAttackDamage;
-        
+
         // Initialize all traits with stage 0
         foreach (var trait in Traits)
         {
-            TraitStages.Add(trait, 0); 
+            TraitStages.Add(trait, 0);
         }
     }
 
@@ -97,16 +97,20 @@ public class GameUnit : Unit
                     }
                     break;
             }
-
         }
         Shop.Instance.DisableUnitSellField();
     }
 
-    public void StarUp()
+    // Create star objects and set current star level
+    public void SetUnitStarLevel(int starLevel)
     {
-        // *** instantiate correct amount of stars and override in child gameunit for unique behavior
-        Instantiate(_starPrefab, _starsParent);
-        Instantiate(_starPrefab, _starsParent);
+        for (int i = 0; i < starLevel; i++)
+        {
+            Instantiate(_starPrefab, _starsParent);
+        }
+        StarLevel = starLevel;
+        
+        // *** override in child gameunit for unique behavior
     }
 
     public void Attack(GameUnit target)
