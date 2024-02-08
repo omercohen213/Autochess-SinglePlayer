@@ -14,7 +14,7 @@ public class TraitTracker : MonoBehaviour
 
     private readonly Color INACTIVE_COLOR = new(50 / 255f, 50 / 255f, 50 / 255f);
     private readonly Color BRONZE = new(80 / 255f, 60 / 255f, 20 / 255f);
-    private readonly Color SILVER = new(128 / 255f, 128 / 255f, 128 / 255f);
+    private readonly Color SILVER = new(100 / 255f, 100 / 255f, 100 / 255f);
     private readonly Color GOLD = new(255 / 255f, 200 / 255f, 20 / 255f);
     private readonly Color PLATINUM = new(120 / 255f, 230 / 255f, 220 / 255f);
     private Color[] stagesColors;

@@ -47,8 +47,8 @@ public class Player : MonoBehaviour
     // Check if player leveled up through the xp gain
     private void CheckLevelUp()
     {
-        int _xpToLevelUp = GameManager.Instance.GetXpToLevelUp(Lvl);
-        if (Xp > _xpToLevelUp)
+        int xpToLevelUp = GameManager.Instance.GetXpToLevelUp(Lvl);
+        if (Xp >= xpToLevelUp)
         {
             Xp = 0;
             OnLevelUp();
@@ -58,12 +58,14 @@ public class Player : MonoBehaviour
     // Gain the level up benefits
     private void OnLevelUp()
     {
+        Lvl++;
+        UIManager.Instance.UpdateXpUI();
         UIManager.Instance.UpdatePlayerLvlUI();
     }
 
     public List<GameUnit> GetUnitsWithTrait(Trait trait)
     {
-        List<GameUnit> unitsWithTrait = new ();
+        List<GameUnit> unitsWithTrait = new();
         foreach (GameUnit unit in BoardUnits)
         {
             if (unit.Traits.Contains(trait) && !unitsWithTrait.Any(u => u.Equals(unit)))

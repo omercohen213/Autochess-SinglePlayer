@@ -1,5 +1,4 @@
 - add behavior for each gameunit
-- shop unit probability
 - board unit limit
 - forbid units placement on opponent's board 
 - board hover w/ unit

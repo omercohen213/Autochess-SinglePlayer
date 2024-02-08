@@ -69,7 +69,6 @@ public class Shop : MonoBehaviour
         }
         _shopUnitsProbabilities = new() { LVL1_PROBABILITIES, LVL2_PROBABILITIES, LVL3_PROBABILITIES, LVL4_PROBABILITIES, LVL5_PROBABILITIES };
 
-
         RerollUnits();
 
     }
@@ -156,26 +155,11 @@ public class Shop : MonoBehaviour
     {
         if (_shopUnitDatabase.Count > 0)
         {
-            // Get a random rarity
-            int[] probabilities = GetCurrentLevelProbabilities();
-            int totalProbability = probabilities.Sum();
-            int randomNumber = Random.Range(0, totalProbability);
-
-            int index = 0;
-            int accumilatedProbablity = probabilities[0];
-            for (int i = 1; i < probabilities.Length; i++)
-            {
-                if (randomNumber > accumilatedProbablity)
-                {
-                    accumilatedProbablity+=probabilities[i];
-                    index++;
-                }
-            }
-            UnitRarity randomRarity = (UnitRarity)index;
-
+            UnitRarity randomRarity = GetRandomUnitRarity();
             List<UnitData> unitsOfRarity = GetUnitsOfRarity(randomRarity);
-            int randomIndex = Random.Range(0, unitsOfRarity.Count-1);
-            if (unitsOfRarity != null && unitsOfRarity.Count > 0)
+            int randomIndex = Random.Range(0, unitsOfRarity.Count);
+            Debug.Log("index " + randomIndex+ " count " + unitsOfRarity.Count);
+            if (unitsOfRarity != null)
             {
                 return unitsOfRarity[randomIndex];
             }
@@ -192,6 +176,27 @@ public class Shop : MonoBehaviour
         return null;
     }
 
+    // Returns a random rarity according to the probabilities
+    private UnitRarity GetRandomUnitRarity()
+    {
+        int[] probabilities = GetCurrentLevelProbabilities();
+        int totalProbability = probabilities.Sum();
+        int randomNumber = Random.Range(0, totalProbability);
+
+        int index = 0;
+        int accumilatedProbablity = probabilities[0];
+        for (int i = 1; i < probabilities.Length; i++)
+        {
+            if (randomNumber > accumilatedProbablity)
+            {
+                accumilatedProbablity += probabilities[i];
+                index++;
+            }
+        }
+        return(UnitRarity)index;
+    }
+
+    // Returns all units of a rarity in shopUnitDatabase
     private List<UnitData> GetUnitsOfRarity(UnitRarity rarity)
     {
         List<UnitData> unitsOfRarity = new();
@@ -205,15 +210,16 @@ public class Shop : MonoBehaviour
         return unitsOfRarity;
     }
 
-    // Get the current level probabilities
+    // Returns the current level probabilities based on player's level
     private int[] GetCurrentLevelProbabilities()
     {
-        // Determine the probabilities based on the player level
         return _player.Lvl switch
         {
             1 => LVL1_PROBABILITIES,
             2 => LVL2_PROBABILITIES,
             3 => LVL3_PROBABILITIES,
+            4 => LVL4_PROBABILITIES,
+            5 => LVL5_PROBABILITIES,
             _ => null,
         };
     }
