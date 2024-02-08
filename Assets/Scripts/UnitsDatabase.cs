@@ -20,5 +20,4 @@ public class UnitsDatabase : ScriptableObject
     {
         return Units.Find(unit => unit.Id == id);
     }
-
 }

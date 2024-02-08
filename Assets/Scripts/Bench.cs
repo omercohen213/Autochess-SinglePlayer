@@ -10,7 +10,6 @@ public class Bench : MonoBehaviour
     [SerializeField] private GameObject _gameUnitPrefab;
     [SerializeField] private Transform _benchSlotPrefab;
 
-
     private readonly int BENCH_SIZE = 10;
     private readonly int BENCH_COLUMNS = 2;
     private readonly float BENCHSLOT_SPACING = -1.2f; // Space between two benchSlots in the Y axis
@@ -79,6 +78,12 @@ public class Bench : MonoBehaviour
         {
             RemoveAllUnitsOfKind(unit, starLevel);
             CreateGameUnit(unit.UnitData.Id, starLevel + 1);
+
+            // If unit reaches max star level, remove from database
+            if (starLevel + 1 == unit.MAX_STAR_LEVEL)
+            {
+                Shop.Instance.RemoveUnitFromShopDB(unit.UnitData);
+            }
         }
     }
 

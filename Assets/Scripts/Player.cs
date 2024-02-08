@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
         return unitsWithTrait;
     }
 
+
     // Check if there is the same unit already on board
     public bool IsSameUnitOnBoard(GameUnit unit)
     {

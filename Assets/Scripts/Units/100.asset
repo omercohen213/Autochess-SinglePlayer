@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: 100
   m_EditorClassIdentifier: 
   Id: 100
-  UnitName: 
+  UnitName: 100
   Cost: 100
+  Rarity: 4
   ShopImage: {fileID: 1346157962, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
   MaxHp: 0
   MaxMp: 0
@@ -22,4 +23,3 @@ MonoBehaviour:
   BaseArmor: 0
   Sprite: {fileID: 1346157962, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
   Traits: []
-  AbilityName: 

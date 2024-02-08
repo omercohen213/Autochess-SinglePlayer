@@ -265,7 +265,6 @@ public class TraitTracker : MonoBehaviour
                 if (bgImageTransform.TryGetComponent<Image>(out var backgroundImage))
                 {
                     backgroundImage.color = stagesColors[currentStage];
-                    Debug.Log(stagesColors[currentStage].ToString());
                 }
                 else
                 {

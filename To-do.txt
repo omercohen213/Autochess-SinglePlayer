@@ -1,9 +1,8 @@
-- star up units
 - add behavior for each gameunit
 - shop unit probability
 - board unit limit
 - forbid units placement on opponent's board 
-- board unit hover
+- board hover w/ unit
 - trait hover
 - trait placement according to stage
 

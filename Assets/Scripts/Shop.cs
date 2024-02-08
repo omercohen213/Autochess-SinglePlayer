@@ -1,14 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Shop : MonoBehaviour
 {
     [SerializeField] private Transform _shopUnitsTransform;
-    [SerializeField] private UnitsDatabase _unitsDatabase;
+    private List<UnitData> _shopUnitDatabase;
 
-    //private readonly int SHOP_SIZE = 5;
+
+
+    private List<int[]> _shopUnitsProbabilities;
+    private readonly int[] LVL1_PROBABILITIES = new[] { 70, 30, 0, 0, 0 };
+    private readonly int[] LVL2_PROBABILITIES = new[] { 55, 30, 15, 0, 0 };
+    private readonly int[] LVL3_PROBABILITIES = new[] { 45, 33, 20, 2, 0 };
+    private readonly int[] LVL4_PROBABILITIES = new[] { 30, 40, 25, 5, 0 };
+    private readonly int[] LVL5_PROBABILITIES = new[] { 19, 30, 35, 10, 1 };
+
     private readonly int REROLL_COST = 1;
     private readonly int XP_COST = 4;
     private Player _player;
@@ -44,11 +57,21 @@ public class Shop : MonoBehaviour
     private void Start()
     {
         _player = LocalPlayer.Instance;
-        RerollUnits();
+        _shopUnitDatabase = new();
+        foreach (UnitData unitData in UnitsDatabase.Instance.Units)
+        {
+            _shopUnitDatabase.Add(unitData);
+        }
+
         if (_unitSellField != null)
         {
             _unitSellField.SetActive(false);
         }
+        _shopUnitsProbabilities = new() { LVL1_PROBABILITIES, LVL2_PROBABILITIES, LVL3_PROBABILITIES, LVL4_PROBABILITIES, LVL5_PROBABILITIES };
+
+
+        RerollUnits();
+
     }
 
     // Buy unit from the shop and set it inactive
@@ -59,10 +82,10 @@ public class Shop : MonoBehaviour
         if (CanAfford(shopUnit.Cost) && !_player.Bench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
-            _player.Bench.CreateGameUnit(shopUnit.UnitData.Id, 1); // can change to shopUnit.UnitData.StarLevel
+            _player.Bench.CreateGameUnit(shopUnit.UnitData.Id, 1);
             shopUnitGo.SetActive(false);
         }
-    } 
+    }
 
     // Buy reroll on button click
     public void OnRerollClick()
@@ -128,6 +151,85 @@ public class Shop : MonoBehaviour
         }
     }
 
+    // Get a random unitData according to the probaility of getting each rarity
+    private UnitData GetRandomUnitData()
+    {
+        if (_shopUnitDatabase.Count > 0)
+        {
+            // Get a random rarity
+            int[] probabilities = GetCurrentLevelProbabilities();
+            int totalProbability = probabilities.Sum();
+            int randomNumber = Random.Range(0, totalProbability);
+
+            int index = 0;
+            int accumilatedProbablity = probabilities[0];
+            for (int i = 1; i < probabilities.Length; i++)
+            {
+                if (randomNumber > accumilatedProbablity)
+                {
+                    accumilatedProbablity+=probabilities[i];
+                    index++;
+                }
+            }
+            UnitRarity randomRarity = (UnitRarity)index;
+
+            List<UnitData> unitsOfRarity = GetUnitsOfRarity(randomRarity);
+            int randomIndex = Random.Range(0, unitsOfRarity.Count-1);
+            if (unitsOfRarity != null && unitsOfRarity.Count > 0)
+            {
+                return unitsOfRarity[randomIndex];
+            }
+            else
+            {
+                Debug.LogError("unitsOfRarity" + randomRarity + " is null or empty.");
+                return null;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("UnitsDatabase is empty.");
+        }
+        return null;
+    }
+
+    private List<UnitData> GetUnitsOfRarity(UnitRarity rarity)
+    {
+        List<UnitData> unitsOfRarity = new();
+        foreach (UnitData unitData in _shopUnitDatabase)
+        {
+            if (unitData.Rarity == rarity)
+            {
+                unitsOfRarity.Add(unitData);
+            }
+        }
+        return unitsOfRarity;
+    }
+
+    // Get the current level probabilities
+    private int[] GetCurrentLevelProbabilities()
+    {
+        // Determine the probabilities based on the player level
+        return _player.Lvl switch
+        {
+            1 => LVL1_PROBABILITIES,
+            2 => LVL2_PROBABILITIES,
+            3 => LVL3_PROBABILITIES,
+            _ => null,
+        };
+    }
+
+    // Remove a unit from shop database
+    public void AddUnitToShopDB(UnitData unitData)
+    {
+        _shopUnitDatabase.Add(unitData);
+    }
+
+    // Add a unit to shop database
+    public void RemoveUnitFromShopDB(UnitData unitData)
+    {
+        _shopUnitDatabase.Remove(unitData);
+    }
+
     // Sell unit and remove it from bench
     public void SellUnit(GameUnit unit)
     {
@@ -139,8 +241,13 @@ public class Shop : MonoBehaviour
         {
             _player.Bench.RemoveUnitFromBench(unit);
         }
+
+        if (unit.StarLevel == unit.MAX_STAR_LEVEL)
+        {
+            AddUnitToShopDB(unit.UnitData);
+        }
+
         _player.GainGold(unit.Cost);
-        Debug.Log("Sold for + " + unit.Cost);
     }
 
     // Set unit sell field active
@@ -171,21 +278,6 @@ public class Shop : MonoBehaviour
         if (_unitSellField != null)
         {
             _unitSellField.SetActive(false);
-        }
-    }
-
-    // Get a random UnitData from the UnitsDatabase
-    private UnitData GetRandomUnitData()
-    {
-        if (_unitsDatabase.Units.Count > 0)
-        {
-            int randomIndex = Random.Range(0, _unitsDatabase.Units.Count);
-            return _unitsDatabase.Units[randomIndex];
-        }
-        else
-        {
-            Debug.LogWarning("UnitsDatabase is empty.");
-            return null;
         }
     }
 }

@@ -10,6 +10,7 @@ public class UnitData : ScriptableObject
     public int Id;
     public string UnitName;
     public int Cost;
+    public UnitRarity Rarity;
 
     [Header("ShopUnit Data")]
     public Sprite ShopImage;
@@ -19,8 +20,17 @@ public class UnitData : ScriptableObject
     public int MaxMp;
     public int BaseAttackDamage;
     public int BaseArmor;
-    public Sprite Sprite; 
+    public Sprite Sprite;
 
     [Header("Traits Data")]
     public List<Trait> Traits;
+}
+
+public enum UnitRarity
+{
+    Common,
+    Uncommon,
+    Rare,
+    Epic,
+    Legendary
 }

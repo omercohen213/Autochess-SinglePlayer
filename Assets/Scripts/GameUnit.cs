@@ -20,6 +20,7 @@ public class GameUnit : Unit
     public Dictionary<Trait, int> TraitStages = new();
     public List<int> _Stages = new();
     public int StarLevel;
+    public readonly int MAX_STAR_LEVEL = 3;
 
     public Player Owner { get => _owner; set => _owner = value; }
     public int MaxHp { get => _maxHp; private set => _maxHp = value; }

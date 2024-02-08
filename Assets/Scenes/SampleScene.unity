@@ -1093,7 +1093,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shopUnitsTransform: {fileID: 1515822111}
-  _unitsDatabase: {fileID: 11400000, guid: f56c36649a511324f98e09d103e7b411, type: 2}
   _unitSellField: {fileID: 1877565077}
 --- !u!1 &257467959
 GameObject:

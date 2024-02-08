@@ -11,6 +11,7 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject _hexPrefab;
     [SerializeField] private Transform _board;
 
+
     public readonly int _ROWS = 5;
     public readonly int _COLUMNS = 8;
     private readonly float HEX_SPACING_Y = -1.35f; // Space between two hexes in the Y axis
