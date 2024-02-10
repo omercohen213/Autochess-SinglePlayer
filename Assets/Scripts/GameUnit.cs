@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Unity.Burst.CompilerServices;
@@ -31,6 +32,7 @@ public class GameUnit : Unit
     public Hex CurrentHex { get => _currentHex; set => _currentHex = value; }
     public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
 
+
     private void Start()
     {
         _owner = LocalPlayer.Instance;
@@ -56,14 +58,7 @@ public class GameUnit : Unit
         // The unit was not dragged on a game object - return unit to its current bench or hex
         if (objTag == null)
         {
-            if (IsOnBoard)
-            {
-                Board.Instance.PlaceUnitOnBoard(this, _currentHex);
-            }
-            else
-            {
-                _owner.Bench.PutUnitOnBenchSlot(this, _currentBenchSlot);
-            }
+            ReturnToPlace();
         }
         else
         {
@@ -77,8 +72,8 @@ public class GameUnit : Unit
 
                 // Place on board
                 case "Hex":
-                    Hex hexDraggedOn = objDraggedOn.GetComponent<Hex>();
-                    Board.Instance.PlaceUnitOnBoard(this, hexDraggedOn);
+                    Hex hex = objDraggedOn.GetComponent<Hex>();
+                    CheckHexPlacement(hex);               
                     break;
 
                 // Place on another bench slot
@@ -86,20 +81,49 @@ public class GameUnit : Unit
                     BenchSlot benchSlotDraggedOn = objDraggedOn.GetComponent<BenchSlot>();
                     _owner.Bench.PutUnitOnBenchSlot(this, benchSlotDraggedOn);
                     break;
-                // Return unit to its current bench or hex
+
                 default:
-                    if (IsOnBoard)
-                    {
-                        Board.Instance.PlaceUnitOnBoard(this, CurrentHex);
-                    }
-                    else
-                    {
-                        _owner.Bench.PutUnitOnBenchSlot(this, _currentBenchSlot);
-                    }
+                    ReturnToPlace();
                     break;
             }
         }
         Shop.Instance.DisableUnitSellField();
+    }
+
+    // Place unit on board only if allowed
+    private void CheckHexPlacement(Hex hex)
+    {
+        // Allow only if board limit is not reached
+        if (Owner.IsBoardLimitReached() && !IsOnBoard)
+        {
+            ReturnToPlace();
+            Debug.Log("Units limit reached");
+        }
+
+        // Allow only on player's side of the board
+        else if (hex.X < 4)
+        {
+            Board.Instance.PlaceUnitOnBoard(this, hex);
+        }
+        else
+        {
+            ReturnToPlace();
+            Debug.Log("Can't place unit on opponent's board");
+        }
+
+    }
+
+    // Return unit to its current bench or hex
+    private void ReturnToPlace()
+    {
+        if (IsOnBoard)
+        {
+            Board.Instance.PlaceUnitOnBoard(this, CurrentHex);
+        }
+        else
+        {
+            _owner.Bench.PutUnitOnBenchSlot(this, _currentBenchSlot);
+        }
     }
 
     // Create star objects and set current star level
@@ -110,7 +134,7 @@ public class GameUnit : Unit
             Instantiate(_starPrefab, _starsParent);
         }
         StarLevel = starLevel;
-        
+
         // *** override in child gameunit for unique behavior
     }
 

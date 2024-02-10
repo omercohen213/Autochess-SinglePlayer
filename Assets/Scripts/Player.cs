@@ -14,11 +14,19 @@ public class Player : MonoBehaviour
 
     public Bench Bench;
     public List<GameUnit> BoardUnits;
+    public int boardLimit;
     public List<Trait> ActiveTraits;
+
+
+    private void Awake()
+    {
+        BoardUnits = new();
+    }
 
     private void Start()
     {
-        BoardUnits = new();
+        boardLimit = 2;
+        
     }
 
     // Decrease gold by amount
@@ -59,7 +67,9 @@ public class Player : MonoBehaviour
     private void OnLevelUp()
     {
         Lvl++;
+        boardLimit++;
         UIManager.Instance.UpdateXpUI();
+        UIManager.Instance.UpdateBoardLimit();
         UIManager.Instance.UpdatePlayerLvlUI();
     }
 
@@ -90,7 +100,11 @@ public class Player : MonoBehaviour
                 return true;
             }
         }
-
         return false;
+    }
+
+    public bool IsBoardLimitReached()
+    {
+        return BoardUnits.Count >= boardLimit; 
     }
 }

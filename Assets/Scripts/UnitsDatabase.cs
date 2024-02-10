@@ -12,7 +12,6 @@ public class UnitsDatabase : ScriptableObject
 
     private void OnEnable()
     {
-        // Assign the instance when the scriptable object is loaded
         Instance = this;
     }
 

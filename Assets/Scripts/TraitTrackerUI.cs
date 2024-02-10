@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TraitTracker : MonoBehaviour
+public class TraitTrackerUI : MonoBehaviour
 {
     [SerializeField] private Transform _activeTraitsTransform;
     [SerializeField] private Transform _inactiveTraitsTransform;

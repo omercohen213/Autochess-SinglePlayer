@@ -10,20 +10,16 @@ public class DragManager : MonoBehaviour
     private RaycastHit2D[] hits;
     private GameObject draggedObject;
     GameObject lastHexHovered = null;
-    Color hexColor;
 
     private int shopLayer;
     private int benchLayer;
     private int layerMask;
-
 
     private void Start()
     {
         shopLayer = LayerMask.NameToLayer("Shop");
         benchLayer = LayerMask.NameToLayer("Bench");
         layerMask = ~(1 << shopLayer) & ~(1 << benchLayer);
-
-        hexColor = FindFirstObjectByType<Hex>().GetComponent<SpriteRenderer>().color;
     }
 
     void Update()
@@ -47,35 +43,44 @@ public class DragManager : MonoBehaviour
         else if (isDragging && Input.GetMouseButton(0))
         {
             ContinueDragging();
-
-            GameObject hex = null;
+            GameObject hexGo = null;
             foreach (RaycastHit2D hit in hits)
             {
                 if (hit.collider != null && hit.collider.gameObject.CompareTag("Hex"))
                 {
-                    hex = hit.collider.gameObject;
-                    hex.GetComponent<SpriteRenderer>().color = Color.gray;
+                    hexGo = hit.collider.gameObject;
+                    if (hexGo.TryGetComponent(out Hex hex))
+                    {
+                        hex.OnHover();
+                    }
                     break;
                 }
             }
 
             // Check if the hex under the mouse has changed
-            if (hex != lastHexHovered)
+            if (hexGo != lastHexHovered)
             {
-                // Reset color of the last hex
-                if (lastHexHovered != null)
-                {
-                    lastHexHovered.GetComponent<SpriteRenderer>().color = hexColor;
-                }
-                lastHexHovered = hex;
+                StopHexHover();
+                lastHexHovered = hexGo;
             }
         }
         // Stop dragging gameobject
         else if (isDragging && Input.GetMouseButtonUp(0))
         {
             StopDragging();
-            lastHexHovered.GetComponent<SpriteRenderer>().color = hexColor;
+            StopHexHover();
         }
+    }
+
+    private void StopHexHover()
+    {
+        if (lastHexHovered != null)
+        {
+            if (lastHexHovered.TryGetComponent(out Hex lastHex))
+            {
+                lastHex.OnHoverStopped();
+            }
+        }        
     }
 
     // Set the starting offset position

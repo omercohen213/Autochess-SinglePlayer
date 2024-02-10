@@ -13,8 +13,6 @@ public class Shop : MonoBehaviour
     [SerializeField] private Transform _shopUnitsTransform;
     private List<UnitData> _shopUnitDatabase;
 
-
-
     private List<int[]> _shopUnitsProbabilities;
     private readonly int[] LVL1_PROBABILITIES = new[] { 70, 30, 0, 0, 0 };
     private readonly int[] LVL2_PROBABILITIES = new[] { 55, 30, 15, 0, 0 };
@@ -52,25 +50,26 @@ public class Shop : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        _shopUnitDatabase = new();
+        _shopUnitsProbabilities = new() { LVL1_PROBABILITIES, LVL2_PROBABILITIES, LVL3_PROBABILITIES, LVL4_PROBABILITIES, LVL5_PROBABILITIES };
     }
+
+
 
     private void Start()
     {
         _player = LocalPlayer.Instance;
-        _shopUnitDatabase = new();
         foreach (UnitData unitData in UnitsDatabase.Instance.Units)
         {
             _shopUnitDatabase.Add(unitData);
         }
-
         if (_unitSellField != null)
         {
             _unitSellField.SetActive(false);
         }
-        _shopUnitsProbabilities = new() { LVL1_PROBABILITIES, LVL2_PROBABILITIES, LVL3_PROBABILITIES, LVL4_PROBABILITIES, LVL5_PROBABILITIES };
 
         RerollUnits();
-
     }
 
     // Buy unit from the shop and set it inactive
@@ -158,7 +157,6 @@ public class Shop : MonoBehaviour
             UnitRarity randomRarity = GetRandomUnitRarity();
             List<UnitData> unitsOfRarity = GetUnitsOfRarity(randomRarity);
             int randomIndex = Random.Range(0, unitsOfRarity.Count);
-            Debug.Log("index " + randomIndex+ " count " + unitsOfRarity.Count);
             if (unitsOfRarity != null)
             {
                 return unitsOfRarity[randomIndex];
@@ -213,15 +211,7 @@ public class Shop : MonoBehaviour
     // Returns the current level probabilities based on player's level
     private int[] GetCurrentLevelProbabilities()
     {
-        return _player.Lvl switch
-        {
-            1 => LVL1_PROBABILITIES,
-            2 => LVL2_PROBABILITIES,
-            3 => LVL3_PROBABILITIES,
-            4 => LVL4_PROBABILITIES,
-            5 => LVL5_PROBABILITIES,
-            _ => null,
-        };
+        return _shopUnitsProbabilities[_player.Lvl-1];
     }
 
     // Remove a unit from shop database

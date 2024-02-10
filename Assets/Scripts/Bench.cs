@@ -190,6 +190,7 @@ public class Bench : MonoBehaviour
             {
                 Board.Instance.RemoveUnitFromBoard(unit);
                 _units.Add(unit);
+                UIManager.Instance.UpdateBoardLimit();
             }
             // Unit is already on bench- change its bench slot to given one
             else
