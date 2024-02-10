@@ -98,7 +98,7 @@ public class TraitTrackerUI : MonoBehaviour
         }
 
         // Set trait image
-        Transform imageTransform = traitGo.transform.Find("Image");
+        Transform imageTransform = traitGo.transform.Find("Icon");
         if (imageTransform.TryGetComponent<Image>(out var image))
         {
             image.sprite = trait.traitSprite;

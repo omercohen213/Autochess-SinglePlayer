@@ -1,11 +1,8 @@
 - add behavior for each gameunit
-
-- board unit limit
 - trait hover
-- fix trait placement according to stage
+- shop unit highlight when on bench/board
 
+- fix trait placement according to stage
 - OBJECT POOLING
 - fix datatabase on unity start bug
-- fix unit sell field
-
 - encapsulate properties not used in editor

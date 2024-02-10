@@ -120,12 +120,12 @@ TextureImporter:
       name: PicMonkey-Collage11_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 314
-        width: 300
-        height: 313
+        x: 7
+        y: 318
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -141,12 +141,12 @@ TextureImporter:
       name: PicMonkey-Collage11_1
       rect:
         serializedVersion: 2
-        x: 299
-        y: 314
-        width: 300
-        height: 313
+        x: 307
+        y: 319
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -162,12 +162,12 @@ TextureImporter:
       name: PicMonkey-Collage11_2
       rect:
         serializedVersion: 2
-        x: 600
-        y: 314
-        width: 300
-        height: 313
+        x: 605
+        y: 319
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -183,12 +183,12 @@ TextureImporter:
       name: PicMonkey-Collage11_3
       rect:
         serializedVersion: 2
-        x: 900
-        y: 314
-        width: 300
-        height: 313
+        x: 904
+        y: 316
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -204,12 +204,12 @@ TextureImporter:
       name: PicMonkey-Collage11_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 2
-        width: 300
-        height: 313
+        x: 8
+        y: 7
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -225,12 +225,12 @@ TextureImporter:
       name: PicMonkey-Collage11_5
       rect:
         serializedVersion: 2
-        x: 300
-        y: 1
-        width: 300
-        height: 313
+        x: 307
+        y: 6
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -246,12 +246,12 @@ TextureImporter:
       name: PicMonkey-Collage11_6
       rect:
         serializedVersion: 2
-        x: 600
-        y: 1
-        width: 300
-        height: 313
+        x: 604
+        y: 8
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -267,12 +267,12 @@ TextureImporter:
       name: PicMonkey-Collage11_7
       rect:
         serializedVersion: 2
-        x: 900
-        y: 1
-        width: 300
-        height: 313
+        x: 904
+        y: 7
+        width: 290
+        height: 300
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
