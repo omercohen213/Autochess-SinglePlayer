@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
-  m_Name: 1
+  m_Name: Ninja
   m_EditorClassIdentifier: 
-  Id: 1
-  UnitName: 1
+  Id: 7
+  UnitName: Ninja
   Cost: 1
   Rarity: 0
-  ShopImage: {fileID: -1828946549344447192, guid: d9786946c4e72434cb174e526fa382a7, type: 3}
-  UnitPrefab: {fileID: 117150395161187363, guid: d9f4da4c880e3e6489a3b236bbcfb607, type: 3}
+  ShopImage: {fileID: 21300000, guid: b7da85537a8cd1548ad3edbd0af3f113, type: 3}
+  UnitPrefab: {fileID: 1109986417982920, guid: feca73e862c53b94599c1e4f4ce23745, type: 3}
   MaxHp: 0
   MaxMp: 0
-  BaseAttackDamage: 20
+  BaseAttackDamage: 0
   BaseArmor: 0
+  Range: 1
   Traits:
-  - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}
+  - {fileID: 11400000, guid: ceb29ad378042744eaa8a06ec19db335, type: 2}

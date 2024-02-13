@@ -728,7 +728,6 @@ MonoBehaviour:
   _Stages: 
   StarLevel: 0
   AttackDamage: 0
-  Range: 0
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

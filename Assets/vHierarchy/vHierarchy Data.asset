@@ -39,7 +39,7 @@ MonoBehaviour:
           iconNameOrGuid: Canvas Icon
         - colorIndex: 9
           iconNameOrGuid: Canvas Icon
-        - colorIndex: 0
+        - colorIndex: 9
           iconNameOrGuid: Canvas Icon
         - colorIndex: 0
           iconNameOrGuid: AvatarMask On Icon

@@ -15,11 +15,12 @@ MonoBehaviour:
   Id: 6
   UnitName: 6
   Cost: 6
-  Rarity: 3
+  Rarity: 4
   ShopImage: {fileID: -161384387, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
   UnitPrefab: {fileID: 0}
   MaxHp: 0
   MaxMp: 0
   BaseAttackDamage: 0
   BaseArmor: 0
+  Range: 0
   Traits: []

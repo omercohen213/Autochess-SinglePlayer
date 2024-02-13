@@ -767,7 +767,6 @@ MonoBehaviour:
   _Stages: 
   StarLevel: 0
   AttackDamage: 0
-  moveSpeed: 4
   Range: 0
 --- !u!1 &188064519148664878
 GameObject:

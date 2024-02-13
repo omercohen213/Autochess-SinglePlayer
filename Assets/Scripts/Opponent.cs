@@ -18,7 +18,8 @@ public class Opponent : Player
 
     public void CreateEnemyUnit()
     {
-        Bench.CreateGameUnit(this,1001,1);
+        //Bench.CreateGameUnit(this,1001,1);
+        Bench.CreateGameUnit(this,1002,1);
         foreach (GameUnit gameUnit in Bench.Units)
         {
             gameUnit.PlaceOnHex(Board.Instance.GetHex(5, 1));

@@ -27,7 +27,6 @@ public class GameUnit : Unit
 
     public int StarLevel;
     public int AttackDamage;
-    public int Range;
 
     public readonly float MOVE_SPEED = 4f;
     public readonly int MAX_STAR_LEVEL = 3;
@@ -42,10 +41,19 @@ public class GameUnit : Unit
 
     private void Awake()
     {
-        if(!TryGetComponent(out animator))
+        Transform animationTransfrom = transform.Find("Animation");
+        if (animationTransfrom != null)
         {
-            Debug.LogWarning("Missing animator on game unit " + UnitName);    
+            if (!animationTransfrom.TryGetComponent(out animator))
+            {
+                Debug.LogWarning("Missing animator on game unit " + UnitName);
+            }
         }
+        else
+        {
+            Debug.LogWarning("Missing 'Animation' object on game unit "+ UnitName);
+        }
+        
     }
 
     private void Start()
@@ -177,7 +185,7 @@ public class GameUnit : Unit
         {
             if (_currentHex.IsAdjacentToHex(nextHex))
             {
-                if (distance <= Range || _currentHex.IsAdjacentToHex(enemyHex))
+                if (distance <= UnitData.Range || _currentHex.IsAdjacentToHex(enemyHex))
                 {
                     Attack(enemyHex.UnitOnHex);
                     break;
@@ -323,7 +331,8 @@ public class GameUnit : Unit
     public void Attack(GameUnit target)
     {
         Debug.Log("attack");
-        //animator.SetTrigger("Attack");
+        animator.SetBool("Cast 0", true);
+        animator.SetTrigger("Cast");
     }
 
     public void UseAbility()

@@ -21,6 +21,7 @@ public class UnitData : ScriptableObject
     public int MaxMp;
     public int BaseAttackDamage;
     public int BaseArmor;
+    public int Range;
 
     [Header("Traits Data")]
     public List<Trait> Traits;
