@@ -15,12 +15,12 @@ MonoBehaviour:
   Id: 0
   UnitName: Knight
   Cost: 0
+  Rarity: 0
   ShopImage: {fileID: 74893781, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  UnitPrefab: {fileID: 1109986072035710, guid: 41ec65ac6642a064d8ebf0ecc0b9b7b3, type: 3}
   MaxHp: 0
   MaxMp: 0
   BaseAttackDamage: 10
   BaseArmor: 0
-  Sprite: {fileID: 74893781, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
   Traits:
   - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}
-  AbilityName: 

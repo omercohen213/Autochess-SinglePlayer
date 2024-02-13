@@ -15,6 +15,8 @@ public class Bench : MonoBehaviour
     private readonly float BENCHSLOT_SPACING = -1.2f; // Space between two benchSlots in the Y axis
     private readonly int UNIT_STAR_UP_COUNT = 3;
 
+    public List<GameUnit> Units { get => _units; set => _units = value; }
+
     public void Awake()
     {
         _units = new List<GameUnit>();
@@ -44,17 +46,19 @@ public class Bench : MonoBehaviour
         }
     }
 
-    // Create an instance of a unit on scene and set its data according to the id
-    public void CreateGameUnit(int id, int starLevel)
+    // Create an instance of a unit on scene and initialize it
+    public void CreateGameUnit(Player owner, int id, int starLevel)
     {
-        GameObject unitGo = Instantiate(_gameUnitPrefab, transform);
-        GameUnit gameUnit = unitGo.GetComponent<GameUnit>();
-        //unitGo.AddComponent<Knight>();
-        gameUnit.SetUnitData(id);
-        gameUnit.Owner = LocalPlayer.Instance;
-        SpriteRenderer unitSpriteRenderer = gameUnit.GetComponent<SpriteRenderer>();
-        unitSpriteRenderer.sprite = gameUnit.UnitSprite;
-        gameUnit.SetUnitStarLevel(starLevel);
+        UnitData unitData = UnitsDatabase.Instance.FindUnitById(id);
+        GameObject unitGo = Instantiate(unitData.UnitPrefab);
+        if (unitGo.TryGetComponent(out GameUnit gameUnit))
+        {
+            gameUnit.Initialize(owner, id, starLevel);
+        }
+        else
+        {
+            Debug.LogWarning("missing gameUnit component");
+        }
         AddUnitToBench(gameUnit);
     }
 
@@ -63,10 +67,7 @@ public class Bench : MonoBehaviour
     {
         _units.Add(unit);
         BenchSlot benchSlot = FindEmptyBenchSlot();
-        benchSlot.IsTaken = true;
-        unit.CurrentBenchSlot = benchSlot;
-        unit.transform.SetParent(benchSlot.transform);
-        unit.transform.position = benchSlot.transform.position;
+        unit.PlaceOnBenchSlot(benchSlot);
         CheckStarUp(unit, unit.StarLevel);
     }
 
@@ -77,7 +78,7 @@ public class Bench : MonoBehaviour
         if (sameUnitsCount >= UNIT_STAR_UP_COUNT)
         {
             RemoveAllUnitsOfKind(unit, starLevel);
-            CreateGameUnit(unit.UnitData.Id, starLevel + 1);
+            CreateGameUnit(unit.Owner, unit.UnitData.Id, starLevel + 1);
 
             // If unit reaches max star level, remove from database
             if (starLevel + 1 == unit.MAX_STAR_LEVEL)
@@ -175,11 +176,6 @@ public class Bench : MonoBehaviour
                 Board.Instance.PlaceUnitOnBoard(unit, unit.CurrentHex);
                 return;
             }
-            // Unit is already on bench- return it to its current bench slot
-            else
-            {
-                benchSlot = unit.CurrentBenchSlot;
-            }
         }
 
         // Bench slot is empty
@@ -192,18 +188,8 @@ public class Bench : MonoBehaviour
                 _units.Add(unit);
                 UIManager.Instance.UpdateBoardLimit();
             }
-            // Unit is already on bench- change its bench slot to given one
-            else
-            {
-                unit.CurrentBenchSlot.IsTaken = false;
-            }
-            unit.CurrentBenchSlot = benchSlot;
-            benchSlot.IsTaken = true;
         }
-
-        // Change to the given bench slot
-        unit.transform.position = unit.CurrentBenchSlot.transform.position;
-        unit.transform.SetParent(benchSlot.transform);
+        unit.PlaceOnBenchSlot(benchSlot);
     }
 
     // Check if bench exceeds max units limit
@@ -220,11 +206,7 @@ public class Bench : MonoBehaviour
     // Remove a unit from the bench
     public void RemoveUnitFromBench(GameUnit unit)
     {
-        if (unit.CurrentBenchSlot != null)
-        {
-            unit.CurrentBenchSlot.IsTaken = false;
-            unit.CurrentBenchSlot = null;
-        }
+        unit.RemoveFromBench();
         _units.Remove(unit);
     }
 

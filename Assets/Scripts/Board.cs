@@ -11,6 +11,8 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject _hexPrefab;
     [SerializeField] private Transform _board;
 
+    private List<Hex> _hexes = new();
+
     public readonly int _ROWS = 5;
     public readonly int _COLUMNS = 8;
     private readonly float HEX_SPACING_Y = -1.35f; // Space between two hexes in the Y axis
@@ -47,69 +49,69 @@ public class Board : MonoBehaviour
             {
                 // Create the hex gameObject
                 GameObject hexGo = Instantiate(_hexPrefab, pos, Quaternion.identity, transform);
-                hexGo.AddComponent<Hex>();
-                hexGo.GetComponent<Hex>().SetPosition(i, j);
-                hexGo.name = $"Hex ({i},{j})";
+                Hex hex = hexGo.GetComponent<Hex>();
+                hex.Initialize(i,j);
+                _hexes.Add(hex);
+                
                 pos += new Vector3(0f, HEX_SPACING_Y); // Space out the hexes in the Y axis
             }
             pos = new Vector3(pos.x + HEX_SPACING_X, transform.position.y); // Space out in the X axis           
         }
     }
 
-    // Place the unit on an hex on board
-    public void PlaceUnitOnBoard(GameUnit unit, Hex hex)
+    public Hex GetHex(int x, int y)
     {
-        // Unit is already on board
-        if (unit.IsOnBoard)
+        foreach(Hex hex in _hexes)
         {
-            // Hex is taken - return the unit to its current hex
-            if (hex.IsTaken)
+            if (hex.X == x && hex.Y == y)
             {
-                hex = unit.CurrentHex;
-            }
-            // Hex is not taken - place the unit on it
-            else
-            {
-                unit.CurrentHex.IsTaken = false;
-                hex.IsTaken = true;
-                unit.CurrentHex = hex;
+                return hex;
             }
         }
-        // Unit is not on board
+        return null;
+    }
+
+    // Place the unit on an hex on board
+    public void PlaceUnitOnBoard(GameUnit gameUnit, Hex hex)
+    {
+        // Unit is already on board
+        if (gameUnit.IsOnBoard)
+        {
+            // Hex is not taken - place the unit on it
+            if (!hex.IsTaken)
+            {
+                gameUnit.PlaceOnHex(hex);              
+            }
+            // Hex is taken, return unit to its current hex
+            else
+            {
+                gameUnit.PlaceOnHex(gameUnit.CurrentHex);
+            }
+        }
+        // Unit is on bench
         else
         {
             // Hex is taken, return it to its current bench slot
             if (hex.IsTaken)
             {
-                unit.Owner.Bench.PutUnitOnBenchSlot(unit, unit.CurrentBenchSlot);
+                gameUnit.Owner.Bench.PutUnitOnBenchSlot(gameUnit, gameUnit.CurrentBenchSlot);
             }
             // Hex is not taken, Remove it from bench and add it to board on given hex
             else
             {
-                unit.Owner.Bench.RemoveUnitFromBench(unit);
-                unit.Owner.BoardUnits.Add(unit);
-                unit.CurrentHex = hex;
-                hex.IsTaken = true;
-                unit.IsOnBoard = true;
-                UpdateBoardTraits(unit);
+                gameUnit.Owner.Bench.RemoveUnitFromBench(gameUnit);
+                gameUnit.Owner.BoardUnits.Add(gameUnit);
+                gameUnit.PlaceOnHex(hex);                
+                UpdateBoardTraits(gameUnit);
                 UIManager.Instance.UpdateBoardLimit();
             }
         }
-
-        unit.transform.SetParent(hex.transform);
-        unit.transform.position = hex.transform.position;
     }
 
     // Remove a unit from board
     public void RemoveUnitFromBoard(GameUnit unit)
     {
-        if (unit.CurrentHex != null)
-        {
-            unit.CurrentHex.IsTaken = false;
-            unit.CurrentHex = null;
-        }
-        unit.IsOnBoard = false;
-        unit.Owner.BoardUnits.Remove(unit);
+        unit.RemoveFromBoard();       
         UpdateBoardTraits(unit);
     }
 

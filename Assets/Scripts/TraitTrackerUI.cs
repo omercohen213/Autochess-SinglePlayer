@@ -208,23 +208,22 @@ public class TraitTrackerUI : MonoBehaviour
         Color color;
 
         // Image
-        Transform imageTransform = traitTransform.Find("Image");
-        if (imageTransform != null)
+        Transform iconTransform = traitTransform.Find("Icon");
+        if (iconTransform != null)
         {
-            if (imageTransform.TryGetComponent<Image>(out var image))
+            if (iconTransform.TryGetComponent<Image>(out var icon))
             {
-                color = image.color;
-                image.color = new Color(color.r, color.g, color.b, alpha);
+                color = icon.color;
+                icon.color = new Color(color.r, color.g, color.b, alpha);
             }
             else
             {
-                Debug.Log("Missing image component");
+                Debug.LogWarning("Missing image component");
             }
         }
         else
         {
-            Debug.Log("Missing trait image object");
-
+            Debug.LogWarning("Missing trait image object");
         }
         // Background Image
         Transform bgImageTransform = traitTransform.Find("BackgroundImage");
@@ -237,12 +236,12 @@ public class TraitTrackerUI : MonoBehaviour
             }
             else
             {
-                Debug.Log("Missing background image component");
+                Debug.LogWarning("Missing background image component");
             }
         }
         else
         {
-            Debug.Log("Missing trait background image object");
+            Debug.LogWarning("Missing trait background icon object");
         }
 
     }
@@ -268,12 +267,12 @@ public class TraitTrackerUI : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Missing background image component");
+                    Debug.LogWarning("Missing background image component");
                 }
             }
             else
             {
-                Debug.Log("Missing background image object");
+                Debug.LogWarning("Missing background image object");
 
             }
 

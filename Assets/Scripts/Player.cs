@@ -13,20 +13,13 @@ public class Player : MonoBehaviour
     public string PlayerName { get; protected set; }
 
     public Bench Bench;
-    public List<GameUnit> BoardUnits;
+    public List<GameUnit> BoardUnits = new();
     public int boardLimit;
-    public List<Trait> ActiveTraits;
-
-
-    private void Awake()
-    {
-        BoardUnits = new();
-    }
+    public List<Trait> ActiveTraits = new();
 
     private void Start()
     {
-        boardLimit = 2;
-        
+        boardLimit = 2;     
     }
 
     // Decrease gold by amount

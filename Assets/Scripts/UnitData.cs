@@ -16,11 +16,11 @@ public class UnitData : ScriptableObject
     public Sprite ShopImage;
 
     [Header("GameUnit Data")]
+    public GameObject UnitPrefab;
     public int MaxHp;
     public int MaxMp;
     public int BaseAttackDamage;
     public int BaseArmor;
-    public Sprite Sprite;
 
     [Header("Traits Data")]
     public List<Trait> Traits;

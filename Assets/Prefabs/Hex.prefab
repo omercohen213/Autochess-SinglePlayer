@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -5478750390027734692}
   - component: {fileID: 308242059770189294}
   - component: {fileID: 2006722597}
+  - component: {fileID: -1219973942969602928}
   m_Layer: 7
   m_Name: Hex
   m_TagString: Hex
@@ -60,6 +61,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6529462bd764e5d488f092431639bd4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsTaken: 0
+  UnitOnHex: {fileID: 0}
 --- !u!212 &308242059770189294
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -143,3 +146,19 @@ PolygonCollider2D:
       - {x: -0.2481208, y: -0.43706036}
       - {x: 0.2574292, y: -0.4383036}
       - {x: 0.5043121, y: -0.0015288652}
+--- !u!58 &-1219973942969602928
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547559300007333341}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.6

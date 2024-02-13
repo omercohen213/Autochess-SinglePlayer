@@ -292,7 +292,7 @@ public class Shop : MonoBehaviour
         if (CanAfford(shopUnit.Cost) && !_player.Bench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
-            _player.Bench.CreateGameUnit(shopUnit.UnitData.Id, 1);
+            _player.Bench.CreateGameUnit(LocalPlayer.Instance, shopUnit.UnitData.Id, 1);
             Destroy(shopUnitGo);
         }
     }

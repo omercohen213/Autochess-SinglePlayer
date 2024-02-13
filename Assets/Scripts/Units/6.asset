@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: 6
   m_EditorClassIdentifier: 
   Id: 6
-  UnitName: 
+  UnitName: 6
   Cost: 6
   Rarity: 3
   ShopImage: {fileID: -161384387, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
+  UnitPrefab: {fileID: 0}
   MaxHp: 0
   MaxMp: 0
   BaseAttackDamage: 0
   BaseArmor: 0
-  Sprite: {fileID: -161384387, guid: 89189c0ecd0dbbe49b9e330c4fb09f1b, type: 3}
   Traits: []

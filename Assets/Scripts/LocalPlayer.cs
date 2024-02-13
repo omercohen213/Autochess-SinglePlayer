@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class LocalPlayer : Player
 {
-    public static Player Instance { get; private set; }
-
+    public static LocalPlayer Instance { get; private set; }
 
     private void Awake()
     {
@@ -19,7 +18,5 @@ public class LocalPlayer : Player
         Gold = 100;
         PlayerName = "Spite";
         Lvl = 1;
-
-        ActiveTraits = new();
     }
 }

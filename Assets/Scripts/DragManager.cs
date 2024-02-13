@@ -88,10 +88,10 @@ public class DragManager : MonoBehaviour
     {
         isDragging = true;
 
-        draggedObject.TryGetComponent(out GameUnit unit);
-        if (unit != null)
+        draggedObject.TryGetComponent(out GameUnit gameUnit);
+        if (gameUnit != null)
         {
-            unit.HandleDragStarted();
+            gameUnit.HandleDragStarted();
         }
 
     }
@@ -106,11 +106,11 @@ public class DragManager : MonoBehaviour
     private void StopDragging()
     {
         isDragging = false;
-        draggedObject.TryGetComponent(out GameUnit unit);
-        if (unit != null)
+        draggedObject.TryGetComponent(out GameUnit gameUnit);
+        if (gameUnit != null)
         {
             GameObject objDraggedOn = GetObjectDraggedOn(draggedObject.transform.position, draggedObject);
-            unit.HandleDragStopped(objDraggedOn);
+            gameUnit.HandleDragStopped(objDraggedOn);
         }
     }
 
