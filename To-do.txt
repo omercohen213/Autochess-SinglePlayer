@@ -1,11 +1,11 @@
 - add behavior for each gameunit
 - trait hover
 - shop unit highlight when on bench/board
-- shop unit color according to rarity
 - shop unit hover animation
 
-- fix trait placement according to stage
 - OBJECT POOLING
 - fix datatabase on unity start bug
 - encapsulate properties not used in editor
 - fix circle collider on hex with drag
+-fireheart shop traits fix
+-starts fix

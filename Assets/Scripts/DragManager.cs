@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class DragManager : MonoBehaviour
 {
+    private bool isEnable;
     private bool isDragging = false;
     private RaycastHit2D[] hits;
     private GameObject draggedObject;
@@ -20,55 +21,73 @@ public class DragManager : MonoBehaviour
         shopLayer = LayerMask.NameToLayer("Shop");
         benchLayer = LayerMask.NameToLayer("Bench");
         layerMask = ~(1 << shopLayer) & ~(1 << benchLayer);
+
+        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
     void Update()
     {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, layerMask);
-        if (Input.GetMouseButtonDown(0) && !isDragging)
+        if (isEnable)
         {
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, layerMask);
+            if (Input.GetMouseButtonDown(0) && !isDragging)
+            {
 
-            // Loop through all hits
-            foreach (RaycastHit2D hit in hits)
-            {
-                if (hit.collider != null && hit.collider.gameObject.CompareTag("DraggableObject"))
+                // Loop through all hits
+                foreach (RaycastHit2D hit in hits)
                 {
-                    draggedObject = hit.collider.gameObject;
-                    StartDragging();
-                }
-            }
-        }
-        // Continue dragging gameobject
-        else if (isDragging && Input.GetMouseButton(0))
-        {
-            ContinueDragging();
-            GameObject hexGo = null;
-            foreach (RaycastHit2D hit in hits)
-            {
-                if (hit.collider != null && hit.collider.gameObject.CompareTag("Hex"))
-                {
-                    hexGo = hit.collider.gameObject;
-                    if (hexGo.TryGetComponent(out Hex hex))
+                    if (hit.collider != null && hit.collider.gameObject.CompareTag("DraggableObject"))
                     {
-                        hex.OnHover();
+                        draggedObject = hit.collider.gameObject;
+                        StartDragging();
                     }
-                    break;
                 }
             }
-
-            // Check if the hex under the mouse has changed
-            if (hexGo != lastHexHovered)
+            // Continue dragging gameobject
+            else if (isDragging && Input.GetMouseButton(0))
             {
-                StopHexHover();
-                lastHexHovered = hexGo;
+                ContinueDragging();
+                GameObject hexGo = null;
+                foreach (RaycastHit2D hit in hits)
+                {
+                    if (hit.collider != null && hit.collider.gameObject.CompareTag("Hex"))
+                    {
+                        hexGo = hit.collider.gameObject;
+                        if (hexGo.TryGetComponent(out Hex hex))
+                        {
+                            hex.OnHover();
+                        }
+                        break;
+                    }
+                }
+
+                // Check if the hex under the mouse has changed
+                if (hexGo != lastHexHovered)
+                {
+                    StopHexHover();
+                    lastHexHovered = hexGo;
+                }
             }
-        }
-        // Stop dragging gameobject
-        else if (isDragging && Input.GetMouseButtonUp(0))
+            // Stop dragging gameobject
+            else if (isDragging && Input.GetMouseButtonUp(0))
+            {
+                StopDragging();
+                StopHexHover();
+            }
+        }      
+    }
+
+    public void OnPhaseChanged(GamePhase newPhase)
+    {
+        switch (newPhase)
         {
-            StopDragging();
-            StopHexHover();
+            case GamePhase.Preparation:
+                isEnable = true;
+                break;
+            case GamePhase.Battle:
+                isEnable = false;
+                break;
         }
     }
 

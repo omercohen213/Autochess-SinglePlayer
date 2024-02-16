@@ -1,3 +1,4 @@
+using Assets.HeroEditor.Common.Scripts.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,7 @@ using Random = UnityEngine.Random;
 public class Shop : MonoBehaviour
 {
     [SerializeField] private Transform _shopUnitsTransform;
-    [SerializeField] private GameObject _shopUnitPrefab;
-    [SerializeField] private GameObject _shopUnitTraitPrefab;
-
-    private Transform _shopUnitTraitsParent;
-    private List<UnitData> _shopUnitDatabase;
+    [SerializeField] private List<UnitData> _shopUnitsDatabase = new();
 
     private List<int[]> _shopUnitsProbabilities;
     private readonly int[] LVL1_PROBABILITIES = new[] { 70, 30, 0, 0, 0 };
@@ -25,6 +22,7 @@ public class Shop : MonoBehaviour
     private readonly int[] LVL5_PROBABILITIES = new[] { 19, 30, 35, 10, 1 };
 
     private readonly int REROLL_COST = 1;
+    private readonly int SHOP_UNITS = 5;
     private readonly int XP_COST = 4;
     private Player _player;
 
@@ -55,17 +53,18 @@ public class Shop : MonoBehaviour
             Destroy(gameObject);
         }
 
-        _shopUnitDatabase = new();
         _shopUnitsProbabilities = new() { LVL1_PROBABILITIES, LVL2_PROBABILITIES, LVL3_PROBABILITIES, LVL4_PROBABILITIES, LVL5_PROBABILITIES };
+        foreach (UnitData unitData in ShopUnitsDatabase.Instance.UnitDatas)
+        {
+            _shopUnitsDatabase.Add(unitData);
+
+        }
     }
 
     private void Start()
     {
         _player = LocalPlayer.Instance;
-        foreach (UnitData unitData in UnitsDatabase.Instance.Units)
-        {
-            _shopUnitDatabase.Add(unitData);
-        }
+
         if (_unitSellField != null)
         {
             _unitSellField.SetActive(false);
@@ -111,60 +110,86 @@ public class Shop : MonoBehaviour
     private void RerollUnits()
     {
         // Clear current shop units
-        for (int i = 0; i < _shopUnitsTransform.childCount; i++)
+        for (int i = 0; i < SHOP_UNITS; i++)
         {
-            Transform shopUnitParent = _shopUnitsTransform.GetChild(i);
-
             // Clear shop
-            if (shopUnitParent.childCount != 0)
+            Transform shopUnitParent = _shopUnitsTransform.GetChild(i);
+            if (shopUnitParent != null)
             {
-                Destroy(shopUnitParent.GetChild(0).gameObject);
+                foreach (ShopUnit shopUnit in shopUnitParent.GetComponentsInChildren<ShopUnit>())
+                {
+                    shopUnit.gameObject.SetActive(false);
+                }
             }
+        }
 
+        for (int i = 0; i < SHOP_UNITS; i++)
+        {
             // Create the shop unit gameObject
             UnitData unitData = GetRandomUnitData();
-            GameObject shopUnitGo = Instantiate(_shopUnitPrefab, shopUnitParent);
+            ShopUnit shopUnit = null;
+            switch (unitData.Rarity)
+            {
+                case UnitRarity.Common:
+                    shopUnit = _shopUnitsTransform.GetChild(i).Find("ShopUnitCommon").GetComponent<ShopUnit>();
+                    break;
+                case UnitRarity.Uncommon:
+                    shopUnit = _shopUnitsTransform.GetChild(i).Find("ShopUnitUncommon").GetComponent<ShopUnit>();
+                    break;
+                case UnitRarity.Rare:
+                    shopUnit = _shopUnitsTransform.GetChild(i).Find("ShopUnitRare").GetComponent<ShopUnit>();
+                    break;
+                case UnitRarity.Epic:
+                    shopUnit = _shopUnitsTransform.GetChild(i).Find("ShopUnitEpic").GetComponent<ShopUnit>();
+                    break;
+                case UnitRarity.Legendary:
+                    shopUnit = _shopUnitsTransform.GetChild(i).Find("ShopUnitLegendery").GetComponent<ShopUnit>();
+                    break;
+            }
+
             if (unitData != null)
             {
-                if (shopUnitGo.TryGetComponent(out ShopUnit shopUnit))
-                {
-                    shopUnit.SetUnitData(unitData.Id);
-                    ShowShopUnit(shopUnitGo);
-                }
+                shopUnit.SetUnitData(unitData);
+                ShowShopUnit(shopUnit);
             }
 
             // Add button function
-            Button buyButton = shopUnitGo.AddComponent<Button>();
-            int shopUnitIndex = shopUnitGo.transform.parent.GetSiblingIndex();
-            buyButton.onClick.AddListener(() => BuyUnit(shopUnitIndex));
+            Button buyButton = shopUnit.transform.parent.gameObject.GetComponent<Button>();
+            buyButton.onClick.RemoveAllListeners();
+            buyButton.onClick.AddListener(() => BuyUnit(shopUnit));
+            buyButton.interactable = true;
         }
     }
 
     // Update the visual representation
-    private void ShowShopUnit(GameObject shopUnitGo)
+    private void ShowShopUnit(ShopUnit shopUnit)
     {
-        ShopUnit shopUnit = shopUnitGo.GetComponent<ShopUnit>();
-
         // Name
-        TextMeshProUGUI shopUnitName = shopUnitGo.transform.Find("UnitName").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI shopUnitName = shopUnit.transform.Find("UnitName").GetComponent<TextMeshProUGUI>();
         shopUnitName.text = shopUnit.UnitName;
 
         // Cost
-        TextMeshProUGUI shopUnitCost = shopUnitGo.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI shopUnitCost = shopUnit.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         shopUnitCost.text = shopUnit.Cost.ToString();
 
-        // Shop image
-        Image shopUnitImage = shopUnitGo.transform.Find("UnitImage").GetComponent<Image>();
-        shopUnitImage.sprite = shopUnit.UnitImage;
+        // Shop unit image
+        Image shopUnitImage = shopUnit.transform.Find("UnitImage").GetComponent<Image>();
+        shopUnitImage.sprite = shopUnit.ShopImage;
 
         // Traits
-        _shopUnitTraitsParent = shopUnitGo.transform.Find("Traits");
-        if (_shopUnitTraitsParent != null)
+        Transform traitsParent = shopUnit.transform.Find("Traits");
+        if (traitsParent != null)
         {
+            Transform traitTransform = null;
+            for (int i = 0; i < shopUnit.Traits.Count; i++)
+            {
+                traitTransform = traitsParent.GetChild(i);
+                traitTransform.gameObject.SetActive(true);
+            }
+
             foreach (Trait trait in shopUnit.Traits)
             {
-                GameObject traitGo = Instantiate(_shopUnitTraitPrefab, _shopUnitTraitsParent);
-                Transform iconTransform = traitGo.transform.Find("Icon");
+                Transform iconTransform = traitTransform.Find("Icon");
                 if (iconTransform != null)
                 {
                     if (iconTransform.TryGetComponent(out Image iconImage))
@@ -180,49 +205,22 @@ public class Shop : MonoBehaviour
                 {
                     Debug.LogWarning("Shop unit trait missing icon object");
                 }
-
-                Transform nameTransform = traitGo.transform.Find("TraitName");
-                if (nameTransform != null)
-                {
-                    if (nameTransform.TryGetComponent(out TextMeshProUGUI nameText))
-                    {
-                        nameText.text = trait.traitName;
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Shop unit trait missing text component");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Shop unit trait missing trait name object");
-                }
             }
         }
-        else
-        {
-            Debug.LogWarning("Shop unit missing Traits parent object");
-        }
-
-        shopUnitGo.SetActive(true);
+        shopUnit.gameObject.SetActive(true);
     }
 
     // Get a random unitData according to the probaility of getting each rarity
     private UnitData GetRandomUnitData()
     {
-        if (_shopUnitDatabase.Count > 0)
+        if (_shopUnitsDatabase.Count > 0)
         {
             UnitRarity randomRarity = GetRandomUnitRarity();
             List<UnitData> unitsOfRarity = GetUnitsOfRarity(randomRarity);
-            int randomIndex = Random.Range(0, unitsOfRarity.Count);
-            if (unitsOfRarity != null)
+            if (unitsOfRarity.Count > 0)
             {
+                int randomIndex = Random.Range(0, unitsOfRarity.Count);
                 return unitsOfRarity[randomIndex];
-            }
-            else
-            {
-                Debug.LogError("unitsOfRarity" + randomRarity + " is null or empty.");
-                return null;
             }
         }
         else
@@ -256,7 +254,7 @@ public class Shop : MonoBehaviour
     private List<UnitData> GetUnitsOfRarity(UnitRarity rarity)
     {
         List<UnitData> unitsOfRarity = new();
-        foreach (UnitData unitData in _shopUnitDatabase)
+        foreach (UnitData unitData in _shopUnitsDatabase)
         {
             if (unitData.Rarity == rarity)
             {
@@ -273,48 +271,59 @@ public class Shop : MonoBehaviour
     }
 
     // Remove a unit from shop database
-    public void AddUnitToShopDB(UnitData unitData)
+    public void AddUnitToShopDB(GameUnit gameUnit)
     {
-        _shopUnitDatabase.Add(unitData);
+        _shopUnitsDatabase.Add(gameUnit.UnitData);
     }
 
     // Add a unit to shop database
-    public void RemoveUnitFromShopDB(UnitData unitData)
+    public void RemoveUnitFromShopDB(GameUnit gameUnit)
     {
-        _shopUnitDatabase.Remove(unitData);
+        _shopUnitsDatabase.Remove(gameUnit.UnitData);
     }
 
     // Buy unit from the shop destroy the gameObject
-    public void BuyUnit(int pos)
+    public void BuyUnit(ShopUnit shopUnit)
     {
-        GameObject shopUnitGo = _shopUnitsTransform.GetChild(pos).GetChild(0).gameObject;
-        ShopUnit shopUnit = shopUnitGo.GetComponent<ShopUnit>();
         if (CanAfford(shopUnit.Cost) && !_player.Bench.IsFull())
         {
             _player.PayGold(shopUnit.Cost);
-            _player.Bench.CreateGameUnit(LocalPlayer.Instance, shopUnit.UnitData.Id, 1);
-            Destroy(shopUnitGo);
+            _player.Bench.CreateGameUnit(LocalPlayer.Instance, shopUnit.UnitData, 1);
+            shopUnit.gameObject.SetActive(false);
+            Button buyButton = shopUnit.transform.parent.gameObject.GetComponent<Button>();
+            buyButton.interactable = false;
+            //HighlightSameUnits(shopUnit);
+        }
+    }
+
+    // Highlight shop units that the player has on bench or board
+    private void HighlightSameUnits(ShopUnit shopUnit)
+    {
+        Transform highlighTransform = shopUnit.transform.parent.Find("Highlight");
+        if (_player.HasUnit(shopUnit.UnitData.UnitName))
+        {
+            highlighTransform.gameObject.SetActive(true);
         }
     }
 
     // Sell unit and remove it from bench
-    public void SellUnit(GameUnit unit)
+    public void SellUnit(GameUnit gameUnit)
     {
-        if (unit.IsOnBoard)
+        if (gameUnit.IsOnBoard)
         {
-            Board.Instance.RemoveUnitFromBoard(unit);
+            Board.Instance.RemoveUnitFromBoard(gameUnit);
         }
         else
         {
-            _player.Bench.RemoveUnitFromBench(unit);
+            _player.Bench.RemoveUnitFromBench(gameUnit);
         }
 
-        if (unit.StarLevel == unit.MAX_STAR_LEVEL)
+        if (gameUnit.StarLevel == gameUnit.MAX_STAR_LEVEL)
         {
-            AddUnitToShopDB(unit.UnitData);
+            AddUnitToShopDB(gameUnit);
         }
 
-        _player.GainGold(unit.Cost);
+        _player.GainGold(gameUnit.Cost);
     }
 
     // Set unit sell field active

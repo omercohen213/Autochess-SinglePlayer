@@ -2,21 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Units Database", menuName = "Game/Units Database")]
-public class UnitsDatabase : ScriptableObject
+public abstract class UnitsDatabase : ScriptableObject
 {
-    public List<UnitData> Units;
+    public List<UnitData> UnitDatas;
 
-    // Public reference to the instance of UnitsDatabase
-    public static UnitsDatabase Instance;
-
-    private void OnEnable()
+    public UnitData FindUnitByName(string name)
     {
-        Instance = this;
-    }
+        UnitData unitData = UnitDatas.Find(unit => unit.UnitName == name);
+        if (unitData != null)
+        {
+            return unitData;
 
-    public UnitData FindUnitById(int id)
-    {
-        return Units.Find(unit => unit.Id == id);
+        }
+        else
+        {
+            Debug.LogWarning("Unit data " + name + " was not found");
+            return null;
+        }
+
     }
 }

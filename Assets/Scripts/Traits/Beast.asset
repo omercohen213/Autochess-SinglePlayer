@@ -15,5 +15,5 @@ MonoBehaviour:
   traitName: Beast
   traitDescription: 
   BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  traitSprite: {fileID: 21300000, guid: 748ae8b33df036b46a86e0387f1602cf, type: 3}
+  traitSprite: {fileID: 21300000, guid: 1d9ccbee9c2314c418886c47cc8ca433, type: 3}
   _unitNumNeeded: 020000000400000006000000

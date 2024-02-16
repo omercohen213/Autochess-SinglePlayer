@@ -12,10 +12,10 @@ public class Bench : MonoBehaviour
 
     private readonly int BENCH_SIZE = 10;
     private readonly int BENCH_COLUMNS = 2;
-    private readonly float BENCHSLOT_SPACING = -1.2f; // Space between two benchSlots in the Y axis
+    private readonly float BENCHSLOT_SPACING = -1.5f; // Space between two benchSlots in the Y axis
     private readonly int UNIT_STAR_UP_COUNT = 3;
 
-    public List<GameUnit> Units { get => _units; set => _units = value; }
+    public List<GameUnit> BenchUnits { get => _units; set => _units = value; }
 
     public void Awake()
     {
@@ -42,22 +42,37 @@ public class Bench : MonoBehaviour
                 benchSlotTransform.gameObject.name = $"BenchSlot ({i},{j})";
                 pos += new Vector3(0f, BENCHSLOT_SPACING); // Space out the benchSlots in the Y axis
             }
-            pos += new Vector3(BENCHSLOT_SPACING, 5f); // Space out in the X axis and Y axis for the second column
+            pos += new Vector3(BENCHSLOT_SPACING, 7f); // Space out in the X axis and Y axis for the second column
         }
     }
 
     // Create an instance of a unit on scene and initialize it
-    public void CreateGameUnit(Player owner, int id, int starLevel)
+    public void CreateGameUnitByName(Player owner, string unitName, int starLevel)
     {
-        UnitData unitData = UnitsDatabase.Instance.FindUnitById(id);
+        UnitData unitData = GameUnitsDatabase.Instance.FindUnitByName(unitName);
         GameObject unitGo = Instantiate(unitData.UnitPrefab);
         if (unitGo.TryGetComponent(out GameUnit gameUnit))
         {
-            gameUnit.Initialize(owner, id, starLevel);
+            gameUnit.Initialize(owner,unitData, starLevel);
         }
         else
         {
-            Debug.LogWarning("missing gameUnit component");
+            Debug.LogWarning("Missing gameUnit component");
+        }
+        AddUnitToBench(gameUnit);
+    }
+   
+    // Create the gameUnit object
+    public void CreateGameUnit(Player owner, UnitData unitData, int starLevel)
+    {
+        GameObject unitGo = Instantiate(unitData.UnitPrefab);
+        if (unitGo.TryGetComponent(out GameUnit gameUnit))
+        {
+            gameUnit.Initialize(owner,unitData, starLevel);
+        }
+        else
+        {
+            Debug.LogWarning("Missing gameUnit component");
         }
         AddUnitToBench(gameUnit);
     }
@@ -72,18 +87,18 @@ public class Bench : MonoBehaviour
     }
 
     // Check if there are enough of the same unit to star it up
-    private void CheckStarUp(GameUnit unit, int starLevel)
+    private void CheckStarUp(GameUnit gameUnit, int starLevel)
     {
-        int sameUnitsCount = SameUnitsCount(unit);
+        int sameUnitsCount = SameUnitsCount(gameUnit);
         if (sameUnitsCount >= UNIT_STAR_UP_COUNT)
         {
-            RemoveAllUnitsOfKind(unit, starLevel);
-            CreateGameUnit(unit.Owner, unit.UnitData.Id, starLevel + 1);
+            RemoveAllUnitsOfKind(gameUnit, starLevel);
+            CreateGameUnit(gameUnit.Owner, gameUnit.UnitData, starLevel + 1);
 
             // If unit reaches max star level, remove from database
-            if (starLevel + 1 == unit.MAX_STAR_LEVEL)
+            if (starLevel + 1 == gameUnit.MAX_STAR_LEVEL)
             {
-                Shop.Instance.RemoveUnitFromShopDB(unit.UnitData);
+                Shop.Instance.RemoveUnitFromShopDB(gameUnit);
             }
         }
     }
@@ -121,30 +136,29 @@ public class Bench : MonoBehaviour
     }
 
     // Returns the count of same units and same star level as unit
-    private int SameUnitsCount(GameUnit unit)
+    private int SameUnitsCount(GameUnit gameUnit)
     {
         int count = 0;
 
         // Bench Units
         foreach (GameUnit benchUnit in _units)
         {
-            if (benchUnit.Equals(unit) && benchUnit.StarLevel == unit.StarLevel)
+            if (benchUnit.Equals(gameUnit) && benchUnit.StarLevel == gameUnit.StarLevel)
             {
                 count++;
             }
         }
 
         // Board units
-        foreach (GameUnit boardUnit in unit.Owner.BoardUnits)
+        foreach (GameUnit boardUnit in gameUnit.Owner.BoardUnits)
         {
-            if (boardUnit.Equals(unit) && boardUnit.StarLevel == unit.StarLevel)
+            if (boardUnit.Equals(gameUnit) && boardUnit.StarLevel == gameUnit.StarLevel)
             {
                 count++;
             }
         }
         return count;
     }
-
 
     // Returns the first empty benchSlot 
     private BenchSlot FindEmptyBenchSlot()

@@ -15,5 +15,5 @@ MonoBehaviour:
   traitName: Assasin
   traitDescription: 
   BackgroundColor: {r: 1, g: 0.8163534, b: 0, a: 0}
-  traitSprite: {fileID: 21300000, guid: cee9dbe90b270c944ae1dabf41c93b10, type: 3}
+  traitSprite: {fileID: 21300000, guid: 163c4b743344846f78b764bc3070cf25, type: 3}
   _unitNumNeeded: 01000000030000000500000007000000

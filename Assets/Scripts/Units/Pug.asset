@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
   m_Name: Pug
   m_EditorClassIdentifier: 
-  Id: 1002
   UnitName: Pug
   Cost: 1
   Rarity: 4
@@ -22,5 +21,5 @@ MonoBehaviour:
   MaxMp: 0
   BaseAttackDamage: 0
   BaseArmor: 0
-  Range: 0
+  Range: 1
   Traits: []

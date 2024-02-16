@@ -149,4 +149,5 @@ public class Board : MonoBehaviour
         }
         return traitStage;
     }
+
 }

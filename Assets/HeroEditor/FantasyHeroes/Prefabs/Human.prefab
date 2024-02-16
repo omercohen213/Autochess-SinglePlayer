@@ -715,13 +715,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitName: 
-  unitData: {fileID: 0}
+  _unitData: {fileID: 0}
+  _unitName: 
+  _cost: 0
+  _rarity: 0
+  _traits: []
   _maxHp: 0
   _maxMp: 0
   _baseAttackDamage: 0
+  _range: 0
   _starPrefab: {fileID: 396680785574740202, guid: b1c64ccd81fc87a4a9042a97ab7da314, type: 3}
-  _starsParent: {fileID: 8231868273938261133}
   _isOnBoard: 0
   _currentHex: {fileID: 0}
   _currentBenchSlot: {fileID: 0}

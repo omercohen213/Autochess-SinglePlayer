@@ -5,25 +5,27 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public int Cost { get; private set; }
-    public List<Trait> Traits { get; private set; }
-
-    [SerializeField] private string unitName;
-    public string UnitName { get => unitName; private set => unitName = value; }
-
-    [SerializeField] private UnitData unitData;
-    public UnitData UnitData { get => unitData; private set => unitData = value; }
+    [SerializeField] protected UnitData _unitData;
+    [SerializeField] protected string _unitName;
+    [SerializeField] protected int _cost;
+    [SerializeField] protected UnitRarity _rarity;
+    [SerializeField] protected List<Trait> _traits;
+    public string UnitName { get => _unitName; private set => _unitName = value; }
+    public UnitData UnitData { get => _unitData; private set => _unitData = value; }
+    public List<Trait> Traits { get => _traits; set => _traits = value; }
+    public int Cost { get => _cost; set => _cost = value; }
 
     private void Awake()
     {
-        Traits = new();
+        _traits = new();
     }
 
-    public virtual void SetUnitData(int id)
+    public virtual void SetUnitData(UnitData unitData)
     {
-        UnitData = UnitsDatabase.Instance.FindUnitById(id);
-        Traits = UnitData.Traits;
-        Cost = UnitData.Cost;
-        UnitName = UnitData.UnitName;
+        _unitData = unitData;
+        _cost = _unitData.Cost;
+        _unitName = _unitData.UnitName;
+        _rarity = _unitData.Rarity;
+        _traits = _unitData.Traits;
     }
 }

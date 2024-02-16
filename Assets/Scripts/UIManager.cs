@@ -4,6 +4,8 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Slider = UnityEngine.UI.Slider;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _goldText;
     [SerializeField] private TextMeshProUGUI _xpText;
+    [SerializeField] private Slider _xpBar;
     [SerializeField] private TextMeshProUGUI _lvlText;
     [SerializeField] private TextMeshProUGUI _boardLimitText;
     [SerializeField] private TraitTrackerUI _traitTracker;
@@ -36,9 +39,10 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        _player = LocalPlayer.Instance;        
+        _player = LocalPlayer.Instance;
         UpdateGoldUI();
         UpdateXpUI();
+        UpdatePlayerLvlUI();
         UpdateBoardLimit();
     }
 
@@ -51,8 +55,18 @@ public class UIManager : MonoBehaviour
     // Update current xp text
     public void UpdateXpUI()
     {
-        _xpText.text = _player.Xp.ToString() + "/" 
-            + GameManager.Instance.GetXpToLevelUp(_player.Lvl).ToString();
+        _xpText.text = _player.Xp.ToString() + "/"
+            + _player.GetXpToLevelUp(_player.Lvl).ToString();
+        UpdateXPBarUI();
+    }
+
+
+    private void UpdateXPBarUI()
+    {
+        float currentXP = _player.Xp;
+        float xpToLevelUp = _player.GetXpToLevelUp(_player.Lvl);
+        float fillAmount = currentXP / (currentXP + xpToLevelUp);
+        _xpBar.value = fillAmount;
     }
 
     // Update current lvl text

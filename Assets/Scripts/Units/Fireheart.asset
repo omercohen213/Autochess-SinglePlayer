@@ -12,17 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
   m_Name: Fireheart
   m_EditorClassIdentifier: 
-  Id: 2
   UnitName: Fireheart
   Cost: 2
   Rarity: 0
   ShopImage: {fileID: 21300000, guid: 6eb81a2d33b7cfc4fb5956dc10f65089, type: 3}
-  UnitPrefab: {fileID: 1109986417982920, guid: 811b2c24745bfca49b76b036c0dab2eb, type: 3}
+  UnitPrefab: {fileID: 3705924833248917223, guid: 7c8886214e6d70e4f944979af0440931, type: 3}
   MaxHp: 0
   MaxMp: 0
   BaseAttackDamage: 0
   BaseArmor: 0
   Range: 4
   Traits:
-  - {fileID: 11400000, guid: ceb29ad378042744eaa8a06ec19db335, type: 2}
   - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}
+  - {fileID: 11400000, guid: ceb29ad378042744eaa8a06ec19db335, type: 2}

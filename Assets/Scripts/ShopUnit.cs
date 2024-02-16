@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -6,8 +7,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ShopUnit : Unit, IPointerDownHandler
-{   
-    public Sprite UnitImage { get; private set; }
+{
+    private Sprite _shopImage;
+
+    public Sprite ShopImage { get => _shopImage; set => _shopImage = value; }
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -30,10 +33,9 @@ public class ShopUnit : Unit, IPointerDownHandler
         //Debug.Log("OnEndDrag");
     }
 
-    // Set the unit's properties based on the unit id
-    public override void SetUnitData(int id)
+     public override void SetUnitData(UnitData unitData)
     {
-        base.SetUnitData(id);
-        UnitImage = UnitData.ShopImage;
+        base.SetUnitData(unitData);
+        _shopImage = _unitData.ShopImage;
     }
 }

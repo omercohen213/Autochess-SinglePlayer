@@ -15,9 +15,10 @@ public class GameUnit : Unit
     [SerializeField] private int _maxHp;
     [SerializeField] private int _maxMp;
     [SerializeField] private int _baseAttackDamage;
+    [SerializeField] private int _range;
     [SerializeField] private GameObject _starPrefab;
-    [SerializeField] private Transform _starsParent;
     private Animator animator;
+    private GamePhase _currentGamePhase;
 
     public bool _isOnBoard;
     public Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
@@ -51,9 +52,9 @@ public class GameUnit : Unit
         }
         else
         {
-            Debug.LogWarning("Missing 'Animation' object on game unit "+ UnitName);
+            Debug.LogWarning("Missing 'Animation' object on game unit " + UnitName);
         }
-        
+
     }
 
     private void Start()
@@ -65,13 +66,40 @@ public class GameUnit : Unit
         {
             TraitStages.Add(trait, 0);
         }
+
+        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
-    public void Initialize(Player owner, int id, int starLevel)
+
+    private void Update()
     {
-        SetUnitData(id);
+        if (_currentGamePhase == GamePhase.Battle)
+        {
+            MoveTowardsEnemyUnit();
+        }
+    }
+
+    public void Initialize(Player owner, UnitData unitData, int starLevel)
+    {
         _owner = owner;
+        SetUnitData(unitData);
         SetUnitStarLevel(starLevel);
+    }
+
+    private void OnPhaseChanged(GamePhase newPhase)
+    {
+        switch (newPhase)
+        {
+            case GamePhase.Preparation:
+                break;
+            case GamePhase.Battle:
+                //MoveTowardsEnemyUnit();
+                _currentGamePhase = newPhase;
+                break;
+            case GamePhase.BattleWon:
+            case GamePhase.BattleLost:
+                break;
+        }
     }
 
     public void HandleDragStarted()
@@ -158,16 +186,25 @@ public class GameUnit : Unit
     // Create star objects and set current star level
     public void SetUnitStarLevel(int starLevel)
     {
-        for (int i = 0; i < starLevel; i++)
+        Transform starsParent = transform.Find("Stars");
+        if (starsParent != null)
         {
-            if (_starPrefab != null && _starsParent != null)
+            for (int i = 0; i < starLevel; i++)
             {
-                Instantiate(_starPrefab, _starsParent);
+                if (starsParent.childCount >= starLevel)
+                {
+
+                    starsParent.GetChild(i).gameObject.SetActive(true);
+                }
+                else
+                {
+                    Debug.LogWarning("Missing star objets on unit " + _unitName);
+                }
             }
-            else
-            {
-                Debug.LogWarning("Missing star objects on gameUnit " + UnitName);
-            }
+        }
+        else
+        {
+            Debug.LogWarning("Missing star parent on gameUnit " + _unitName);
         }
         StarLevel = starLevel;
     }
@@ -176,27 +213,33 @@ public class GameUnit : Unit
     {
         // Find the shortest path to the enemy unit's hex
         Hex enemyHex = FindClosestEnemy();
-        List<Hex> shortestPath = FindShortestPath(_currentHex, enemyHex);
-
-        int distance = shortestPath.Count;
-
-        // Move one step at a time along the path until reaching a hex adjacent to the enemy unit's hex
-        foreach (Hex nextHex in shortestPath)
+        if (enemyHex != null)
         {
-            if (_currentHex.IsAdjacentToHex(nextHex))
+            List<Hex> shortestPath = FindShortestPath(_currentHex, enemyHex);
+            int distance = shortestPath.Count;
+
+            // Move one step at a time along the path until reaching a hex adjacent to the enemy unit's hex
+            foreach (Hex nextHex in shortestPath)
             {
-                if (distance <= UnitData.Range || _currentHex.IsAdjacentToHex(enemyHex))
+                if (_currentHex.IsAdjacentToHex(nextHex))
                 {
-                    Attack(enemyHex.UnitOnHex);
-                    break;
-                }
-                else
-                {
-                    MoveToHex(nextHex);
-                    distance--;
+                    Debug.Log(UnitName + " next hex: " + nextHex.ToString());
+                    if (distance <= _range || _currentHex.IsAdjacentToHex(enemyHex))
+                    {
+                        Attack(enemyHex.UnitOnHex);
+                    }
+                    else
+                    {
+                        MoveToHex(nextHex);
+                        distance--;
+                    }
                     break;
                 }
             }
+        }
+        else
+        {
+            Debug.LogWarning("No enemy found");
         }
     }
 
@@ -268,34 +311,38 @@ public class GameUnit : Unit
             foreach (GameUnit enemyUnit in Opponent.Instance.BoardUnits)
             {
                 // Calculate distance between current unit and enemy unit
-                float distance = Vector2Int.Distance(_currentHex.ToVector2Int(), enemyUnit.CurrentHex.ToVector2Int());
-
-                // Check if this enemy unit is closer than the previously found closest one
-                if (distance < shortestDistance)
+                if (_currentHex != null && enemyUnit.CurrentHex != null)
                 {
-                    shortestDistance = distance;
-                    closestHex = enemyUnit.CurrentHex;
+                    float distance = Vector2Int.Distance(_currentHex.ToVector2Int(), enemyUnit.CurrentHex.ToVector2Int());
+
+                    // Check if this enemy unit is closer than the previously found closest one
+                    if (distance < shortestDistance)
+                    {
+                        shortestDistance = distance;
+                        closestHex = enemyUnit.CurrentHex;
+                    }
                 }
             }
-
-            return closestHex;
         }
         else
         {
             foreach (GameUnit playerUnit in LocalPlayer.Instance.BoardUnits)
             {
-                // Calculate distance between current unit and enemy unit
-                float distance = Vector2Int.Distance(_currentHex.ToVector2Int(), playerUnit.CurrentHex.ToVector2Int());
-
-                // Check if this enemy unit is closer than the previously found closest one
-                if (distance < shortestDistance)
+                if (_currentHex != null && playerUnit.CurrentHex != null)
                 {
-                    shortestDistance = distance;
-                    closestHex = playerUnit.CurrentHex;
+                    // Calculate distance between current unit and enemy unit
+                    float distance = Vector2Int.Distance(_currentHex.ToVector2Int(), playerUnit.CurrentHex.ToVector2Int());
+
+                    // Check if this enemy unit is closer than the previously found closest one
+                    if (distance < shortestDistance)
+                    {
+                        shortestDistance = distance;
+                        closestHex = playerUnit.CurrentHex;
+                    }
                 }
             }
-            return closestHex;
         }
+        return closestHex;
     }
 
     // Method to move the unit to a specific hex
@@ -303,6 +350,7 @@ public class GameUnit : Unit
     {
         //transform.position = hex.transform.position;
         StartCoroutine(MoveCoroutine(hex));
+
     }
 
     // Coroutine for moving the unit
@@ -317,7 +365,6 @@ public class GameUnit : Unit
             // Calculate the next position to move towards
             Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, MOVE_SPEED * Time.deltaTime);
 
-            // Update the position of the unit
             transform.position = newPosition;
 
             // Wait for the next frame
@@ -331,8 +378,8 @@ public class GameUnit : Unit
     public void Attack(GameUnit target)
     {
         Debug.Log("attack");
-        animator.SetBool("Cast 0", true);
-        animator.SetTrigger("Cast");
+        //animator.SetBool("Cast 0", true);
+        //animator.SetTrigger("Cast");
     }
 
     public void UseAbility()
@@ -341,18 +388,9 @@ public class GameUnit : Unit
         //Ability?.ExecuteAbility();
     }
 
-    // Set the unit's properties based on unitData
-    public override void SetUnitData(int id)
-    {
-        base.SetUnitData(id);
-        MaxHp = UnitData.MaxHp;
-        MaxMp = UnitData.MaxMp;
-        BaseAttackDamage = UnitData.BaseAttackDamage;
-    }
-
     public bool Equals(GameUnit other)
     {
-        return UnitData.Id == other.UnitData.Id;
+        return UnitName == other.UnitName;
     }
 
     public void PlaceOnBenchSlot(BenchSlot benchSlot)
@@ -389,7 +427,7 @@ public class GameUnit : Unit
         _isOnBoard = true;
         transform.SetParent(hex.transform);
         transform.position = hex.transform.position;
-        MoveTowardsEnemyUnit();
+        //MoveTowardsEnemyUnit();
     }
 
     public void RemoveFromBoard()
@@ -402,5 +440,14 @@ public class GameUnit : Unit
         }
         _isOnBoard = false;
         _owner.BoardUnits.Remove(this);
+    }
+
+    public override void SetUnitData(UnitData unitData)
+    {
+        base.SetUnitData(unitData);
+        _maxHp = _unitData.MaxHp;
+        _maxMp = _unitData.MaxMp;
+        _baseAttackDamage = _unitData.BaseAttackDamage;
+        _range = _unitData.Range;
     }
 }

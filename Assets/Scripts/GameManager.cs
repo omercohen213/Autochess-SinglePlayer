@@ -2,9 +2,18 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GamePhase
+{
+    Preparation,
+    Battle,
+    BattleWon,
+    BattleLost,
+}
+
 public class GameManager : MonoBehaviour
 {
-    private int[] _xpTable;
+    public GamePhase currentPhase;
+    public event Action<GamePhase> OnPhaseChanged;
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -29,11 +38,40 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        _xpTable = new int[] { 0, 2, 6, 10, 20, 36, 56, 80, 100 };
+        DontDestroyOnLoad(gameObject);
+        
     }
 
-    public int GetXpToLevelUp(int lvl)
+    void Start()
     {
-        return _xpTable[lvl];
+        // Start with the preparation phase
+        SwitchToPhase(GamePhase.Preparation);
+    }
+
+    public void SwitchToPhase(GamePhase gamePhase)
+    {
+        currentPhase = gamePhase;
+        OnPhaseChanged?.Invoke(currentPhase);
+
+        switch (currentPhase)
+        {
+            case GamePhase.Preparation:
+                Debug.Log("Starting preparation phase...");
+                break;
+            case GamePhase.Battle:
+                Debug.Log("Starting next preparation phase...");
+                break;
+            default:
+                Debug.LogError("Unknown game phase!");
+                break;
+        }
+    }
+
+    public void SwitchToPhase(string str)
+    {
+        if (str == GamePhase.Battle.ToString())
+        {
+            SwitchToPhase(GamePhase.Battle);
+        }
     }
 }
