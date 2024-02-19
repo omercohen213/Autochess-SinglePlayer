@@ -385,6 +385,9 @@ GameObject:
   - component: {fileID: 1793250967975191074}
   - component: {fileID: 4796883749224880408}
   - component: {fileID: 4438842113788650753}
+  - component: {fileID: 2038752887011216176}
+  - component: {fileID: 7312602794990661187}
+  - component: {fileID: -8243889658612114072}
   m_Layer: 0
   m_Name: Knight2
   m_TagString: DraggableObject
@@ -721,14 +724,13 @@ MonoBehaviour:
   _cost: 0
   _rarity: 0
   _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
   _maxMp: 0
   _baseAttackDamage: 0
   _range: 0
   _starPrefab: {fileID: 396680785574740202, guid: b1c64ccd81fc87a4a9042a97ab7da314, type: 3}
   _isOnBoard: 0
-  _currentHex: {fileID: 0}
-  _currentBenchSlot: {fileID: 0}
   _Stages: 
   StarLevel: 0
   AttackDamage: 0
@@ -758,6 +760,51 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.604888, y: 2.9625235}
   m_EdgeRadius: 0
+--- !u!95 &2038752887011216176
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7312602794990661187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8292c7929b5a943b3b46ffab269e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-8243889658612114072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fafae0f36d9868348b6ceeec20214f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1148429388143190
 GameObject:
   m_ObjectHideFlags: 0

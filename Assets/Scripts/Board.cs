@@ -61,6 +61,11 @@ public class Board : MonoBehaviour
 
     public Hex GetHex(int x, int y)
     {
+        if (x < 0 || x> 7 || y<0 || y > 4)
+        {
+            return null;
+        }
+
         foreach(Hex hex in _hexes)
         {
             if (hex.X == x && hex.Y == y)

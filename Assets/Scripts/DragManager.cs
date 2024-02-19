@@ -86,7 +86,7 @@ public class DragManager : MonoBehaviour
                 isEnable = true;
                 break;
             case GamePhase.Battle:
-                isEnable = false;
+                //isEnable = false;
                 break;
         }
     }

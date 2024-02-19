@@ -649,7 +649,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Cast 0
+  - m_Name: Cast0
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -1996,7 +1996,7 @@ AnimatorState:
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
-  m_TimeParameter: 
+  m_TimeParameter: UpperBodySpeed
 --- !u!1102 &1102902918720498620
 AnimatorState:
   serializedVersion: 6
@@ -2491,7 +2491,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Cast 0
+    m_ConditionEvent: Cast0
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102850289186639906}

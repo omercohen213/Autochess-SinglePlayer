@@ -384,6 +384,7 @@ GameObject:
   - component: {fileID: 114576219538283162}
   - component: {fileID: 1793250967599767188}
   - component: {fileID: -4426488288076552786}
+  - component: {fileID: 6052668832958664579}
   m_Layer: 0
   m_Name: Human
   m_TagString: DraggableObject
@@ -720,17 +721,37 @@ MonoBehaviour:
   _cost: 0
   _rarity: 0
   _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
   _maxMp: 0
   _baseAttackDamage: 0
   _range: 0
   _starPrefab: {fileID: 396680785574740202, guid: b1c64ccd81fc87a4a9042a97ab7da314, type: 3}
   _isOnBoard: 0
-  _currentHex: {fileID: 0}
-  _currentBenchSlot: {fileID: 0}
   _Stages: 
   StarLevel: 0
   AttackDamage: 0
+--- !u!95 &6052668832958664579
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,12 +5,31 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Shop Units Database", menuName = "Game/Units Database/Shop Units Database")]
 public class ShopUnitsDatabase : UnitsDatabase
 {
-    public static ShopUnitsDatabase Instance;
+    // Private field to hold the instance
+    private static ShopUnitsDatabase _instance;
 
-    private void OnEnable()
+    // Property to access the instance
+    public static ShopUnitsDatabase Instance
     {
-        Instance = this;
+        // Getter
+        get
+        {
+            if (_instance == null)
+            {
+                // If the instance hasn't been assigned yet, try to find it in the project assets
+                _instance = Resources.Load<ShopUnitsDatabase>("ShopUnitsDatabase");
+            }
+            return _instance;
+        }
+
+        // Setter
+        set
+        {
+            _instance = value;
+        }
     }
+
+
 
     // Start is called before the first frame update
     void Start()

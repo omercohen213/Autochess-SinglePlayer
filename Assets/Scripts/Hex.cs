@@ -2,63 +2,114 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[RequireComponent (typeof(PolygonCollider2D))]
-[RequireComponent (typeof(CircleCollider2D))]
+[RequireComponent(typeof(PolygonCollider2D))]
 public class Hex : MonoBehaviour
 {
     // Hex properties
-    public int X { get; private set; }
-    public int Y { get; private set; }
+    private int _x;
+    private int _y;
 
-    //private bool _isTaken;
-    public bool IsTaken;// { get => _isTaken; set => _isTaken = value; }
-    public GameUnit UnitOnHex; 
+    public int X { get => _x; }
+    public int Y { get => _y; }
+
+    private bool _isTaken;
+    public bool IsTaken { get => _isTaken; set => _isTaken = value; }
+    public GameUnit UnitOnHex;
+
+    public int GCost;
+    public float HCost;
+    public float FCost { get => GCost + HCost; }
+    private Hex _connectedHex;
 
     private Color hexColor;
     private Color HOVER_ALLOWED = Color.gray;
     private Color HOVER_NOT_ALLOWED = new(200 / 255f, 70 / 255f, 70 / 255f);
 
-    private CircleCollider2D circleCollider;
-    public HashSet<Hex> AdjacentHexes = new HashSet<Hex>();
+    public Hex ConnectedHex { get => _connectedHex; set => _connectedHex = value; }
+    private List<Hex> _adjacentHexes = new();
+    public List<Hex> AdjacentHexes { get => _adjacentHexes; set => _adjacentHexes = value; }
 
-    private void Awake()
-    {
-        circleCollider = GetComponent<CircleCollider2D>();
-    }
 
     private void Start()
     {
+        FindAdjacentHexes();  
         hexColor = gameObject.GetComponent<SpriteRenderer>().color;
-        FindAdjacentHexes();
     }
 
     public void Initialize(int x, int y)
     {
-        X = x;
-        Y = y;
+        _x = x;
+        _y = y;
         name = $"Hex ({x},{y})";
     }
 
     // Method to find adjacent hexes
     public void FindAdjacentHexes()
     {
-        // Clear the list of adjacent hexes
-        AdjacentHexes.Clear();
-
-        // Find all colliders overlapping with the circle collider
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(circleCollider.bounds.center, circleCollider.radius);
-
-        foreach (Collider2D collider in colliders)
+        // Upper hex
+        if (Board.Instance.GetHex(_x, _y - 1) != null)
         {
-            // Check if the collider belongs to a hex other than this one
-            if (collider.gameObject != gameObject && collider.TryGetComponent(out Hex adjacentHex))
+            _adjacentHexes.Add(Board.Instance.GetHex(_x, _y - 1));
+        }
+
+        // Bottom hex
+        if (Board.Instance.GetHex(_x, _y + 1) != null)
+        {
+            _adjacentHexes.Add(Board.Instance.GetHex(_x, _y + 1));
+        }
+
+        if (_x % 2 == 0)
+        {
+            // Upper right hex
+            if (Board.Instance.GetHex(_x + 1, _y - 1) != null)
             {
-                AdjacentHexes.Add(adjacentHex);
+                _adjacentHexes.Add(Board.Instance.GetHex(_x + 1, _y - 1));
+            }
+            // Bottom right hex
+            if (Board.Instance.GetHex(_x + 1, _y) != null)
+            {
+                _adjacentHexes.Add(Board.Instance.GetHex(_x + 1, _y));
+            }
+            // Bottom left hex
+            if (Board.Instance.GetHex(_x - 1, _y) != null)
+            {
+                _adjacentHexes.Add(Board.Instance.GetHex(_x - 1, _y));
+            }           
+            // Upper left hex
+            if (Board.Instance.GetHex(_x - 1, _y - 1) != null)
+            {
+                _adjacentHexes.Add(Board.Instance.GetHex(_x - 1, _y - 1));
+            }
+        }
+
+        else
+        {
+            // Upper right hex
+            if (Board.Instance.GetHex(_x + 1, _y) != null)
+            {
+                _adjacentHexes.Add(Board.Instance.GetHex(_x + 1, _y));
+            }
+
+            // Bottom right hex
+            if (Board.Instance.GetHex(_x + 1, _y+1) != null)
+            {
+                _adjacentHexes.Add(Board.Instance.GetHex(_x + 1, _y + 1));
+            }
+
+            // Bottom left hex
+            if (Board.Instance.GetHex(_x - 1, _y+1) != null)
+            {
+                _adjacentHexes.Add(Board.Instance.GetHex(_x - 1, _y+1));
+            }
+            // Upper left hex
+            if (Board.Instance.GetHex(_x - 1, _y) != null)
+            {
+                _adjacentHexes.Add(Board.Instance.GetHex(_x - 1, _y));
             }
         }
     }
 
-    public bool IsAdjacentToHex (Hex hex)
+    public bool IsAdjacentToHex(Hex hex)
     {
         return AdjacentHexes.Contains(hex);
     }

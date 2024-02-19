@@ -180,21 +180,23 @@ public class Shop : MonoBehaviour
         Transform traitsParent = shopUnit.transform.Find("Traits");
         if (traitsParent != null)
         {
-            Transform traitTransform = null;
+            // Clear traits
+            for (int i = 0; i < traitsParent.childCount; i++)
+            {
+                traitsParent.GetChild(i).SetActive(false);
+            }
+
+            // Set icon
+            Transform traitTransform;
             for (int i = 0; i < shopUnit.Traits.Count; i++)
             {
                 traitTransform = traitsParent.GetChild(i);
-                traitTransform.gameObject.SetActive(true);
-            }
-
-            foreach (Trait trait in shopUnit.Traits)
-            {
                 Transform iconTransform = traitTransform.Find("Icon");
                 if (iconTransform != null)
                 {
                     if (iconTransform.TryGetComponent(out Image iconImage))
                     {
-                        iconImage.sprite = trait.traitSprite;
+                        iconImage.sprite = shopUnit.Traits[i].traitSprite;
                     }
                     else
                     {
@@ -205,6 +207,8 @@ public class Shop : MonoBehaviour
                 {
                     Debug.LogWarning("Shop unit trait missing icon object");
                 }
+
+                traitTransform.gameObject.SetActive(true);
             }
         }
         shopUnit.gameObject.SetActive(true);
@@ -303,7 +307,7 @@ public class Shop : MonoBehaviour
         if (_player.HasUnit(shopUnit.UnitData.UnitName))
         {
             highlighTransform.gameObject.SetActive(true);
-        }
+        }   
     }
 
     // Sell unit and remove it from bench

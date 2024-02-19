@@ -53,7 +53,6 @@ public class Player : MonoBehaviour
     // Check if player leveled up through the xp gain
     private void CheckLevelUp()
     {
-        Debug.Log(Lvl + " " + Xp);
         int xpToLevelUp = GetXpToLevelUp(Lvl);
         if (Xp >= xpToLevelUp)
         {

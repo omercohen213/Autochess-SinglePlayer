@@ -1,60 +1,54 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
-using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using static UnityEngine.UI.CanvasScaler;
 
+[RequireComponent(typeof(Animator))]
 public class GameUnit : Unit
 {
-    private Player _owner;
+    [SerializeField] private Player _owner;
     [SerializeField] private int _maxHp;
     [SerializeField] private int _maxMp;
     [SerializeField] private int _baseAttackDamage;
     [SerializeField] private int _range;
     [SerializeField] private GameObject _starPrefab;
-    private Animator animator;
+    private Animator _animator;
     private GamePhase _currentGamePhase;
 
     public bool _isOnBoard;
-    public Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
-    public BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
+    private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
+    private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
     public Dictionary<Trait, int> TraitStages = new();
     public List<int> _Stages = new();
 
     public int StarLevel;
     public int AttackDamage;
 
-    public readonly float MOVE_SPEED = 4f;
     public readonly int MAX_STAR_LEVEL = 3;
-    public Player Owner { get => _owner; set => _owner = value; }
+    [SerializeField] public Player Owner { get => _owner; set => _owner = value; }
     public int MaxHp { get => _maxHp; private set => _maxHp = value; }
     public int MaxMp { get => _maxMp; private set => _maxMp = value; }
     public int BaseAttackDamage { get => _baseAttackDamage; private set => _baseAttackDamage = value; }
     public bool IsOnBoard { get => _isOnBoard; set => _isOnBoard = value; }
     public Hex CurrentHex { get => _currentHex; set => _currentHex = value; }
     public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
-
+    public int Range { get => _range; set => _range = value; }
 
     private void Awake()
     {
-        Transform animationTransfrom = transform.Find("Animation");
-        if (animationTransfrom != null)
+        Transform animationTransform = transform.Find("Animation");
+        if (animationTransform != null)
         {
-            if (!animationTransfrom.TryGetComponent(out animator))
-            {
-                Debug.LogWarning("Missing animator on game unit " + UnitName);
-            }
+            _animator = animationTransform.GetComponent<Animator>();
         }
         else
         {
-            Debug.LogWarning("Missing 'Animation' object on game unit " + UnitName);
+            Debug.LogWarning("Missing animation transform on game unit " + UnitName);
         }
-
     }
 
     private void Start()
@@ -70,15 +64,6 @@ public class GameUnit : Unit
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
-
-    private void Update()
-    {
-        if (_currentGamePhase == GamePhase.Battle)
-        {
-            MoveTowardsEnemyUnit();
-        }
-    }
-
     public void Initialize(Player owner, UnitData unitData, int starLevel)
     {
         _owner = owner;
@@ -86,6 +71,15 @@ public class GameUnit : Unit
         SetUnitStarLevel(starLevel);
     }
 
+
+    public override void SetUnitData(UnitData unitData)
+    {
+        base.SetUnitData(unitData);
+        _maxHp = _unitData.MaxHp;
+        _maxMp = _unitData.MaxMp;
+        _baseAttackDamage = _unitData.BaseAttackDamage;
+        Range = _unitData.Range;
+    }
     private void OnPhaseChanged(GamePhase newPhase)
     {
         switch (newPhase)
@@ -93,7 +87,6 @@ public class GameUnit : Unit
             case GamePhase.Preparation:
                 break;
             case GamePhase.Battle:
-                //MoveTowardsEnemyUnit();
                 _currentGamePhase = newPhase;
                 break;
             case GamePhase.BattleWon:
@@ -209,185 +202,6 @@ public class GameUnit : Unit
         StarLevel = starLevel;
     }
 
-    public void MoveTowardsEnemyUnit()
-    {
-        // Find the shortest path to the enemy unit's hex
-        Hex enemyHex = FindClosestEnemy();
-        if (enemyHex != null)
-        {
-            List<Hex> shortestPath = FindShortestPath(_currentHex, enemyHex);
-            int distance = shortestPath.Count;
-
-            // Move one step at a time along the path until reaching a hex adjacent to the enemy unit's hex
-            foreach (Hex nextHex in shortestPath)
-            {
-                if (_currentHex.IsAdjacentToHex(nextHex))
-                {
-                    Debug.Log(UnitName + " next hex: " + nextHex.ToString());
-                    if (distance <= _range || _currentHex.IsAdjacentToHex(enemyHex))
-                    {
-                        Attack(enemyHex.UnitOnHex);
-                    }
-                    else
-                    {
-                        MoveToHex(nextHex);
-                        distance--;
-                    }
-                    break;
-                }
-            }
-        }
-        else
-        {
-            Debug.LogWarning("No enemy found");
-        }
-    }
-
-    // Find the shortest path using BFS
-    private List<Hex> FindShortestPath(Hex startHex, Hex targetHex)
-    {
-        Dictionary<Hex, Hex> cameFrom = new(); // To reconstruct the path
-        Queue<Hex> frontier = new(); // Queue for BFS traversal
-        HashSet<Hex> visited = new(); // To keep track of visited hexes
-
-        frontier.Enqueue(startHex);
-        visited.Add(startHex);
-
-        while (frontier.Count > 0)
-        {
-            Hex currentHex = frontier.Dequeue();
-
-            if (currentHex.Equals(targetHex))
-            {
-                // Reconstruct the path
-                List<Hex> path = new();
-                Hex current = targetHex;
-                while (!current.Equals(startHex))
-                {
-                    path.Add(current);
-                    current = cameFrom[current];
-                }
-                path.Reverse(); // Reverse to get the correct order
-                return path;
-            }
-
-            // Explore the neighbors
-            foreach (Hex neighbor in currentHex.AdjacentHexes)
-            {
-                // The target hex is taken, but we still want it included in the path
-                if (neighbor.Equals(targetHex))
-                {
-                    if (!visited.Contains(neighbor))
-                    {
-                        frontier.Enqueue(neighbor);
-                        visited.Add(neighbor);
-                        cameFrom[neighbor] = currentHex;
-                    }
-                }
-                // For other neighbors we want to check if its taken to find a different path
-                else
-                {
-                    if (!visited.Contains(neighbor) && !neighbor.IsTaken)
-                    {
-                        frontier.Enqueue(neighbor);
-                        visited.Add(neighbor);
-                        cameFrom[neighbor] = currentHex;
-                    }
-                }
-            }
-        }
-
-        // If no path found, return an empty list
-        return new List<Hex>();
-    }
-
-    // Find closest enemy unit on board
-    private Hex FindClosestEnemy()
-    {
-        Hex closestHex = null;
-        float shortestDistance = float.MaxValue;
-        if (_owner == LocalPlayer.Instance)
-        {
-            foreach (GameUnit enemyUnit in Opponent.Instance.BoardUnits)
-            {
-                // Calculate distance between current unit and enemy unit
-                if (_currentHex != null && enemyUnit.CurrentHex != null)
-                {
-                    float distance = Vector2Int.Distance(_currentHex.ToVector2Int(), enemyUnit.CurrentHex.ToVector2Int());
-
-                    // Check if this enemy unit is closer than the previously found closest one
-                    if (distance < shortestDistance)
-                    {
-                        shortestDistance = distance;
-                        closestHex = enemyUnit.CurrentHex;
-                    }
-                }
-            }
-        }
-        else
-        {
-            foreach (GameUnit playerUnit in LocalPlayer.Instance.BoardUnits)
-            {
-                if (_currentHex != null && playerUnit.CurrentHex != null)
-                {
-                    // Calculate distance between current unit and enemy unit
-                    float distance = Vector2Int.Distance(_currentHex.ToVector2Int(), playerUnit.CurrentHex.ToVector2Int());
-
-                    // Check if this enemy unit is closer than the previously found closest one
-                    if (distance < shortestDistance)
-                    {
-                        shortestDistance = distance;
-                        closestHex = playerUnit.CurrentHex;
-                    }
-                }
-            }
-        }
-        return closestHex;
-    }
-
-    // Method to move the unit to a specific hex
-    private void MoveToHex(Hex hex)
-    {
-        //transform.position = hex.transform.position;
-        StartCoroutine(MoveCoroutine(hex));
-
-    }
-
-    // Coroutine for moving the unit
-    private IEnumerator MoveCoroutine(Hex hex)
-    {
-        // Get the target position of the hex
-        Vector3 targetPosition = hex.transform.position;
-
-        // Move the unit towards the target position
-        while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
-        {
-            // Calculate the next position to move towards
-            Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, MOVE_SPEED * Time.deltaTime);
-
-            transform.position = newPosition;
-
-            // Wait for the next frame
-            yield return null;
-        }
-
-        // Snap the unit to the exact position of the hex
-        PlaceOnHex(hex);
-    }
-
-    public void Attack(GameUnit target)
-    {
-        Debug.Log("attack");
-        //animator.SetBool("Cast 0", true);
-        //animator.SetTrigger("Cast");
-    }
-
-    public void UseAbility()
-    {
-        // Check if the unit has an ability and execute it
-        //Ability?.ExecuteAbility();
-    }
-
     public bool Equals(GameUnit other)
     {
         return UnitName == other.UnitName;
@@ -427,7 +241,23 @@ public class GameUnit : Unit
         _isOnBoard = true;
         transform.SetParent(hex.transform);
         transform.position = hex.transform.position;
-        //MoveTowardsEnemyUnit();
+    }
+
+    public void ChangeHex(Hex hex)
+    {
+        if (hex == null)
+        {
+            Debug.LogWarning("hex is null");
+            return;
+        }
+        if (_currentHex != null)
+        {
+            _currentHex.IsTaken = false;
+        }
+        _currentHex = hex;
+        hex.IsTaken = true;
+        hex.UnitOnHex = this;
+        _isOnBoard = true;
     }
 
     public void RemoveFromBoard()
@@ -442,12 +272,34 @@ public class GameUnit : Unit
         _owner.BoardUnits.Remove(this);
     }
 
-    public override void SetUnitData(UnitData unitData)
+    public void Attack(GameUnit target)
     {
-        base.SetUnitData(unitData);
-        _maxHp = _unitData.MaxHp;
-        _maxMp = _unitData.MaxMp;
-        _baseAttackDamage = _unitData.BaseAttackDamage;
-        _range = _unitData.Range;
+        if (_animator != null)
+        {
+            _animator.SetBool("Cast0", true);
+        }
+        else
+        {
+            Debug.LogWarning("Missing animator");
+        }
+        //animator.SetTrigger("Cast");
     }
+    public void StopAttack(GameUnit target)
+    {
+        if (_animator != null)
+        {
+            //_animator.SetBool("Cast0", false);
+        }
+        else
+        {
+            Debug.LogWarning("Missing animator");
+        }
+    }
+
+    public void UseAbility()
+    {
+        // Check if the unit has an ability and execute it
+        //Ability?.ExecuteAbility();
+    }
+
 }

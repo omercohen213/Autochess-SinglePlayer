@@ -445,6 +445,8 @@ GameObject:
   - component: {fileID: 1423470163212545531}
   - component: {fileID: 8829033274029990554}
   - component: {fileID: 3028665045429058820}
+  - component: {fileID: 4574292371330682774}
+  - component: {fileID: 6661211588813225034}
   m_Layer: 0
   m_Name: Pug
   m_TagString: Untagged
@@ -588,19 +590,42 @@ MonoBehaviour:
   _unitData: {fileID: 11400000, guid: ed9694e3951334c42ae346de136788c8, type: 2}
   _unitName: 
   _cost: 0
+  _rarity: 0
   _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
   _maxMp: 0
   _baseAttackDamage: 0
   _range: 0
   _starPrefab: {fileID: 0}
-  _starsParent: {fileID: 0}
   _isOnBoard: 0
-  _currentHex: {fileID: 0}
-  _currentBenchSlot: {fileID: 0}
   _Stages: 
   StarLevel: 0
   AttackDamage: 0
+--- !u!114 &4574292371330682774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8292c7929b5a943b3b46ffab269e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6661211588813225034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fafae0f36d9868348b6ceeec20214f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1785783350246851850
 GameObject:
   m_ObjectHideFlags: 0

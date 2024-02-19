@@ -545,6 +545,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ShopUnitUncommon
       objectReference: {fileID: 0}
+    - target: {fileID: 4533535671719471477, guid: bcbe30e13e4e07740a5e8ea1948d1b2f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcbe30e13e4e07740a5e8ea1948d1b2f, type: 3}
 --- !u!224 &2603145483097845471 stripped

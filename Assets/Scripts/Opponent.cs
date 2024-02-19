@@ -9,7 +9,6 @@ public class Opponent : Player
 {
     public static Opponent Instance { get; private set; }
 
-
     private void Awake()
     {
         if (Instance != null)
@@ -46,16 +45,18 @@ public class Opponent : Player
         {
             if (gameUnit.UnitName == "Pug")
             {
-                gameUnit.PlaceOnHex(Board.Instance.GetHex(5, 1));
+                Hex randomHex = GetRandomHex();
+                gameUnit.PlaceOnHex(Board.Instance.GetHex(4, 1));
+                //gameUnit.PlaceOnHex(randomHex);
+                _boardUnits.Add(gameUnit);
             }
-           /* if (gameUnit.UnitName == "Dog")
+/*            if (gameUnit.UnitName == "Dog")
             {
-                gameUnit.PlaceOnHex(Board.Instance.GetHex(6, 3));
-
+                Hex randomHex = GetRandomHex();
+                gameUnit.PlaceOnHex(randomHex);
+                _boardUnits.Add(gameUnit);
             }*/
-            //Hex randomHex = GetRandomHex();
-            //gameUnit.PlaceOnHex(randomHex);
-            _boardUnits.Add(gameUnit);
+            
         }
     }
 

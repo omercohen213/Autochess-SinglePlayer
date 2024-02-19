@@ -27009,6 +27009,9 @@ GameObject:
   - component: {fileID: 3138743715367414029}
   - component: {fileID: 8213460557682643511}
   - component: {fileID: 1509189479234021291}
+  - component: {fileID: 3522594779024000149}
+  - component: {fileID: 2854677572208674702}
+  - component: {fileID: 5741166503900416247}
   m_Layer: 6
   m_Name: Fireheart
   m_TagString: DraggableObject
@@ -27348,14 +27351,13 @@ MonoBehaviour:
   _cost: 0
   _rarity: 0
   _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
   _maxMp: 0
   _baseAttackDamage: 0
   _range: 0
   _starPrefab: {fileID: 0}
   _isOnBoard: 0
-  _currentHex: {fileID: 0}
-  _currentBenchSlot: {fileID: 0}
   _Stages: 
   StarLevel: 0
   AttackDamage: 0
@@ -27385,6 +27387,51 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.7601385, y: 2.9622169}
   m_EdgeRadius: 0
+--- !u!95 &3522594779024000149
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2854677572208674702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8292c7929b5a943b3b46ffab269e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5741166503900416247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fafae0f36d9868348b6ceeec20214f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3705941194928310209
 GameObject:
   m_ObjectHideFlags: 0
