@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        boardLimit = 2;     
+        boardLimit = 20;     
     }
 
     // Decrease gold by amount
@@ -66,7 +66,6 @@ public class Player : MonoBehaviour
     {
         Lvl++;
         boardLimit++;
-        UIManager.Instance.UpdateXpUI();
         UIManager.Instance.UpdateBoardLimit();
         UIManager.Instance.UpdatePlayerLvlUI();
     }

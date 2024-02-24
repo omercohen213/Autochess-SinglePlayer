@@ -716,21 +716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitData: {fileID: 0}
-  _unitName: 
-  _cost: 0
-  _rarity: 0
   _traits: []
-  _owner: {fileID: 0}
-  _maxHp: 0
-  _maxMp: 0
-  _baseAttackDamage: 0
-  _range: 0
-  _starPrefab: {fileID: 396680785574740202, guid: b1c64ccd81fc87a4a9042a97ab7da314, type: 3}
-  _isOnBoard: 0
-  _Stages: 
-  StarLevel: 0
-  AttackDamage: 0
 --- !u!95 &6052668832958664579
 Animator:
   serializedVersion: 5

@@ -56,10 +56,9 @@ public class GameManager : MonoBehaviour
         switch (currentPhase)
         {
             case GamePhase.Preparation:
-                Debug.Log("Starting preparation phase...");
                 break;
             case GamePhase.Battle:
-                Debug.Log("Starting next preparation phase...");
+                //Debug.Log("Starting next preparation phase...");
                 break;
             default:
                 Debug.LogError("Unknown game phase!");

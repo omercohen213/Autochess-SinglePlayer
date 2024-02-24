@@ -2,10 +2,13 @@
 - trait hover
 - shop unit highlight when on bench/board
 - shop unit hover animation
+- hp and damage to units
+- star lvl base stats
+- enable bench units drag on battle
+
+- fix costs on hexes changed from other units
+- fix on star up unit destroy
+- swap unit places
 
 - OBJECT POOLING
-- fix datatabase on unity start bug
 - encapsulate properties not used in editor
-- fix circle collider on hex with drag
--fireheart shop traits fix
--starts fix

@@ -6,11 +6,11 @@ using UnityEngine;
 
 public class DragManager : MonoBehaviour
 {
-    private bool isEnable;
-    private bool isDragging = false;
-    private RaycastHit2D[] hits;
-    private GameObject draggedObject;
-    GameObject lastHexHovered = null;
+    private bool _isEnable;
+    private bool _isDragging = false;
+    private RaycastHit2D[] _hits;
+    private GameObject _draggedObject;
+    private GameObject _lastHexHovered = null;
 
     private int shopLayer;
     private int benchLayer;
@@ -27,29 +27,29 @@ public class DragManager : MonoBehaviour
 
     void Update()
     {
-        if (isEnable)
+        if (_isEnable)
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, layerMask);
-            if (Input.GetMouseButtonDown(0) && !isDragging)
+            _hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, layerMask);
+            if (Input.GetMouseButtonDown(0) && !_isDragging)
             {
 
                 // Loop through all hits
-                foreach (RaycastHit2D hit in hits)
+                foreach (RaycastHit2D hit in _hits)
                 {
                     if (hit.collider != null && hit.collider.gameObject.CompareTag("DraggableObject"))
                     {
-                        draggedObject = hit.collider.gameObject;
+                        _draggedObject = hit.collider.gameObject;
                         StartDragging();
                     }
                 }
             }
             // Continue dragging gameobject
-            else if (isDragging && Input.GetMouseButton(0))
+            else if (_isDragging && Input.GetMouseButton(0))
             {
                 ContinueDragging();
                 GameObject hexGo = null;
-                foreach (RaycastHit2D hit in hits)
+                foreach (RaycastHit2D hit in _hits)
                 {
                     if (hit.collider != null && hit.collider.gameObject.CompareTag("Hex"))
                     {
@@ -63,19 +63,19 @@ public class DragManager : MonoBehaviour
                 }
 
                 // Check if the hex under the mouse has changed
-                if (hexGo != lastHexHovered)
+                if (hexGo != _lastHexHovered)
                 {
                     StopHexHover();
-                    lastHexHovered = hexGo;
+                    _lastHexHovered = hexGo;
                 }
             }
             // Stop dragging gameobject
-            else if (isDragging && Input.GetMouseButtonUp(0))
+            else if (_isDragging && Input.GetMouseButtonUp(0))
             {
                 StopDragging();
                 StopHexHover();
             }
-        }      
+        }
     }
 
     public void OnPhaseChanged(GamePhase newPhase)
@@ -83,7 +83,7 @@ public class DragManager : MonoBehaviour
         switch (newPhase)
         {
             case GamePhase.Preparation:
-                isEnable = true;
+                _isEnable = true;
                 break;
             case GamePhase.Battle:
                 //isEnable = false;
@@ -93,25 +93,26 @@ public class DragManager : MonoBehaviour
 
     private void StopHexHover()
     {
-        if (lastHexHovered != null)
+        if (_lastHexHovered != null)
         {
-            if (lastHexHovered.TryGetComponent(out Hex lastHex))
+            if (_lastHexHovered.TryGetComponent(out Hex lastHex))
             {
                 lastHex.OnHoverStopped();
             }
-        }        
+        }
     }
 
     // Set the starting offset position
     private void StartDragging()
     {
-        isDragging = true;
+        _isDragging = true;
 
-        draggedObject.TryGetComponent(out GameUnit gameUnit);
+        _draggedObject.TryGetComponent(out GameUnit gameUnit);
         if (gameUnit != null)
         {
             gameUnit.HandleDragStarted();
         }
+
 
     }
 
@@ -119,16 +120,16 @@ public class DragManager : MonoBehaviour
     private void ContinueDragging()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        draggedObject.transform.position = new Vector3(mousePosition.x, mousePosition.y);
+        _draggedObject.transform.position = new Vector3(mousePosition.x, mousePosition.y);
     }
 
     private void StopDragging()
     {
-        isDragging = false;
-        draggedObject.TryGetComponent(out GameUnit gameUnit);
+        _isDragging = false;
+        _draggedObject.TryGetComponent(out GameUnit gameUnit);
         if (gameUnit != null)
         {
-            GameObject objDraggedOn = GetObjectDraggedOn(draggedObject.transform.position, draggedObject);
+            GameObject objDraggedOn = GetObjectDraggedOn(_draggedObject.transform.position, _draggedObject);
             gameUnit.HandleDragStopped(objDraggedOn);
         }
     }

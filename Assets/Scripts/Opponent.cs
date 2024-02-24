@@ -46,17 +46,15 @@ public class Opponent : Player
             if (gameUnit.UnitName == "Pug")
             {
                 Hex randomHex = GetRandomHex();
-                gameUnit.PlaceOnHex(Board.Instance.GetHex(4, 1));
-                //gameUnit.PlaceOnHex(randomHex);
+                gameUnit.PlaceOnHex(randomHex);
                 _boardUnits.Add(gameUnit);
             }
-/*            if (gameUnit.UnitName == "Dog")
+           /* if (gameUnit.UnitName == "Dog")
             {
                 Hex randomHex = GetRandomHex();
                 gameUnit.PlaceOnHex(randomHex);
                 _boardUnits.Add(gameUnit);
             }*/
-            
         }
     }
 

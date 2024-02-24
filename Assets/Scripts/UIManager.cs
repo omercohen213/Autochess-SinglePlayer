@@ -73,6 +73,7 @@ public class UIManager : MonoBehaviour
     public void UpdatePlayerLvlUI()
     {
         _lvlText.text = _player.Lvl.ToString();
+        UpdateXpUI();
     }
 
 

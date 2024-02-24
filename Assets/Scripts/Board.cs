@@ -87,19 +87,25 @@ public class Board : MonoBehaviour
             {
                 gameUnit.PlaceOnHex(hex);              
             }
-            // Hex is taken, return unit to its current hex
+            // Hex is taken, swap places
             else
             {
                 gameUnit.PlaceOnHex(gameUnit.CurrentHex);
+
+               /* hex.UnitOnHex.PlaceOnHex(gameUnit.CurrentHex);
+                gameUnit.PlaceOnHex(hex);*/
             }
         }
         // Unit is on bench
         else
         {
-            // Hex is taken, return it to its current bench slot
+            // Hex is taken, swap places
             if (hex.IsTaken)
             {
                 gameUnit.Owner.Bench.PutUnitOnBenchSlot(gameUnit, gameUnit.CurrentBenchSlot);
+              /*  hex.UnitOnHex.Owner.Bench.PutUnitOnBenchSlot(hex.UnitOnHex, gameUnit.CurrentBenchSlot);
+                hex.UnitOnHex.RemoveFromBoard();
+                gameUnit.PlaceOnHex(hex);*/
             }
             // Hex is not taken, Remove it from bench and add it to board on given hex
             else

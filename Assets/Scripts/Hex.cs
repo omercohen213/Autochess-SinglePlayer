@@ -12,7 +12,7 @@ public class Hex : MonoBehaviour
     public int X { get => _x; }
     public int Y { get => _y; }
 
-    private bool _isTaken;
+    [SerializeField] private bool _isTaken;
     public bool IsTaken { get => _isTaken; set => _isTaken = value; }
     public GameUnit UnitOnHex;
 
@@ -22,8 +22,8 @@ public class Hex : MonoBehaviour
     private Hex _connectedHex;
 
     private Color hexColor;
-    private Color HOVER_ALLOWED = Color.gray;
-    private Color HOVER_NOT_ALLOWED = new(200 / 255f, 70 / 255f, 70 / 255f);
+    private Color HOVER_ALLOWED = new(60 / 255f, 60 / 255f, 60 / 255f);
+    private Color HOVER_NOT_ALLOWED = new(255 / 255f, 40 / 255f, 40 / 255f);
 
     public Hex ConnectedHex { get => _connectedHex; set => _connectedHex = value; }
     private List<Hex> _adjacentHexes = new();
@@ -135,7 +135,7 @@ public class Hex : MonoBehaviour
     // Change color when hovered
     public void OnHover()
     {
-        if (gameObject.TryGetComponent(out SpriteRenderer spriteRenderer))
+        if (transform.Find("Background").gameObject.TryGetComponent(out SpriteRenderer spriteRenderer))
         {
             if (X < 4)
             {
@@ -151,7 +151,7 @@ public class Hex : MonoBehaviour
     // Revert color back to normal
     public void OnHoverStopped()
     {
-        if (gameObject.TryGetComponent(out SpriteRenderer spriteRenderer))
+        if (transform.Find("Background").gameObject.TryGetComponent(out SpriteRenderer spriteRenderer))
         {
             spriteRenderer.color = hexColor;
         }

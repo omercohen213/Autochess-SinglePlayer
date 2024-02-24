@@ -9,6 +9,7 @@ namespace Assets.FantasyMonsters.Scripts
     /// <summary>
     /// The main script to control monsters.
     /// </summary>
+    [RequireComponent(typeof(Animator))]
     public class Monster : MonoBehaviour
     {
         public SpriteRenderer Head;
@@ -22,6 +23,7 @@ namespace Assets.FantasyMonsters.Scripts
         /// </summary>
         public void Awake()
         {
+            Animator = GetComponent<Animator>();
             if (Variations)
             {
                 var variations = GetComponents<MonsterVariation>();

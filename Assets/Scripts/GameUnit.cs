@@ -7,61 +7,67 @@ using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using static UnityEngine.UI.CanvasScaler;
 
-[RequireComponent(typeof(Animator))]
-public class GameUnit : Unit
+public class GameUnit : Unit, IDamageable
 {
-    [SerializeField] private Player _owner;
-    [SerializeField] private int _maxHp;
-    [SerializeField] private int _maxMp;
-    [SerializeField] private int _baseAttackDamage;
-    [SerializeField] private int _range;
-    [SerializeField] private GameObject _starPrefab;
-    private Animator _animator;
+    private Player _owner;
+    private int _maxHp;
+    private int _maxMp;
+    private int _baseAttackDamage;
+    private int _baseAttackSpeed;
+    private int _range;
     private GamePhase _currentGamePhase;
 
-    public bool _isOnBoard;
+    private bool _isOnBoard;
     private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
     private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
-    public Dictionary<Trait, int> TraitStages = new();
-    public List<int> _Stages = new();
+    private Dictionary<Trait, int> _traitStages = new();
 
-    public int StarLevel;
-    public int AttackDamage;
+    private int _starLevel;
+    private int _attackDamage;
+    private int _attackSpeed;
+    private int _hp;
+    private int _mp;
 
     public readonly int MAX_STAR_LEVEL = 3;
-    [SerializeField] public Player Owner { get => _owner; set => _owner = value; }
+  
+    public Player Owner { get => _owner; set => _owner = value; }
     public int MaxHp { get => _maxHp; private set => _maxHp = value; }
     public int MaxMp { get => _maxMp; private set => _maxMp = value; }
     public int BaseAttackDamage { get => _baseAttackDamage; private set => _baseAttackDamage = value; }
+    public int Range { get => _range; set => _range = value; }
     public bool IsOnBoard { get => _isOnBoard; set => _isOnBoard = value; }
     public Hex CurrentHex { get => _currentHex; set => _currentHex = value; }
     public BenchSlot CurrentBenchSlot { get => _currentBenchSlot; set => _currentBenchSlot = value; }
-    public int Range { get => _range; set => _range = value; }
+    public Dictionary<Trait, int> TraitStages { get => _traitStages; set => _traitStages = value; }
+    public int AttackDamage { get => _attackDamage; set => _attackDamage = value; }
+    public int StarLevel { get => _starLevel; set => _starLevel = value; }
+    public int Hp { get => _hp; set => _hp = value; }
+    public int Mp { get => _mp; set => _mp = value; }
+    public int BaseAttackSpeed { get => _baseAttackSpeed; set => _baseAttackSpeed = value; }
+    public int AttackSpeed { get => _attackSpeed; set => _attackSpeed = value; }
 
-    private void Awake()
+    private void OnEnable()
     {
-        Transform animationTransform = transform.Find("Animation");
-        if (animationTransform != null)
-        {
-            _animator = animationTransform.GetComponent<Animator>();
-        }
-        else
-        {
-            Debug.LogWarning("Missing animation transform on game unit " + UnitName);
-        }
+        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
+    }
+
+    private void OnDisable()
+    {
+        //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+
     }
 
     private void Start()
     {
-        AttackDamage = _baseAttackDamage;
+        _attackDamage = _baseAttackDamage;
+        _attackSpeed= _baseAttackSpeed;
 
         // Initialize all traits with stage 0
         foreach (var trait in Traits)
         {
-            TraitStages.Add(trait, 0);
+            _traitStages.Add(trait, 0);
         }
 
-        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
     public void Initialize(Player owner, UnitData unitData, int starLevel)
@@ -71,15 +77,16 @@ public class GameUnit : Unit
         SetUnitStarLevel(starLevel);
     }
 
-
     public override void SetUnitData(UnitData unitData)
     {
         base.SetUnitData(unitData);
         _maxHp = _unitData.MaxHp;
         _maxMp = _unitData.MaxMp;
         _baseAttackDamage = _unitData.BaseAttackDamage;
-        Range = _unitData.Range;
+        //_baseAttackSpeed= _unitData.BaseAttackSpeed;
+        _range = _unitData.Range;
     }
+
     private void OnPhaseChanged(GamePhase newPhase)
     {
         switch (newPhase)
@@ -147,7 +154,6 @@ public class GameUnit : Unit
         if (Owner.IsBoardLimitReached() && !IsOnBoard)
         {
             ReturnToPlace();
-            Debug.Log("Units limit reached");
         }
 
         // Allow only on player's side of the board
@@ -223,7 +229,8 @@ public class GameUnit : Unit
             _currentBenchSlot = null;
         }
     }
-
+    
+    // Places a unit on given hex
     public void PlaceOnHex(Hex hex)
     {
         if (hex == null)
@@ -234,6 +241,7 @@ public class GameUnit : Unit
         if (_currentHex != null)
         {
             _currentHex.IsTaken = false;
+        _currentHex.UnitOnHex = null;
         }
         _currentHex = hex;
         hex.IsTaken = true;
@@ -243,6 +251,7 @@ public class GameUnit : Unit
         transform.position = hex.transform.position;
     }
 
+    // Changing unit's hex without changing its' position
     public void ChangeHex(Hex hex)
     {
         if (hex == null)
@@ -254,6 +263,7 @@ public class GameUnit : Unit
         {
             _currentHex.IsTaken = false;
         }
+        _currentHex.UnitOnHex = null;
         _currentHex = hex;
         hex.IsTaken = true;
         hex.UnitOnHex = this;
@@ -272,34 +282,37 @@ public class GameUnit : Unit
         _owner.BoardUnits.Remove(this);
     }
 
-    public void Attack(GameUnit target)
+    public List<GameUnit> GetEnemyUnits()
     {
-        if (_animator != null)
+        if (_owner == LocalPlayer.Instance)
         {
-            _animator.SetBool("Cast0", true);
+            return Opponent.Instance.BoardUnits;
         }
         else
         {
-            Debug.LogWarning("Missing animator");
+            return LocalPlayer.Instance.BoardUnits;
         }
-        //animator.SetTrigger("Cast");
     }
-    public void StopAttack(GameUnit target)
+    public void ReceiveDamage(int damageAmount)
     {
-        if (_animator != null)
+        _hp -= damageAmount;
+        if (_hp <= 0)
         {
-            //_animator.SetBool("Cast0", false);
+            _hp = 0;
+            Death();
         }
-        else
-        {
-            Debug.LogWarning("Missing animator");
-        }
+        // OnHpChange();
     }
 
-    public void UseAbility()
+    public bool IsDamageToKill(float damage)
     {
-        // Check if the unit has an ability and execute it
-        //Ability?.ExecuteAbility();
+        throw new NotImplementedException();
     }
 
+    public void Death()
+    {
+        throw new NotImplementedException();
+    }
+
+   
 }

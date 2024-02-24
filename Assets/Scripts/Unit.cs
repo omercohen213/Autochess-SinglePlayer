@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    [SerializeField] protected UnitData _unitData;
-    [SerializeField] protected string _unitName;
-    [SerializeField] protected int _cost;
-    [SerializeField] protected UnitRarity _rarity;
+    protected UnitData _unitData;
+    protected string _unitName;
+    protected int _cost;
+    protected UnitRarity _rarity;
     [SerializeField] protected List<Trait> _traits;
     public string UnitName { get => _unitName; private set => _unitName = value; }
     public UnitData UnitData { get => _unitData; private set => _unitData = value; }

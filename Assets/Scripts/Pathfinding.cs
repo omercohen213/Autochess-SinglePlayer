@@ -9,25 +9,29 @@ using UnityEngine;
 using UnityEngine.TextCore.LowLevel;
 using Debug = UnityEngine.Debug;
 
-public class Pathfinding : MonoBehaviour
+public class Pathfinding
 {
-    private List<Hex> toSearch = new();
-    private List<Hex> processed = new();
+    private readonly List<Hex> toSearch;
+    private readonly List<Hex> processed;
     private readonly int MOVE_COST = 1;
+
+    public Pathfinding()
+    {
+        toSearch = new();
+        processed = new();
+    }
 
     // Find the shortest path from starting hex to a target hex using A* algorithm
     public List<Hex> FindShortestPath(Hex startHex, Hex targetHex)
     {
         if (startHex == null || targetHex == null)
         {
-            Debug.LogWarning("null start or target hex " + gameObject.GetComponent<GameUnit>().UnitName);
+            Debug.LogWarning("null start or target hex ");
             return null;
         }
 
         startHex.GCost = 0;
         startHex.HCost = 0;
-        toSearch.Clear();
-        processed.Clear();
         toSearch.Add(startHex);
 
         while (toSearch.Any())
@@ -58,6 +62,7 @@ public class Pathfinding : MonoBehaviour
                     currentPathTile = currentPathTile.ConnectedHex;
                 }
                 path.Reverse(); // Reverse to get the correct order
+                ClearHexCosts();
                 return path;
             }
 
@@ -83,7 +88,17 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
+        ClearHexCosts();
         return null;
+    }
+
+    private void ClearHexCosts()
+    {
+        foreach (Hex hex in processed)
+        {
+            hex.HCost = 0;
+            hex.GCost = 0;
+        }
     }
 
     public float GetHeuristicDistance(Hex currentHex, Hex targetHex)
@@ -102,7 +117,7 @@ public class Pathfinding : MonoBehaviour
             // Calculate distance between current unit and enemy unit
             if (currentHex != null && enemyUnit.CurrentHex != null)
             {
-                float distance = Vector2Int.Distance(currentHex.ToVector2Int(), enemyUnit.CurrentHex.ToVector2Int());
+                float distance = GetHeuristicDistance(currentHex, enemyUnit.CurrentHex);
 
                 // Check if this enemy unit is closer than the previously found closest one
                 if (distance < shortestDistance)
