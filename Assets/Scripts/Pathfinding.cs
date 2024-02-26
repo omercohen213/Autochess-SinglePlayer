@@ -106,6 +106,24 @@ public class Pathfinding
         return MOVE_COST * Vector3.Distance(currentHex.transform.position, targetHex.transform.position);
     }
 
+    public int Distance(Hex currentHex, Hex targetHex)
+    {
+        int dx = targetHex.X - currentHex.X;
+        int dy = targetHex.Y - currentHex.Y;
+
+        int dist;
+        if (Math.Sign(dx) == Math.Sign(dy))
+        {
+            dist = Math.Abs(dx + dy);
+        }
+        else
+        {
+            dist = Math.Max(Math.Abs(dx), Math.Abs(dy));
+        }
+
+        return dist;
+    }
+
     // Find closest enemy unit on board
     public Hex FindClosestEnemy(List<GameUnit> enemyUnits, Hex currentHex)
     {

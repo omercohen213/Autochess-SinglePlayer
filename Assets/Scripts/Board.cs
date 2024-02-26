@@ -2,6 +2,7 @@ using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -50,9 +51,9 @@ public class Board : MonoBehaviour
                 // Create the hex gameObject
                 GameObject hexGo = Instantiate(_hexPrefab, pos, Quaternion.identity, transform);
                 Hex hex = hexGo.GetComponent<Hex>();
-                hex.Initialize(i,j);
+                hex.Initialize(i, j);
                 _hexes.Add(hex);
-                
+
                 pos += new Vector3(0f, HEX_SPACING_Y); // Space out the hexes in the Y axis
             }
             pos = new Vector3(pos.x + HEX_SPACING_X, transform.position.y); // Space out in the X axis           
@@ -61,12 +62,12 @@ public class Board : MonoBehaviour
 
     public Hex GetHex(int x, int y)
     {
-        if (x < 0 || x> 7 || y<0 || y > 4)
+        if (x < 0 || x > 7 || y < 0 || y > 4)
         {
             return null;
         }
 
-        foreach(Hex hex in _hexes)
+        foreach (Hex hex in _hexes)
         {
             if (hex.X == x && hex.Y == y)
             {
@@ -85,15 +86,13 @@ public class Board : MonoBehaviour
             // Hex is not taken - place the unit on it
             if (!hex.IsTaken)
             {
-                gameUnit.PlaceOnHex(hex);              
+                gameUnit.PlaceOnHex(hex);
             }
             // Hex is taken, swap places
             else
             {
-                gameUnit.PlaceOnHex(gameUnit.CurrentHex);
-
-               /* hex.UnitOnHex.PlaceOnHex(gameUnit.CurrentHex);
-                gameUnit.PlaceOnHex(hex);*/
+                hex.UnitOnHex.PlaceOnHex(gameUnit.CurrentHex);
+                gameUnit.PlaceOnHex(hex);
             }
         }
         // Unit is on bench
@@ -102,51 +101,57 @@ public class Board : MonoBehaviour
             // Hex is taken, swap places
             if (hex.IsTaken)
             {
-                gameUnit.Owner.Bench.PutUnitOnBenchSlot(gameUnit, gameUnit.CurrentBenchSlot);
-              /*  hex.UnitOnHex.Owner.Bench.PutUnitOnBenchSlot(hex.UnitOnHex, gameUnit.CurrentBenchSlot);
-                hex.UnitOnHex.RemoveFromBoard();
-                gameUnit.PlaceOnHex(hex);*/
+                GameUnit gameUnitToSwap = hex.UnitOnHex;
+                BenchSlot currBenchSlot = gameUnit.CurrentBenchSlot;
+
+                gameUnit.Owner.Bench.RemoveUnitFromBench(gameUnit);
+                gameUnitToSwap.Owner.Bench.PlaceOnBenchSlot(gameUnitToSwap, currBenchSlot);
+                gameUnit.Owner.BoardUnits.Add(gameUnit);
+                gameUnit.PlaceOnHex(hex);
+                //UpdateBoardTraits(gameUnit);
+                //PlaceUnitOnBoard(gameUnit, hex);
             }
             // Hex is not taken, Remove it from bench and add it to board on given hex
             else
             {
                 gameUnit.Owner.Bench.RemoveUnitFromBench(gameUnit);
                 gameUnit.Owner.BoardUnits.Add(gameUnit);
-                gameUnit.PlaceOnHex(hex);                
-                UpdateBoardTraits(gameUnit);
+                gameUnit.PlaceOnHex(hex);
                 UIManager.Instance.UpdateBoardLimit();
             }
+            UpdateBoardTraits(gameUnit);
         }
     }
 
     // Remove a unit from board
-    public void RemoveUnitFromBoard(GameUnit unit)
+    public void RemoveUnitFromBoard(GameUnit gameUnit)
     {
-        unit.RemoveFromBoard();       
-        UpdateBoardTraits(unit);
+        gameUnit.RemoveFromBoard();
+        UpdateBoardTraits(gameUnit);
     }
 
     // Update traits to owner's board
-    private void UpdateBoardTraits(GameUnit unit)
+    private void UpdateBoardTraits(GameUnit gameUnit)
     {
+        Debug.Log("updated " + gameUnit.UnitName);
         // Update traits only if there is no same unit on board
-        if (!unit.Owner.IsSameUnitOnBoard(unit))
+        if (!gameUnit.Owner.IsSameUnitOnBoard(gameUnit))
         {
-            foreach (Trait trait in unit.Traits)
+            foreach (Trait trait in gameUnit.Traits)
             {
-                List<GameUnit> unitsWithTrait = unit.Owner.GetUnitsWithTrait(trait);
+                List<GameUnit> unitsWithTrait = gameUnit.Owner.GetUnitsWithTrait(trait);
                 int unitCount = unitsWithTrait.Count;
                 int currentTraitStage = GetBoardTraitStage(trait, unitCount);
 
                 // Get last trait stage according to the unit addition or removal from board
-                int lastTraitStage = unit.IsOnBoard ? GetBoardTraitStage(trait, unitCount - 1) : GetBoardTraitStage(trait, unitCount + 1);
-                trait.UpdateTrait(unitsWithTrait, unit, currentTraitStage, lastTraitStage);
-                int lastUnitCount = unit.IsOnBoard ? unitCount - 1 : unitCount + 1;
+                int lastTraitStage = gameUnit.IsOnBoard ? GetBoardTraitStage(trait, unitCount - 1) : GetBoardTraitStage(trait, unitCount + 1);
+                trait.UpdateTrait(unitsWithTrait, gameUnit, currentTraitStage, lastTraitStage);
+                int lastUnitCount = gameUnit.IsOnBoard ? unitCount - 1 : unitCount + 1;
                 UIManager.Instance.UpdateTraitUI(trait, currentTraitStage, unitCount, lastUnitCount);
             }
-        }      
+        }
     }
-    
+
     // Get the stage of the trait according to how many units are on board
     public int GetBoardTraitStage(Trait trait, int unitCount)
     {
@@ -161,4 +166,29 @@ public class Board : MonoBehaviour
         return traitStage;
     }
 
+    public void OnUnitDragStarted()
+    {
+        foreach (Hex hex in _hexes.Where(hex => hex.X < 4))
+        {
+            Transform border = hex.transform.Find("Border");
+            for (int i = 0; i < border.childCount; i++)
+            {
+                SpriteRenderer spriteRenderer = border.GetChild(i).GetComponent<SpriteRenderer>();
+                spriteRenderer.color = Color.cyan;
+            }
+        }
+    }
+
+    internal void OnUnitDragStopped()
+    {
+        foreach (Hex hex in _hexes.Where(hex => hex.X < 4))
+        {
+            Transform border = hex.transform.Find("Border");
+            for (int i = 0; i < border.childCount; i++)
+            {
+                SpriteRenderer spriteRenderer = border.GetChild(i).GetComponent<SpriteRenderer>();
+                spriteRenderer.color = Color.white;
+            }
+        }
+    }
 }

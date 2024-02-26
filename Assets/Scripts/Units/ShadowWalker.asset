@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
   m_Name: ShadowWalker
   m_EditorClassIdentifier: 
-  Id: 4
   UnitName: Shadow Walker
   Cost: 3
   Rarity: 2
   ShopImage: {fileID: 21300000, guid: d28c92ae45a2dd1479744f237763df7a, type: 3}
   UnitPrefab: {fileID: 1109987028385428, guid: 7382d3f4af36d684fb6d307f6c1e6795, type: 3}
-  MaxHp: 0
-  MaxMp: 0
-  BaseAttackDamage: 0
+  MaxHp: 100
+  MaxMp: 20
+  BaseAttackDamage: 20
+  BaseAttackSpeed: 1
   BaseArmor: 0
   Range: 3
   Traits:

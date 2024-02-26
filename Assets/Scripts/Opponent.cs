@@ -9,21 +9,17 @@ public class Opponent : Player
 {
     public static Opponent Instance { get; private set; }
 
-    private void Awake()
+    protected override void Awake()
     {
         if (Instance != null)
         {
             Destroy(gameObject);
         }
         Instance = this;
-    }
-
-    private void Start()
-    {
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
-    private void OnPhaseChanged(GamePhase newPhase)
+    protected override void OnPhaseChanged(GamePhase newPhase)
     {
         switch (newPhase)
         {
@@ -37,6 +33,7 @@ public class Opponent : Player
             case GamePhase.BattleLost:
                 break;
         }
+        base.OnPhaseChanged(newPhase);
     }
 
     private void BattleEnemy()
@@ -49,12 +46,12 @@ public class Opponent : Player
                 gameUnit.PlaceOnHex(randomHex);
                 _boardUnits.Add(gameUnit);
             }
-           /* if (gameUnit.UnitName == "Dog")
+            if (gameUnit.UnitName == "Dog")
             {
                 Hex randomHex = GetRandomHex();
                 gameUnit.PlaceOnHex(randomHex);
                 _boardUnits.Add(gameUnit);
-            }*/
+            }
         }
     }
 

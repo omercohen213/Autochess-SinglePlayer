@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
   m_Name: Knight
   m_EditorClassIdentifier: 
-  Id: 0
   UnitName: Knight
   Cost: 2
   Rarity: 1
   ShopImage: {fileID: 21300000, guid: c79bde9d05e3d9143bdf08d5e818c52c, type: 3}
   UnitPrefab: {fileID: 1109986417982920, guid: a9c081fd28abd81438fe6bd7b21646ea, type: 3}
-  MaxHp: 0
-  MaxMp: 0
+  MaxHp: 100
+  MaxMp: 100
   BaseAttackDamage: 10
-  BaseArmor: 0
+  BaseAttackSpeed: 1
+  BaseArmor: 5
   Range: 1
   Traits:
   - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}

@@ -717,6 +717,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _traits: []
+  _maxHp: 0
+  _maxMp: 0
+  _baseAttackDamage: 0
+  _baseAttackSpeed: 0
+  _attackDamage: 0
+  _attackSpeed: 0
+  _hp: 0
+  _mp: 0
 --- !u!95 &6052668832958664579
 Animator:
   serializedVersion: 5

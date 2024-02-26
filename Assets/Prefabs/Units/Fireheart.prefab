@@ -27010,6 +27010,7 @@ GameObject:
   - component: {fileID: 8213460557682643511}
   - component: {fileID: 1509189479234021291}
   - component: {fileID: -8845763197816792325}
+  - component: {fileID: 7511910753546943888}
   m_Layer: 6
   m_Name: Fireheart
   m_TagString: DraggableObject
@@ -27345,6 +27346,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _traits: []
+  _maxHp: 0
+  _maxMp: 0
+  _baseAttackDamage: 0
+  _baseAttackSpeed: 0
+  _attackDamage: 0
+  _attackSpeed: 0
+  _hp: 0
+  _mp: 0
 --- !u!61 &1509189479234021291
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -27381,6 +27390,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd9891e111b32f9499b27ccc83590120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7511910753546943888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3705941194928310209
@@ -27566,7 +27587,7 @@ GameObject:
   - component: {fileID: 4574728963535752267}
   - component: {fileID: 4574728963535752264}
   m_Layer: 5
-  m_Name: FrameIcon1
+  m_Name: Class
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27795,7 +27816,7 @@ GameObject:
   - component: {fileID: 4574728963736096046}
   - component: {fileID: 3291067986405024805}
   m_Layer: 5
-  m_Name: Slider_IconType_00_WhiteFill
+  m_Name: Bars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27934,7 +27955,7 @@ GameObject:
   - component: {fileID: 4574728963920012348}
   - component: {fileID: 4574728963920012349}
   m_Layer: 5
-  m_Name: Slider_Bottom
+  m_Name: MpBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28063,7 +28084,7 @@ GameObject:
   - component: {fileID: 4574728964098453753}
   - component: {fileID: 4574728964098453734}
   m_Layer: 5
-  m_Name: Slider_Top
+  m_Name: HpBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

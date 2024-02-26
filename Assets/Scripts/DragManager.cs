@@ -11,15 +11,41 @@ public class DragManager : MonoBehaviour
     private RaycastHit2D[] _hits;
     private GameObject _draggedObject;
     private GameObject _lastHexHovered = null;
+    private GameObject _lastBenchSlotHovered = null;
 
     private int shopLayer;
     private int benchLayer;
     private int layerMask;
 
+    private static DragManager _instance;
+    public static DragManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<DragManager>();
+            }
+            return _instance;
+        }
+    }
+
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
         shopLayer = LayerMask.NameToLayer("Shop");
-        benchLayer = LayerMask.NameToLayer("Bench");
+        //benchLayer = LayerMask.NameToLayer("Bench");
         layerMask = ~(1 << shopLayer) & ~(1 << benchLayer);
 
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
@@ -27,54 +53,75 @@ public class DragManager : MonoBehaviour
 
     void Update()
     {
-        if (_isEnable)
+        if (!_isEnable)
         {
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            _hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, layerMask);
-            if (Input.GetMouseButtonDown(0) && !_isDragging)
-            {
+            return;
+        }
 
-                // Loop through all hits
-                foreach (RaycastHit2D hit in _hits)
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        _hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, layerMask);
+        if (Input.GetMouseButtonDown(0) && !_isDragging)
+        {
+
+            // Loop through all hits
+            foreach (RaycastHit2D hit in _hits)
+            {
+                if (hit.collider != null && hit.collider.gameObject.CompareTag("DraggableObject"))
                 {
-                    if (hit.collider != null && hit.collider.gameObject.CompareTag("DraggableObject"))
-                    {
-                        _draggedObject = hit.collider.gameObject;
-                        StartDragging();
-                    }
+                    _draggedObject = hit.collider.gameObject;
+                    StartDragging();
                 }
             }
-            // Continue dragging gameobject
-            else if (_isDragging && Input.GetMouseButton(0))
+        }
+        // Continue dragging gameobject
+        else if (_isDragging && Input.GetMouseButton(0))
+        {
+            ContinueDragging();
+            GameObject hexGo = null;
+            GameObject benchSlotGo = null;
+            foreach (RaycastHit2D hit in _hits)
             {
-                ContinueDragging();
-                GameObject hexGo = null;
-                foreach (RaycastHit2D hit in _hits)
+                if (hit.collider != null && hit.collider.gameObject.CompareTag("Hex"))
                 {
-                    if (hit.collider != null && hit.collider.gameObject.CompareTag("Hex"))
+                    hexGo = hit.collider.gameObject;
+                    if (hexGo.TryGetComponent(out Hex hex))
                     {
-                        hexGo = hit.collider.gameObject;
-                        if (hexGo.TryGetComponent(out Hex hex))
-                        {
-                            hex.OnHover();
-                        }
-                        break;
+                        hex.OnHover();
                     }
+                    break;
+                }
+                if (hit.collider != null && hit.collider.gameObject.CompareTag("BenchSlot"))
+                {
+                    benchSlotGo = hit.collider.gameObject;
+                    if (benchSlotGo.TryGetComponent(out BenchSlot benchSlot))
+                    {
+                        benchSlot.OnHover();
+                    }
+                    break;
                 }
 
-                // Check if the hex under the mouse has changed
-                if (hexGo != _lastHexHovered)
-                {
-                    StopHexHover();
-                    _lastHexHovered = hexGo;
-                }
             }
-            // Stop dragging gameobject
-            else if (_isDragging && Input.GetMouseButtonUp(0))
+
+            // Check if the hex under the mouse has changed
+            if (hexGo != _lastHexHovered)
             {
-                StopDragging();
                 StopHexHover();
+                _lastHexHovered = hexGo;
             }
+
+            // Check if the hex under the mouse has changed
+            if (benchSlotGo != _lastBenchSlotHovered)
+            {
+                StopBenchSlotHover();
+                _lastBenchSlotHovered = benchSlotGo;
+            }
+        }
+        // Stop dragging gameobject
+        else if (_isDragging && Input.GetMouseButtonUp(0))
+        {
+            StopDragging();
+            StopHexHover();
+            StopBenchSlotHover();
         }
     }
 
@@ -86,8 +133,19 @@ public class DragManager : MonoBehaviour
                 _isEnable = true;
                 break;
             case GamePhase.Battle:
-                //isEnable = false;
+                //_isEnable = false;
                 break;
+        }
+    }
+
+    private void StopBenchSlotHover()
+    {
+        if (_lastBenchSlotHovered != null)
+        {
+            if (_lastBenchSlotHovered.TryGetComponent(out BenchSlot benchSlot))
+            {
+                benchSlot.OnHoverStopped();
+            }
         }
     }
 
@@ -111,9 +169,8 @@ public class DragManager : MonoBehaviour
         if (gameUnit != null)
         {
             gameUnit.HandleDragStarted();
+            Board.Instance.OnUnitDragStarted();
         }
-
-
     }
 
     // Change position of the draggableObject to the mouse position
@@ -131,6 +188,7 @@ public class DragManager : MonoBehaviour
         {
             GameObject objDraggedOn = GetObjectDraggedOn(_draggedObject.transform.position, _draggedObject);
             gameUnit.HandleDragStopped(objDraggedOn);
+            Board.Instance.OnUnitDragStopped();
         }
     }
 

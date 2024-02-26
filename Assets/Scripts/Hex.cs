@@ -22,7 +22,7 @@ public class Hex : MonoBehaviour
     private Hex _connectedHex;
 
     private Color hexColor;
-    private Color HOVER_ALLOWED = new(60 / 255f, 60 / 255f, 60 / 255f);
+    private Color HOVER_ALLOWED = new(70 / 255f, 70 / 255f, 70 / 255f);
     private Color HOVER_NOT_ALLOWED = new(255 / 255f, 40 / 255f, 40 / 255f);
 
     public Hex ConnectedHex { get => _connectedHex; set => _connectedHex = value; }
@@ -32,8 +32,11 @@ public class Hex : MonoBehaviour
 
     private void Start()
     {
-        FindAdjacentHexes();  
-        hexColor = gameObject.GetComponent<SpriteRenderer>().color;
+        FindAdjacentHexes();
+        if (transform.Find("Background").gameObject.TryGetComponent(out SpriteRenderer spriteRenderer))
+        {
+            hexColor = spriteRenderer.color;
+        }
     }
 
     public void Initialize(int x, int y)

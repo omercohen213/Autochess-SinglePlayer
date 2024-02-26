@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430eab95d0b1a5c4496ef2a5fb80efc8, type: 3}
   m_Name: Icewing
   m_EditorClassIdentifier: 
-  Id: 5
   UnitName: Icewing
   Cost: 4
   Rarity: 3
   ShopImage: {fileID: 21300000, guid: 4751d93293a7938469050c809955e836, type: 3}
   UnitPrefab: {fileID: 1109986417982920, guid: 0aeb5fc2164f4a6419e5ef19e2ade6f1, type: 3}
-  MaxHp: 0
-  MaxMp: 0
-  BaseAttackDamage: 0
+  MaxHp: 100
+  MaxMp: 10
+  BaseAttackDamage: 10
+  BaseAttackSpeed: 1
   BaseArmor: 0
   Range: 2
   Traits: []

@@ -54,11 +54,7 @@ public class Shop : MonoBehaviour
         }
 
         _shopUnitsProbabilities = new() { LVL1_PROBABILITIES, LVL2_PROBABILITIES, LVL3_PROBABILITIES, LVL4_PROBABILITIES, LVL5_PROBABILITIES };
-        foreach (UnitData unitData in ShopUnitsDatabase.Instance.UnitDatas)
-        {
-            _shopUnitsDatabase.Add(unitData);
-
-        }
+        _shopUnitsDatabase = ShopUnitsDatabase.Instance.UnitDatas;
     }
 
     private void Start()
@@ -122,6 +118,7 @@ public class Shop : MonoBehaviour
                 }
             }
         }
+        DisableHighlights();
 
         for (int i = 0; i < SHOP_UNITS; i++)
         {
@@ -151,6 +148,7 @@ public class Shop : MonoBehaviour
             {
                 shopUnit.SetUnitData(unitData);
                 ShowShopUnit(shopUnit);
+                HighlightSameUnits(shopUnit);
             }
 
             // Add button function
@@ -296,18 +294,47 @@ public class Shop : MonoBehaviour
             shopUnit.gameObject.SetActive(false);
             Button buyButton = shopUnit.transform.parent.gameObject.GetComponent<Button>();
             buyButton.interactable = false;
-            //HighlightSameUnits(shopUnit);
+            DisableHighlight(shopUnit);
+            HighlightSameUnits(shopUnit);
         }
     }
 
     // Highlight shop units that the player has on bench or board
     private void HighlightSameUnits(ShopUnit shopUnit)
     {
-        Transform highlighTransform = shopUnit.transform.parent.Find("Highlight");
-        if (_player.HasUnit(shopUnit.UnitData.UnitName))
+        for (int i = 0; i < SHOP_UNITS; i++)
         {
-            highlighTransform.gameObject.SetActive(true);
-        }   
+            Transform shopUnitParent = _shopUnitsTransform.GetChild(i);
+            foreach (ShopUnit currShopUnit in shopUnitParent.GetComponentsInChildren<ShopUnit>())
+            {
+                if (currShopUnit != null)
+                {
+                    Transform highlighTransform = _shopUnitsTransform.GetChild(i).Find("Highlight");
+                    if (_player.HasUnit(shopUnit.UnitData.UnitName) && shopUnit.UnitName == currShopUnit.UnitName)
+                    {
+                        highlighTransform.gameObject.SetActive(true);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Disable highlight for given shopUnit
+    private void DisableHighlight(ShopUnit shopUnit)
+    {
+        Transform highlighTransform = shopUnit.transform.parent.Find("Highlight");
+        highlighTransform.gameObject.SetActive(false);
+    }
+
+    // Disable highlight for all shopUnits
+    private void DisableHighlights()
+    {
+        for (int i = 0; i < SHOP_UNITS; i++)
+        {
+            Transform shopUnitParent = _shopUnitsTransform.GetChild(i);
+            shopUnitParent.Find("Highlight").gameObject.SetActive(false);
+        }
     }
 
     // Sell unit and remove it from bench

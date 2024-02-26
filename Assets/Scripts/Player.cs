@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     public string PlayerName { get; protected set; }
     
     [SerializeField] protected Bench _bench;
-    protected List<GameUnit> _boardUnits = new();
+    [SerializeField] protected List<GameUnit> _boardUnits = new();
     public int boardLimit;
     public List<Trait> ActiveTraits = new();
 
@@ -22,9 +22,38 @@ public class Player : MonoBehaviour
 
     private readonly int[] _xpTable = new int[] { 0, 2, 6, 10, 20, 36, 56, 80, 100 };
 
+    protected virtual void Awake()
+    {
+        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
+    }
+
     private void Start()
     {
-        boardLimit = 20;     
+        boardLimit = 10;     
+    }
+
+    protected virtual void OnPhaseChanged(GamePhase newPhase)
+    {
+        switch (newPhase)
+        {
+            case GamePhase.Preparation:
+                break;
+            case GamePhase.Battle:
+                ShowBoardUnitsBars();
+                break;
+            case GamePhase.BattleWon:
+            case GamePhase.BattleLost:
+                break;
+        }
+    }
+
+    // Show hp and mp bar of units on board
+    private void ShowBoardUnitsBars()
+    {
+        foreach (GameUnit gameUnit in _boardUnits)
+        {
+            gameUnit.ShowBars();
+        }
     }
 
     // Decrease gold by amount

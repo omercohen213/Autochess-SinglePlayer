@@ -1,14 +1,13 @@
 - add behavior for each gameunit
+- units animations
 - trait hover
-- shop unit highlight when on bench/board
-- shop unit hover animation
+- shop unit hover
 - hp and damage to units
 - star lvl base stats
 - enable bench units drag on battle
 
-- fix costs on hexes changed from other units
-- fix on star up unit destroy
-- swap unit places
-
+- fix shopUnit on parent instead of children
+- fix unsubscribe onPhaseChanged
 - OBJECT POOLING
-- encapsulate properties not used in editor
+
+*** fix distance to target by changing hexes coordinates***

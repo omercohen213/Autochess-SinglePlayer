@@ -10,12 +10,11 @@ using static UnityEngine.UI.CanvasScaler;
 public class GameUnit : Unit, IDamageable
 {
     private Player _owner;
-    private int _maxHp;
-    private int _maxMp;
-    private int _baseAttackDamage;
-    private int _baseAttackSpeed;
+    [SerializeField] private int _maxHp;
+    [SerializeField] private int _maxMp;
+    [SerializeField] private int _baseAttackDamage;
+    [SerializeField] private float _baseAttackSpeed;
     private int _range;
-    private GamePhase _currentGamePhase;
 
     private bool _isOnBoard;
     private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
@@ -23,13 +22,13 @@ public class GameUnit : Unit, IDamageable
     private Dictionary<Trait, int> _traitStages = new();
 
     private int _starLevel;
-    private int _attackDamage;
-    private int _attackSpeed;
-    private int _hp;
-    private int _mp;
+    [SerializeField] private int _attackDamage;
+    [SerializeField] private float _attackSpeed;
+    [SerializeField] private int _hp;
+    [SerializeField] private int _mp;
 
     public readonly int MAX_STAR_LEVEL = 3;
-  
+
     public Player Owner { get => _owner; set => _owner = value; }
     public int MaxHp { get => _maxHp; private set => _maxHp = value; }
     public int MaxMp { get => _maxMp; private set => _maxMp = value; }
@@ -43,31 +42,33 @@ public class GameUnit : Unit, IDamageable
     public int StarLevel { get => _starLevel; set => _starLevel = value; }
     public int Hp { get => _hp; set => _hp = value; }
     public int Mp { get => _mp; set => _mp = value; }
-    public int BaseAttackSpeed { get => _baseAttackSpeed; set => _baseAttackSpeed = value; }
-    public int AttackSpeed { get => _attackSpeed; set => _attackSpeed = value; }
+    public float BaseAttackSpeed { get => _baseAttackSpeed; set => _baseAttackSpeed = value; }
+    public float AttackSpeed { get => _attackSpeed; set => _attackSpeed = value; }
 
     private void OnEnable()
     {
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
+        GameUnitAttack.OnDamageReceived += OnDamageRecieved;
     }
 
     private void OnDisable()
     {
         //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
-
+        GameUnitAttack.OnDamageReceived -= OnDamageRecieved;
     }
 
     private void Start()
     {
+        _hp = _maxHp;
+        _mp = _maxMp;
         _attackDamage = _baseAttackDamage;
-        _attackSpeed= _baseAttackSpeed;
+        _attackSpeed = _baseAttackSpeed;
 
         // Initialize all traits with stage 0
         foreach (var trait in Traits)
         {
             _traitStages.Add(trait, 0);
         }
-
     }
 
     public void Initialize(Player owner, UnitData unitData, int starLevel)
@@ -83,7 +84,7 @@ public class GameUnit : Unit, IDamageable
         _maxHp = _unitData.MaxHp;
         _maxMp = _unitData.MaxMp;
         _baseAttackDamage = _unitData.BaseAttackDamage;
-        //_baseAttackSpeed= _unitData.BaseAttackSpeed;
+        _baseAttackSpeed= _unitData.BaseAttackSpeed;
         _range = _unitData.Range;
     }
 
@@ -94,7 +95,6 @@ public class GameUnit : Unit, IDamageable
             case GamePhase.Preparation:
                 break;
             case GamePhase.Battle:
-                _currentGamePhase = newPhase;
                 break;
             case GamePhase.BattleWon:
             case GamePhase.BattleLost:
@@ -104,7 +104,7 @@ public class GameUnit : Unit, IDamageable
 
     public void HandleDragStarted()
     {
-        Shop.Instance.ActivateUnitSellField(Cost);
+        Shop.Instance.ActivateUnitSellField(_cost);
     }
 
     // Handles a behavior when this unit is stopped being dragged at final position
@@ -136,7 +136,7 @@ public class GameUnit : Unit, IDamageable
                 // Place on another bench slot
                 case "BenchSlot":
                     BenchSlot benchSlotDraggedOn = objDraggedOn.GetComponent<BenchSlot>();
-                    _owner.Bench.PutUnitOnBenchSlot(this, benchSlotDraggedOn);
+                    _owner.Bench.PlaceOnBenchSlot(this, benchSlotDraggedOn);
                     break;
 
                 default:
@@ -178,7 +178,7 @@ public class GameUnit : Unit, IDamageable
         }
         else
         {
-            _owner.Bench.PutUnitOnBenchSlot(this, _currentBenchSlot);
+            _owner.Bench.PlaceOnBenchSlot(this, _currentBenchSlot);
         }
     }
 
@@ -215,6 +215,7 @@ public class GameUnit : Unit, IDamageable
 
     public void PlaceOnBenchSlot(BenchSlot benchSlot)
     {
+        benchSlot.UnitOnSlot = this;
         _currentBenchSlot = benchSlot;
         benchSlot.IsTaken = true;
         transform.position = _currentBenchSlot.transform.position;
@@ -225,11 +226,12 @@ public class GameUnit : Unit, IDamageable
     {
         if (_currentBenchSlot != null)
         {
+            _currentBenchSlot.UnitOnSlot = null;
             _currentBenchSlot.IsTaken = false;
             _currentBenchSlot = null;
         }
     }
-    
+
     // Places a unit on given hex
     public void PlaceOnHex(Hex hex)
     {
@@ -238,10 +240,10 @@ public class GameUnit : Unit, IDamageable
             Debug.LogWarning("hex is null");
             return;
         }
-        if (_currentHex != null)
+        if (_currentHex != null && _currentHex.UnitOnHex == this)
         {
             _currentHex.IsTaken = false;
-        _currentHex.UnitOnHex = null;
+            _currentHex.UnitOnHex = null;
         }
         _currentHex = hex;
         hex.IsTaken = true;
@@ -293,26 +295,35 @@ public class GameUnit : Unit, IDamageable
             return LocalPlayer.Instance.BoardUnits;
         }
     }
-    public void ReceiveDamage(int damageAmount)
-    {
-        _hp -= damageAmount;
-        if (_hp <= 0)
-        {
-            _hp = 0;
-            Death();
-        }
-        // OnHpChange();
-    }
 
-    public bool IsDamageToKill(float damage)
+    public void OnDamageRecieved(GameUnit attacker, GameUnit target, int damage)
     {
-        throw new NotImplementedException();
+        if (target == this)
+        {
+            _hp -= damage;
+            if (_hp <= 0)
+            {
+                _hp = 0;
+                Death();
+            }
+        }
     }
 
     public void Death()
     {
-        throw new NotImplementedException();
+        Destroy(gameObject);
     }
 
-   
+    public void ShowBars()
+    {
+        Transform bars = transform.Find("Bars");
+        if (bars != null)
+        {
+            bars.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("Missing bars object");
+        }
+    }
 }

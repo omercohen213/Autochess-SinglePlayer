@@ -6,13 +6,14 @@ public class LocalPlayer : Player
 {
     public static LocalPlayer Instance { get; private set; }
 
-    private void Awake()
+    protected override void Awake()
     {
         if (Instance != null)
         {
             Destroy(gameObject);
         }
         Instance = this;
+        base.Awake();
 
         Hp = 100;
         Gold = 100;

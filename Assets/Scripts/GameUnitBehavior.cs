@@ -12,21 +12,24 @@ using static UnityEngine.UI.Image;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(GameUnit))]
+[RequireComponent(typeof(GameUnitAttack))]
 public class GameUnitBehavior : MonoBehaviour
 {
-    protected GameUnit _gameUnit;
-    protected Animator _animator;
-    protected bool _isAttacking = false;
+    private GameUnit _gameUnit;
+    private Animator _animator;
+    private bool _isAttacking = false;
+    private GameUnit _currentTarget;
 
     private List<Hex> _currentPath;
     private int _distanceToTarget = int.MaxValue;
-    private readonly float _moveSpeed = 1.2415f / 1.5f; // 1.2415f is movement speed of 1 hex per second
+    private readonly float _moveSpeed = 1.2415f; // 1.2415f is movement speed of 1 hex per second
 
-    private GameUnit _currentTarget;
+    private GameUnitAttack _gameUnitAttack;
 
-    protected virtual void Awake()
+    private void Awake()
     {
         _gameUnit = GetComponent<GameUnit>();
+        _gameUnitAttack = GetComponent<GameUnitAttack>();
 
         Transform animationTransform = transform.Find("Animation");
         if (animationTransform != null)
@@ -57,12 +60,6 @@ public class GameUnitBehavior : MonoBehaviour
                 break;
         }
     }
-
-    /*    protected override void Awake()
-        {
-            base.Awake();
-            _pathfinding = new();
-        }*/
 
     public async Task MoveTowardsEnemy()
     {
@@ -111,7 +108,6 @@ public class GameUnitBehavior : MonoBehaviour
         // Small delay to make sure not all units search for a path at the same time
         int rnd = Random.Range(100, 200);
         await Task.Delay(rnd);
-
         if (_isAttacking)
         {
             return;
@@ -123,11 +119,12 @@ public class GameUnitBehavior : MonoBehaviour
         Hex newTargetHex = pathfinding.FindClosestEnemy(enemyUnits, _gameUnit.CurrentHex);
         List<Hex> newPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex);
         _currentPath = newPath;
+        _currentTarget = newTargetHex.UnitOnHex;
+        Debug.Log(_gameUnit.UnitName + " " + pathfinding.Distance(_gameUnit.CurrentHex, newTargetHex) + " " + newTargetHex);
         if (_currentPath != null)
         {
             _distanceToTarget = _currentPath.Count;
         }
-
         await MoveTowardsEnemy();
     }
 
@@ -135,26 +132,14 @@ public class GameUnitBehavior : MonoBehaviour
     private void CheckForEnemy()
     {
         List<GameUnit> enemyUnits = _gameUnit.GetEnemyUnits();
-        foreach (Hex hex in _gameUnit.CurrentHex.AdjacentHexes)
+        foreach (GameUnit enemyUnit in enemyUnits)
         {
-            foreach (GameUnit enemyUnit in enemyUnits)
+            if (_distanceToTarget <= _gameUnit.Range && _currentTarget == enemyUnit)
             {
-                if (_distanceToTarget <= _gameUnit.Range || hex.UnitOnHex == enemyUnit)
-                {
-                    Attack(hex.UnitOnHex);
-                }
+                _gameUnitAttack.Attack(_currentTarget);
+                _isAttacking = true;
             }
         }
-    }
 
-    public void Attack(GameUnit target)
-    {
-        _isAttacking = true;
-        _currentTarget = target;
-        if (_animator != null)
-        {
-            _animator.SetTrigger("Cast0");
-        }
-        Debug.Log(_gameUnit.UnitName + " attacking");
     }
 }

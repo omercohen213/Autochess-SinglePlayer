@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Bench : MonoBehaviour
 {
-    [SerializeField] private List<GameUnit> _units; // Units on bench
+    [SerializeField] private List<GameUnit> _benchUnits;
     [SerializeField] private GameObject _gameUnitPrefab;
     [SerializeField] private Transform _benchSlotPrefab;
 
@@ -15,11 +15,11 @@ public class Bench : MonoBehaviour
     private readonly float BENCHSLOT_SPACING = -1.5f; // Space between two benchSlots in the Y axis
     private readonly int UNIT_STAR_UP_COUNT = 3;
 
-    public List<GameUnit> BenchUnits { get => _units; set => _units = value; }
+    public List<GameUnit> BenchUnits { get => _benchUnits; set => _benchUnits = value; }
 
     public void Awake()
     {
-        _units = new List<GameUnit>();
+        _benchUnits = new List<GameUnit>();
     }
 
     private void Start()
@@ -53,7 +53,7 @@ public class Bench : MonoBehaviour
         GameObject unitGo = Instantiate(unitData.UnitPrefab);
         if (unitGo.TryGetComponent(out GameUnit gameUnit))
         {
-            gameUnit.Initialize(owner,unitData, starLevel);
+            gameUnit.Initialize(owner, unitData, starLevel);
         }
         else
         {
@@ -61,14 +61,14 @@ public class Bench : MonoBehaviour
         }
         AddUnitToBench(gameUnit);
     }
-   
+
     // Create the gameUnit object
     public void CreateGameUnit(Player owner, UnitData unitData, int starLevel)
     {
         GameObject unitGo = Instantiate(unitData.UnitPrefab);
         if (unitGo.TryGetComponent(out GameUnit gameUnit))
         {
-            gameUnit.Initialize(owner,unitData, starLevel);
+            gameUnit.Initialize(owner, unitData, starLevel);
         }
         else
         {
@@ -80,7 +80,7 @@ public class Bench : MonoBehaviour
     // Create a gameUnit and add it to the bench
     public void AddUnitToBench(GameUnit unit)
     {
-        _units.Add(unit);
+        _benchUnits.Add(unit);
         BenchSlot benchSlot = FindEmptyBenchSlot();
         unit.PlaceOnBenchSlot(benchSlot);
         CheckStarUp(unit, unit.StarLevel);
@@ -104,23 +104,23 @@ public class Bench : MonoBehaviour
     }
 
     // Remove all units same as unit with same star level
-    private void RemoveAllUnitsOfKind(GameUnit unit, int starLevel)
+    private void RemoveAllUnitsOfKind(GameUnit gameUnit, int starLevel)
     {
         List<GameUnit> unitsToRemove = new();
 
         // Bench units
-        foreach (GameUnit benchUnit in _units)
+        foreach (GameUnit benchUnit in _benchUnits)
         {
-            if (benchUnit.Equals(unit) && benchUnit.StarLevel == starLevel)
+            if (benchUnit.Equals(gameUnit) && benchUnit.StarLevel == starLevel)
             {
                 unitsToRemove.Add(benchUnit);
             }
         }
 
         // Board units
-        foreach (GameUnit boardUnit in unit.Owner.BoardUnits)
+        foreach (GameUnit boardUnit in gameUnit.Owner.BoardUnits)
         {
-            if (boardUnit.Equals(unit) && boardUnit.StarLevel == starLevel)
+            if (boardUnit.Equals(gameUnit) && boardUnit.StarLevel == starLevel)
             {
                 unitsToRemove.Add(boardUnit);
             }
@@ -141,7 +141,7 @@ public class Bench : MonoBehaviour
         int count = 0;
 
         // Bench Units
-        foreach (GameUnit benchUnit in _units)
+        foreach (GameUnit benchUnit in _benchUnits)
         {
             if (benchUnit.Equals(gameUnit) && benchUnit.StarLevel == gameUnit.StarLevel)
             {
@@ -179,16 +179,30 @@ public class Bench : MonoBehaviour
     }
 
     // Change the bench slot of unit to given one
-    public void PutUnitOnBenchSlot(GameUnit unit, BenchSlot benchSlot)
+    public void PlaceOnBenchSlot(GameUnit gameUnit, BenchSlot benchSlot)
     {
         // Bench slot is taken
         if (benchSlot.IsTaken)
         {
-            // Unit is on board- return it to its current hex on board
-            if (unit.IsOnBoard)
+            // Unit is on board- swap units between benchslot and hex
+            if (gameUnit.IsOnBoard)
             {
-                Board.Instance.PlaceUnitOnBoard(unit, unit.CurrentHex);
+                Hex currentHex = gameUnit.CurrentHex;
+                Board.Instance.RemoveUnitFromBoard(gameUnit);
+                Board.Instance.PlaceUnitOnBoard(benchSlot.UnitOnSlot, currentHex);
+                gameUnit.PlaceOnBenchSlot(benchSlot);
                 return;
+            }
+            // Unit is on bench - swap places
+            else if (gameUnit.CurrentBenchSlot != null)
+            {
+                GameUnit unitOnSlot = benchSlot.UnitOnSlot;
+                if (unitOnSlot != null && unitOnSlot != gameUnit)
+                {
+                    unitOnSlot.RemoveFromBench();
+                    unitOnSlot.PlaceOnBenchSlot(gameUnit.CurrentBenchSlot);
+                }
+                gameUnit.PlaceOnBenchSlot(benchSlot);
             }
         }
 
@@ -196,20 +210,26 @@ public class Bench : MonoBehaviour
         else
         {
             // Unit is on board- remove it from board and add to bench on given bench slot
-            if (unit.IsOnBoard)
+            if (gameUnit.IsOnBoard)
             {
-                Board.Instance.RemoveUnitFromBoard(unit);
-                _units.Add(unit);
+                _benchUnits.Add(gameUnit);
+                benchSlot.UnitOnSlot = gameUnit;
+                Board.Instance.RemoveUnitFromBoard(gameUnit);
                 UIManager.Instance.UpdateBoardLimit();
             }
-        }
-        unit.PlaceOnBenchSlot(benchSlot);
-    }
 
+            // Unit is on bench - swap units between benchslots
+            else if (gameUnit.CurrentBenchSlot != null)
+            {
+                gameUnit.RemoveFromBench();
+            }
+            gameUnit.PlaceOnBenchSlot(benchSlot);
+        }
+    }
     // Check if bench exceeds max units limit
     public bool IsFull()
     {
-        if (_units.Count >= BENCH_SIZE)
+        if (_benchUnits.Count >= BENCH_SIZE)
         {
             Debug.Log("Units bench is full!");
             return true;
@@ -218,17 +238,17 @@ public class Bench : MonoBehaviour
     }
 
     // Remove a unit from the bench
-    public void RemoveUnitFromBench(GameUnit unit)
+    public void RemoveUnitFromBench(GameUnit gameUnit)
     {
-        unit.RemoveFromBench();
-        _units.Remove(unit);
+        gameUnit.RemoveFromBench();
+        _benchUnits.Remove(gameUnit);
     }
 
     // Print all unit names
     public override string ToString()
     {
         string str = "";
-        foreach (GameUnit unit in _units)
+        foreach (GameUnit unit in _benchUnits)
         {
             str += unit.UnitName;
         }
