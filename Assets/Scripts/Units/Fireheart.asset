@@ -23,6 +23,7 @@ MonoBehaviour:
   BaseAttackSpeed: 2
   BaseArmor: 0
   Range: 4
+  Weapon: 4
   Traits:
   - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}
   - {fileID: 11400000, guid: ceb29ad378042744eaa8a06ec19db335, type: 2}

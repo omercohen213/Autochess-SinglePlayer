@@ -721,13 +721,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _traits: []
   _maxHp: 0
-  _maxMp: 0
-  _baseAttackDamage: 0
-  _baseAttackSpeed: 0
-  _attackDamage: 0
-  _attackSpeed: 0
   _hp: 0
+  _maxMp: 0
   _mp: 0
+  _baseAttackDamage: 0
+  _attackDamage: 0
+  _baseAttackSpeed: 0
+  _attackSpeed: 0
+  _range: 0
+  _rangeSpeed: 0
+  _weapon: 0
 --- !u!61 &6852682343588001112
 BoxCollider2D:
   m_ObjectHideFlags: 0

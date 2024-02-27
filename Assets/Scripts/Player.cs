@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int Hp;
+    private int _lives;
     public int Gold;
     public int Xp;
     public int Lvl;
@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
 
     public Bench Bench { get => _bench; set => _bench = value; }
     public List<GameUnit> BoardUnits { get => _boardUnits; set => _boardUnits = value; }
+    public int Lives { get => _lives; set => _lives = value; }
 
     private readonly int[] _xpTable = new int[] { 0, 2, 6, 10, 20, 36, 56, 80, 100 };
 
@@ -29,7 +30,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        boardLimit = 10;     
+        boardLimit = 10;
+        _lives = 3;
     }
 
     protected virtual void OnPhaseChanged(GamePhase newPhase)
@@ -41,8 +43,7 @@ public class Player : MonoBehaviour
             case GamePhase.Battle:
                 ShowBoardUnitsBars();
                 break;
-            case GamePhase.BattleWon:
-            case GamePhase.BattleLost:
+            case GamePhase.BattleResult:
                 break;
         }
     }
@@ -132,10 +133,10 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    // Returns true if player has the gameUnit on bench or board
-    public bool HasUnit(GameUnit gameUnit)
+    // Returns true if player has any gameUnit on board
+    public bool HasAnyUnitOnBoard()
     {
-        return _boardUnits.Contains(gameUnit) || _bench.BenchUnits.Contains(gameUnit);
+        return _boardUnits.Any();
     }
 
     // Returns true if player has the gameUnit of name of on bench or board

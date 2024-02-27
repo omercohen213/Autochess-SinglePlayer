@@ -4,8 +4,8 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    void OnDamageRecieved(GameUnit attacker, GameUnit target, int damageAmount);
+    void OnDamageTaken(int damage);
     //void GetStun(float duration);
-    void Death();
+    void Die();
 }
 

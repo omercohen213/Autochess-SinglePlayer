@@ -6,12 +6,14 @@ public enum GamePhase
 {
     Preparation,
     Battle,
-    BattleWon,
-    BattleLost,
+    BattleResult,
+    GameOver
 }
 
 public class GameManager : MonoBehaviour
 {
+    private Player _locaclPlayer;
+    
     public GamePhase currentPhase;
     public event Action<GamePhase> OnPhaseChanged;
 
@@ -39,12 +41,12 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-        
+
     }
 
     void Start()
     {
-        // Start with the preparation phase
+        _locaclPlayer = LocalPlayer.Instance;
         SwitchToPhase(GamePhase.Preparation);
     }
 
@@ -58,7 +60,10 @@ public class GameManager : MonoBehaviour
             case GamePhase.Preparation:
                 break;
             case GamePhase.Battle:
-                //Debug.Log("Starting next preparation phase...");
+                //Debug.Log("Starting battle...");
+                break;
+            case GamePhase.BattleResult:
+                ShowBattleResult();
                 break;
             default:
                 Debug.LogError("Unknown game phase!");
@@ -71,6 +76,30 @@ public class GameManager : MonoBehaviour
         if (str == GamePhase.Battle.ToString())
         {
             SwitchToPhase(GamePhase.Battle);
+        }
+    }
+
+    // Shows battle result after each battle
+    private void ShowBattleResult()
+    {
+        if (_locaclPlayer.HasAnyUnitOnBoard())
+        {
+            Debug.Log("Player won!");
+            SwitchToPhase(GamePhase.Preparation);
+        }
+        else
+        {
+            _locaclPlayer.Lives--;
+            Debug.Log("Opponent won! " + _locaclPlayer.Lives + " lives left!");
+
+            if (_locaclPlayer.Lives <= 0)
+            {
+                SwitchToPhase(GamePhase.GameOver);
+            }
+            else
+            {
+                SwitchToPhase(GamePhase.Preparation);
+            }
         }
     }
 }

@@ -427,13 +427,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _traits: []
   _maxHp: 0
-  _maxMp: 0
-  _baseAttackDamage: 0
-  _baseAttackSpeed: 0
-  _attackDamage: 0
-  _attackSpeed: 0
   _hp: 0
+  _maxMp: 0
   _mp: 0
+  _baseAttackDamage: 0
+  _attackDamage: 0
+  _baseAttackSpeed: 0
+  _attackSpeed: 0
+  _range: 0
+  _rangeSpeed: 0
+  _weapon: 0
 --- !u!114 &114665035497984656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5472,7 +5475,7 @@ Transform:
   - {fileID: 4116734836144346}
   m_Father: {fileID: 4744288488683094}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -1.0622222}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -6.1111116}
 --- !u!1 &1947828779170634
 GameObject:
   m_ObjectHideFlags: 0
@@ -5507,7 +5510,7 @@ Transform:
   - {fileID: 4289884952148014}
   m_Father: {fileID: 4836314608580332}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -8.148149}
 --- !u!212 &212309646193861600
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5978,7 +5981,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.719
+  m_Value: 0.26
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -28797,7 +28800,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.719, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -28829,12 +28832,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 4f2642ecd072c42848f5da97784f0c40, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.369
+  m_FillAmount: 0.26
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

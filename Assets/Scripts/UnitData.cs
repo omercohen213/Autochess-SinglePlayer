@@ -1,3 +1,4 @@
+using HeroEditor.Common.Enums;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,6 @@ public enum UnitRarity
 public class UnitData : ScriptableObject
 {
     [Header("Base Unit Data")]
-    //public int Id;
     public string UnitName;
     public int Cost;
     public UnitRarity Rarity;
@@ -32,6 +32,7 @@ public class UnitData : ScriptableObject
     public float BaseAttackSpeed;
     public int BaseArmor;
     public int Range;
+    public Weapon Weapon;
 
     [Header("Traits Data")]
     public List<Trait> Traits;

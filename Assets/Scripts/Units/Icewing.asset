@@ -23,4 +23,5 @@ MonoBehaviour:
   BaseAttackSpeed: 1
   BaseArmor: 0
   Range: 2
+  Weapon: 3
   Traits: []

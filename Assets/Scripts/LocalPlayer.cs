@@ -15,7 +15,7 @@ public class LocalPlayer : Player
         Instance = this;
         base.Awake();
 
-        Hp = 100;
+        Lives = 100;
         Gold = 100;
         PlayerName = "Spite";
         Lvl = 1;

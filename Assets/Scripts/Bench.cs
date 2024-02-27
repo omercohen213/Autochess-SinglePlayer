@@ -78,12 +78,12 @@ public class Bench : MonoBehaviour
     }
 
     // Create a gameUnit and add it to the bench
-    public void AddUnitToBench(GameUnit unit)
+    public void AddUnitToBench(GameUnit gameUnit)
     {
-        _benchUnits.Add(unit);
+        _benchUnits.Add(gameUnit);
         BenchSlot benchSlot = FindEmptyBenchSlot();
-        unit.PlaceOnBenchSlot(benchSlot);
-        CheckStarUp(unit, unit.StarLevel);
+        gameUnit.PlaceOnBenchSlot(benchSlot);
+        CheckStarUp(gameUnit, gameUnit.StarLevel);
     }
 
     // Check if there are enough of the same unit to star it up

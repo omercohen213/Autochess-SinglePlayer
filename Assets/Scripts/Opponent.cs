@@ -29,9 +29,6 @@ public class Opponent : Player
             case GamePhase.Battle:
                 BattleEnemy();
                 break;
-            case GamePhase.BattleWon:
-            case GamePhase.BattleLost:
-                break;
         }
         base.OnPhaseChanged(newPhase);
     }

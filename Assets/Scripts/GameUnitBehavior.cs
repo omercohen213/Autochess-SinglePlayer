@@ -1,14 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
-using TMPro;
-using TMPro.EditorUtilities;
-using Unity.VisualScripting;
 using UnityEngine;
-using VHierarchy.Libs;
-using static UnityEngine.UI.Image;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(GameUnit))]
@@ -17,7 +10,6 @@ public class GameUnitBehavior : MonoBehaviour
 {
     private GameUnit _gameUnit;
     private Animator _animator;
-    private bool _isAttacking = false;
     private GameUnit _currentTarget;
 
     private List<Hex> _currentPath;
@@ -25,6 +17,7 @@ public class GameUnitBehavior : MonoBehaviour
     private readonly float _moveSpeed = 1.2415f; // 1.2415f is movement speed of 1 hex per second
 
     private GameUnitAttack _gameUnitAttack;
+    private CancellationTokenSource _moveUnitCancellationTokenSource;
 
     private void Awake()
     {
@@ -43,6 +36,16 @@ public class GameUnitBehavior : MonoBehaviour
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
+    private void OnDestroy()
+    {
+        // Cancel the MoveUnit task when the GameUnitBehavior is destroyed
+        if (_moveUnitCancellationTokenSource != null)
+        {
+            _moveUnitCancellationTokenSource.Cancel();
+        }
+        //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+    }
+
     private void OnPhaseChanged(GamePhase newPhase)
     {
         switch (newPhase)
@@ -50,14 +53,16 @@ public class GameUnitBehavior : MonoBehaviour
             case GamePhase.Preparation:
                 break;
             case GamePhase.Battle:
-                if (_gameUnit.IsOnBoard)
-                {
-                    UpdatePathfinding();
-                }
+                StartBattle();
                 break;
-            case GamePhase.BattleWon:
-            case GamePhase.BattleLost:
-                break;
+        }
+    }
+
+    private void StartBattle()
+    {
+        if (_gameUnit.IsOnBoard)
+        {
+            UpdatePathfinding();
         }
     }
 
@@ -65,12 +70,14 @@ public class GameUnitBehavior : MonoBehaviour
     {
         CheckForEnemy();
 
-        if (_currentPath != null && !_isAttacking)
+        if (_currentPath != null && !_gameUnitAttack.IsAttacking)
         {
             Hex nextHex = _currentPath[0];
 
+            // Create a new CancellationTokenSource for the MoveUnit task
+            _moveUnitCancellationTokenSource = new CancellationTokenSource();
             // Move the unit to the next hex
-            await MoveUnit(nextHex);
+            await MoveUnit(nextHex, _moveUnitCancellationTokenSource);
 
             // Check if enemy was found and update path after reaching the next hex
             CheckForEnemy();
@@ -79,7 +86,7 @@ public class GameUnitBehavior : MonoBehaviour
     }
 
     // Move the unit object from current hex to target hex 
-    private async Task MoveUnit(Hex targetHex)
+    private async Task MoveUnit(Hex targetHex, CancellationTokenSource cancellationToken)
     {
         // Instantly change the unit's hex to allow other units to interact with it directly 
         // or calculate paths accodingly
@@ -96,6 +103,12 @@ public class GameUnitBehavior : MonoBehaviour
 
             // Allow other tasks to run before continuing execution
             await Task.Yield();
+
+            // Check if the task has been canceled
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
         }
 
         // Snap the unit to the exact position of the hex
@@ -108,7 +121,7 @@ public class GameUnitBehavior : MonoBehaviour
         // Small delay to make sure not all units search for a path at the same time
         int rnd = Random.Range(100, 200);
         await Task.Delay(rnd);
-        if (_isAttacking)
+        if (_gameUnitAttack.IsAttacking)
         {
             return;
         }
@@ -117,10 +130,18 @@ public class GameUnitBehavior : MonoBehaviour
         Pathfinding pathfinding = new();
 
         Hex newTargetHex = pathfinding.FindClosestEnemy(enemyUnits, _gameUnit.CurrentHex);
+
+        if (newTargetHex == null)
+        {
+            Debug.Log("No enemies left");
+            GameManager.Instance.SwitchToPhase(GamePhase.BattleResult);
+            return;
+        }
+
         List<Hex> newPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex);
         _currentPath = newPath;
         _currentTarget = newTargetHex.UnitOnHex;
-        Debug.Log(_gameUnit.UnitName + " " + pathfinding.Distance(_gameUnit.CurrentHex, newTargetHex) + " " + newTargetHex);
+        //Debug.Log(_gameUnit.UnitName + " " + pathfinding.Distance(_gameUnit.CurrentHex, newTargetHex) + " " + newTargetHex);
         if (_currentPath != null)
         {
             _distanceToTarget = _currentPath.Count;
@@ -137,9 +158,7 @@ public class GameUnitBehavior : MonoBehaviour
             if (_distanceToTarget <= _gameUnit.Range && _currentTarget == enemyUnit)
             {
                 _gameUnitAttack.Attack(_currentTarget);
-                _isAttacking = true;
             }
         }
-
     }
 }

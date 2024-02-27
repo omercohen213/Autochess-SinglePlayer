@@ -1,13 +1,27 @@
-- add behavior for each gameunit
-- units animations
-- trait hover
-- shop unit hover
-- hp and damage to units
-- star lvl base stats
+Game Mechanics:
+- abilities
+- projectiles
+- opponent levels
 - enable bench units drag on battle
 
+Animations & UI:
+- opponent/player units bench to hex animation
+- units animations
+- trait hover
+- unit hover
+- shop unit hover
+- floating text
+- menu
+
+Bugs:
+*** fix distance to target by changing hexes coordinates***
+- gameUnit behavior
 - fix shopUnit on parent instead of children
 - fix unsubscribe onPhaseChanged
+- fix tasks cancel on unit destroy 
 - OBJECT POOLING
 
-*** fix distance to target by changing hexes coordinates***
+- hp and damage to units
+- ui hp and mp change
+- star lvl base stats
+

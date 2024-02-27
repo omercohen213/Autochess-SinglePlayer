@@ -39,7 +39,7 @@ Transform:
   - {fileID: 5304895848163392325}
   - {fileID: 2018599812173410918}
   m_Father: {fileID: 2374989008031308591}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1423470162059733919
 SpriteRenderer:
@@ -291,7 +291,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2374989008031308591}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1423470162948978012
 SpriteRenderer:
@@ -466,6 +466,7 @@ Transform:
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5155591612362611844}
   - {fileID: 2027871452395046274}
   - {fileID: 1423470162948978013}
   - {fileID: 5872441062448319533}
@@ -489,7 +490,7 @@ MonoBehaviour:
   - {fileID: -1828946549344447192, guid: 04306069eb083544d8c2d1ff001e0250, type: 3}
   - {fileID: -7252215782646672311, guid: 04306069eb083544d8c2d1ff001e0250, type: 3}
   - {fileID: -1381065623766834176, guid: 04306069eb083544d8c2d1ff001e0250, type: 3}
-  Animator: {fileID: 0}
+  Animator: {fileID: 8749646274830892866}
   Variations: 0
 --- !u!114 &8067595319045620229
 MonoBehaviour:
@@ -568,6 +569,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _traits: []
+  _maxHp: 0
+  _hp: 0
+  _maxMp: 0
+  _mp: 0
+  _baseAttackDamage: 0
+  _attackDamage: 0
+  _baseAttackSpeed: 0
+  _attackSpeed: 0
+  _range: 0
+  _rangeSpeed: 0
+  _weapon: 0
 --- !u!95 &8749646274830892866
 Animator:
   serializedVersion: 5
@@ -578,7 +590,7 @@ Animator:
   m_GameObject: {fileID: 1423470163212545534}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5aae4b67766ba684f9a0f49122f10252, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -753,7 +765,7 @@ RectTransform:
   - {fileID: 5955326352449303841}
   - {fileID: 7358819557349605993}
   m_Father: {fileID: 2374989008031308591}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1689,6 +1701,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &8768461686917214828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5155591612362611844}
+  m_Layer: 0
+  m_Name: Animation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5155591612362611844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8768461686917214828}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.1000001, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2374989008031308591}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8774969688656652119
 GameObject:
   m_ObjectHideFlags: 0

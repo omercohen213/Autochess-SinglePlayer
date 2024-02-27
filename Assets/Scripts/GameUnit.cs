@@ -1,3 +1,4 @@
+using HeroEditor.Common.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,24 +10,27 @@ using static UnityEngine.UI.CanvasScaler;
 
 public class GameUnit : Unit, IDamageable
 {
+    private Animator _animator;
+
     private Player _owner;
     [SerializeField] private int _maxHp;
+    [SerializeField] private int _hp;
     [SerializeField] private int _maxMp;
+    [SerializeField] private int _mp;
     [SerializeField] private int _baseAttackDamage;
+    [SerializeField] private int _attackDamage;
     [SerializeField] private float _baseAttackSpeed;
-    private int _range;
+    [SerializeField] private float _attackSpeed;
+    [SerializeField] private int _range;
+    [SerializeField] private float _rangeSpeed;
+    [SerializeField] private Weapon _weapon;
 
     private bool _isOnBoard;
     private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
     private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
-    private Dictionary<Trait, int> _traitStages = new();
+    private Dictionary<Trait, int> _traitStages = new(); // Each trait the unit has and its current stage
 
     private int _starLevel;
-    [SerializeField] private int _attackDamage;
-    [SerializeField] private float _attackSpeed;
-    [SerializeField] private int _hp;
-    [SerializeField] private int _mp;
-
     public readonly int MAX_STAR_LEVEL = 3;
 
     public Player Owner { get => _owner; set => _owner = value; }
@@ -44,23 +48,49 @@ public class GameUnit : Unit, IDamageable
     public int Mp { get => _mp; set => _mp = value; }
     public float BaseAttackSpeed { get => _baseAttackSpeed; set => _baseAttackSpeed = value; }
     public float AttackSpeed { get => _attackSpeed; set => _attackSpeed = value; }
+    public Weapon Weapon { get => _weapon; set => _weapon = value; }
+
+    private void Awake()
+    {
+        if (_owner == LocalPlayer.Instance)
+        {
+            Transform animationTransform = transform.Find("Animation");
+            if (animationTransform != null)
+            {
+                _animator = animationTransform.GetComponent<Animator>();
+            }
+            else
+            {
+                Debug.LogWarning("Missing animation transform on game unit " + _unitName);
+            }
+        }
+        // Monster animation
+        else
+        {
+            _animator = GetComponent<Animator>();
+        }
+    }
 
     private void OnEnable()
     {
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
-        GameUnitAttack.OnDamageReceived += OnDamageRecieved;
+        GameUnitAttack.OnAttack += OnAttack;
     }
 
     private void OnDisable()
     {
-        //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
-        GameUnitAttack.OnDamageReceived -= OnDamageRecieved;
+        GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+        GameUnitAttack.OnAttack -= OnAttack;
     }
 
-    private void Start()
+    public void Initialize(Player owner, UnitData unitData, int starLevel)
     {
+        _owner = owner;
+        SetUnitData(unitData, starLevel);
+        ShowStars(starLevel);
+
         _hp = _maxHp;
-        _mp = _maxMp;
+        _mp = 0;
         _attackDamage = _baseAttackDamage;
         _attackSpeed = _baseAttackSpeed;
 
@@ -71,21 +101,30 @@ public class GameUnit : Unit, IDamageable
         }
     }
 
-    public void Initialize(Player owner, UnitData unitData, int starLevel)
-    {
-        _owner = owner;
-        SetUnitData(unitData);
-        SetUnitStarLevel(starLevel);
-    }
-
-    public override void SetUnitData(UnitData unitData)
+    public void SetUnitData(UnitData unitData, int starLevel)
     {
         base.SetUnitData(unitData);
-        _maxHp = _unitData.MaxHp;
+        float multiplier = 1;
+        switch (starLevel)
+        {
+            case 1:
+                multiplier = 1;
+                break;
+            case 2:
+                multiplier = 1.5f;
+                break;
+            case 3:
+                multiplier = 3;
+                break;
+        }
+        _weapon = _unitData.Weapon;
+        _maxHp = (int)(_unitData.MaxHp * multiplier);
         _maxMp = _unitData.MaxMp;
-        _baseAttackDamage = _unitData.BaseAttackDamage;
-        _baseAttackSpeed= _unitData.BaseAttackSpeed;
+        _baseAttackDamage = (int)(_unitData.BaseAttackDamage * multiplier);
+        _baseAttackSpeed = (int)(_unitData.BaseAttackSpeed * multiplier);
         _range = _unitData.Range;
+        _starLevel = starLevel;
+
     }
 
     private void OnPhaseChanged(GamePhase newPhase)
@@ -96,8 +135,7 @@ public class GameUnit : Unit, IDamageable
                 break;
             case GamePhase.Battle:
                 break;
-            case GamePhase.BattleWon:
-            case GamePhase.BattleLost:
+            case GamePhase.BattleResult:
                 break;
         }
     }
@@ -183,7 +221,7 @@ public class GameUnit : Unit, IDamageable
     }
 
     // Create star objects and set current star level
-    public void SetUnitStarLevel(int starLevel)
+    public void ShowStars(int starLevel)
     {
         Transform starsParent = transform.Find("Stars");
         if (starsParent != null)
@@ -205,7 +243,6 @@ public class GameUnit : Unit, IDamageable
         {
             Debug.LogWarning("Missing star parent on gameUnit " + _unitName);
         }
-        StarLevel = starLevel;
     }
 
     public bool Equals(GameUnit other)
@@ -296,22 +333,106 @@ public class GameUnit : Unit, IDamageable
         }
     }
 
-    public void OnDamageRecieved(GameUnit attacker, GameUnit target, int damage)
+    public void OnAttack(GameUnit attacker, GameUnit target, int damage)
     {
-        if (target == this)
+        if (attacker == this)
         {
-            _hp -= damage;
-            if (_hp <= 0)
+            AnimateAttack();
+
+            _mp += 10;
+            if (_mp == _maxMp)
             {
-                _hp = 0;
-                Death();
+                UseAbility(target);
+                _mp = 0;
+            }
+
+            target.OnDamageTaken(damage);
+            if (!target.IsDead())
+            {
+                UIManager.UpdateUnitMPBar(this);
             }
         }
     }
 
-    public void Death()
+    private void AnimateAttack()
     {
-        Destroy(gameObject);
+        if (_animator != null)
+        {
+            switch (_weapon)
+            {
+                case Weapon.MeeleOneHanded:
+                    _animator.SetTrigger("Slash1H");
+                    break;
+                case Weapon.MeeleTwoHanded:
+                    _animator.SetTrigger("Slash2H");
+                    break;
+                case Weapon.Staff:
+                    // todo: change to jab if close range
+                    _animator.SetTrigger("Cast");
+                    break;
+                case Weapon.Bow:
+                    _animator.SetTrigger("SimpleBowShot");
+                    break;
+                case Weapon.Gun:
+                    break;
+                case Weapon.NoWeapon:
+                    _animator.SetTrigger("Attack");
+                    break;
+            }
+        }
+    }
+
+    public IEnumerator BowShot()
+    {
+        _animator.SetInteger("Charge", 1); // 0 = ready, 1 = charging, 2 = release, 3 = cancel.
+
+        yield return new WaitForSeconds(1);
+
+        _animator.SetInteger("Charge", 2);
+
+        yield return new WaitForSeconds(1);
+
+        _animator.SetInteger("Charge", 0);
+    }
+
+    public void OnDamageTaken(int damage)
+    {
+        if (_animator != null)
+        {
+            _animator.SetTrigger("Hit");
+        }
+        _hp -= damage;
+        if (IsDead())
+        {
+            _hp = 0;
+            Die();
+        }
+        else
+        {
+            UIManager.UpdateUnitHPBar(this);
+        }
+    }
+
+    public bool IsDead()
+    {
+        return _hp <= 0;
+    }
+
+    private void UseAbility(GameUnit target)
+    {
+        Debug.Log("ability Used " + _unitName);
+    }
+
+    public void Die()
+    {
+        StartCoroutine(DieCoroutine());
+    }
+
+    private IEnumerator DieCoroutine()
+    {
+
+        yield return new WaitForSeconds(2f);
+        gameObject.SetActive(false);
     }
 
     public void ShowBars()
@@ -325,5 +446,7 @@ public class GameUnit : Unit, IDamageable
         {
             Debug.LogWarning("Missing bars object");
         }
+        UIManager.UpdateUnitHPBar(this);
+        UIManager.UpdateUnitMPBar(this);
     }
 }

@@ -610,9 +610,9 @@ GameObject:
   - component: {fileID: 3028706453810577491}
   - component: {fileID: 1967507198131867429}
   - component: {fileID: 5348429189093309385}
-  - component: {fileID: 117150395161187365}
   - component: {fileID: 563940067125343201}
   - component: {fileID: 8883055862587172904}
+  - component: {fileID: 5079692235608391064}
   m_Layer: 0
   m_Name: Watchdog
   m_TagString: Untagged
@@ -654,7 +654,7 @@ MonoBehaviour:
   - {fileID: -1828946549344447192, guid: 2656b3077e2990a4ebe11d1df7f24bb6, type: 3}
   - {fileID: -7252215782646672311, guid: 2656b3077e2990a4ebe11d1df7f24bb6, type: 3}
   - {fileID: -1381065623766834176, guid: 2656b3077e2990a4ebe11d1df7f24bb6, type: 3}
-  Animator: {fileID: 117150395161187365}
+  Animator: {fileID: 5079692235608391064}
   Variations: 0
 --- !u!114 &3028706453810577491
 MonoBehaviour:
@@ -705,27 +705,6 @@ SortingGroup:
   m_SortingLayerID: 1037250653
   m_SortingLayer: 1
   m_SortingOrder: 0
---- !u!95 &117150395161187365
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 117150395161187363}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 415bf962eaf5c6d4caf7315ee238e2a0, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!70 &563940067125343201
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -754,20 +733,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitName: 
-  unitData: {fileID: 0}
+  _traits: []
   _maxHp: 0
+  _hp: 0
   _maxMp: 0
+  _mp: 0
   _baseAttackDamage: 0
-  _starPrefab: {fileID: 0}
-  _starsParent: {fileID: 0}
-  _isOnBoard: 0
-  _currentHex: {fileID: 0}
-  _currentBenchSlot: {fileID: 0}
-  _Stages: 
-  StarLevel: 0
-  AttackDamage: 0
-  Range: 0
+  _attackDamage: 0
+  _baseAttackSpeed: 0
+  _attackSpeed: 0
+  _range: 0
+  _rangeSpeed: 0
+  _weapon: 0
+--- !u!95 &5079692235608391064
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117150395161187363}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 415bf962eaf5c6d4caf7315ee238e2a0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &188064519148664878
 GameObject:
   m_ObjectHideFlags: 0
