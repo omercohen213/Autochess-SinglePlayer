@@ -130,7 +130,7 @@ public class Bench : MonoBehaviour
         foreach (GameUnit unitToRemove in unitsToRemove)
         {
             RemoveUnitFromBench(unitToRemove);
-            Board.Instance.RemoveUnitFromBoard(unitToRemove);
+            Board.RemoveUnitFromBoard(unitToRemove);
             Destroy(unitToRemove.gameObject);
         }
     }
@@ -188,8 +188,8 @@ public class Bench : MonoBehaviour
             if (gameUnit.IsOnBoard)
             {
                 Hex currentHex = gameUnit.CurrentHex;
-                Board.Instance.RemoveUnitFromBoard(gameUnit);
-                Board.Instance.PlaceUnitOnBoard(benchSlot.UnitOnSlot, currentHex);
+                Board.RemoveUnitFromBoard(gameUnit);
+                Board.PlaceUnitOnBoard(benchSlot.UnitOnSlot, currentHex);
                 gameUnit.PlaceOnBenchSlot(benchSlot);
                 return;
             }
@@ -214,7 +214,7 @@ public class Bench : MonoBehaviour
             {
                 _benchUnits.Add(gameUnit);
                 benchSlot.UnitOnSlot = gameUnit;
-                Board.Instance.RemoveUnitFromBoard(gameUnit);
+                Board.RemoveUnitFromBoard(gameUnit);
                 UIManager.Instance.UpdateBoardLimit();
             }
 

@@ -858,7 +858,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 142.25, y: -150}
-  m_SizeDelta: {x: 0, y: 29.06}
+  m_SizeDelta: {x: 284.5, y: 16.14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &76340675
 MonoBehaviour:
@@ -896,8 +896,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Each assasin unit recieves extra attack damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1276,6 +1276,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hexPrefab: {fileID: 547559300007333341, guid: 57a6e84fdf94baa4488172d9710fa733, type: 3}
   _board: {fileID: 134301333}
+--- !u!1 &138361984
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 138361985}
+  m_Layer: 5
+  m_Name: UnitInfo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &138361985
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138361984}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1162293234}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &138914933
 GameObject:
   m_ObjectHideFlags: 0
@@ -1443,7 +1479,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 16.845, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &191740755
@@ -1746,6 +1782,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1651854046}
     m_Modifications:
+    - target: {fileID: 1338215277743471302, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     - target: {fileID: 5680395253258101488, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1833,6 +1873,10 @@ PrefabInstance:
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Name
       value: ActiveTrait (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_IsActive
@@ -2809,6 +2853,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1651854046}
     m_Modifications:
+    - target: {fileID: 1338215277743471302, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
+    - target: {fileID: 2371649233818337152, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5680395253258101488, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2896,6 +2948,10 @@ PrefabInstance:
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Name
       value: ActiveTrait
+      objectReference: {fileID: 0}
+    - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_IsActive
@@ -3970,8 +4026,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: (6) +50 Attack Damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5111,8 +5167,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: (6) +50 Attack Damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5912,6 +5968,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1651854046}
     m_Modifications:
+    - target: {fileID: 1338215277743471302, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     - target: {fileID: 5680395253258101488, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5999,6 +6059,10 @@ PrefabInstance:
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Name
       value: ActiveTrait (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_IsActive
@@ -6555,8 +6619,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: (4) +20 Attack Damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7264,8 +7328,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: (2) +5 Attack Damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7438,6 +7502,7 @@ RectTransform:
   - {fileID: 243988291}
   - {fileID: 1207527353}
   - {fileID: 1877565078}
+  - {fileID: 138361985}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8226,6 +8291,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1651854046}
     m_Modifications:
+    - target: {fileID: 1338215277743471302, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     - target: {fileID: 5680395253258101488, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -9091,8 +9160,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Assasin
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10234,6 +10303,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1651854046}
     m_Modifications:
+    - target: {fileID: 1338215277743471302, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     - target: {fileID: 5680395253258101488, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -10321,6 +10394,10 @@ PrefabInstance:
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_Name
       value: ActiveTrait (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6777195323060101724, guid: 173943030b1a688499a99f3c59b3de99, type: 3}
       propertyPath: m_IsActive
@@ -11070,6 +11147,10 @@ PrefabInstance:
       value: InactiveTrait (2)
       objectReference: {fileID: 0}
     - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -11157,6 +11238,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7272349216691667499, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
 --- !u!224 &1737627851 stripped
@@ -11174,6 +11259,10 @@ PrefabInstance:
     - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
       propertyPath: m_Name
       value: InactiveTrait (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
       propertyPath: m_IsActive
@@ -11263,6 +11352,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7272349216691667499, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
 --- !u!224 &1752778544 stripped
@@ -12193,8 +12286,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: (2) +5 Attack Damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -12561,8 +12654,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Assasin
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -12876,7 +12969,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -45, y: 104}
-  m_SizeDelta: {x: 0, y: 29.06}
+  m_SizeDelta: {x: 0, y: 45.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1975902459
 MonoBehaviour:
@@ -12914,8 +13007,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Each assasin unit recieves extra attack damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -13097,8 +13190,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: (4) +20 Attack Damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
+  m_sharedMaterial: {fileID: -5016735741044500445, guid: 7f340abb63f105c448f71fc5fe73d924, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -13352,6 +13445,10 @@ PrefabInstance:
       value: InactiveTrait (3)
       objectReference: {fileID: 0}
     - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -13439,6 +13536,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7272349216691667499, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
 --- !u!224 &2018189713 stripped
@@ -13631,6 +13732,10 @@ PrefabInstance:
       value: InactiveTrait (4)
       objectReference: {fileID: 0}
     - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -13718,6 +13823,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7272349216691667499, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
 --- !u!224 &2035110927 stripped
@@ -13735,6 +13844,10 @@ PrefabInstance:
     - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
       propertyPath: m_Name
       value: InactiveTrait
+      objectReference: {fileID: 0}
+    - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3202956180731436442, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
       propertyPath: m_IsActive
@@ -13824,6 +13937,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7272349216691667499, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
+      propertyPath: _traitInfo
+      value: 
+      objectReference: {fileID: 1515418304}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95faf84b9c4e9934489dbdda54f5df2b, type: 3}
 --- !u!224 &2072482571 stripped

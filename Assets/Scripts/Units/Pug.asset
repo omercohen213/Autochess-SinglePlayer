@@ -17,10 +17,12 @@ MonoBehaviour:
   Rarity: 4
   ShopImage: {fileID: -1828946549344447192, guid: 04306069eb083544d8c2d1ff001e0250, type: 3}
   UnitPrefab: {fileID: 1423470163212545534, guid: afc020895cb47474fb56f011f459431d, type: 3}
-  MaxHp: 300
+  MaxHp: 3000
   MaxMp: 50
   BaseAttackDamage: 5
   BaseAttackSpeed: 1
   BaseArmor: 5
   Range: 1
+  Weapon: 0
+  WeaponProjectile: {fileID: 0}
   Traits: []

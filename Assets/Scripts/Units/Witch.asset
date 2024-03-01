@@ -24,5 +24,6 @@ MonoBehaviour:
   BaseArmor: 5
   Range: 3
   Weapon: 3
+  WeaponProjectile: {fileID: 1048374326552262, guid: b08d04a8ce9098241b408b60e09c1f37, type: 3}
   Traits:
   - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}

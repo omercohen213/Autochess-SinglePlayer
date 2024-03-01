@@ -13,9 +13,10 @@ public class DragManager : MonoBehaviour
     private GameObject _lastHexHovered = null;
     private GameObject _lastBenchSlotHovered = null;
 
-    private int shopLayer;
-    private int benchLayer;
-    private int layerMask;
+    private int _shopLayer;
+    private int _benchLayer;
+    private int _boardLayer;
+    private int _layerMask;
 
     private static DragManager _instance;
     public static DragManager Instance
@@ -44,9 +45,10 @@ public class DragManager : MonoBehaviour
 
     private void Start()
     {
-        shopLayer = LayerMask.NameToLayer("Shop");
+        _shopLayer = LayerMask.NameToLayer("Shop");
+        _boardLayer = LayerMask.NameToLayer("Board");
         //benchLayer = LayerMask.NameToLayer("Bench");
-        layerMask = ~(1 << shopLayer) & ~(1 << benchLayer);
+        _layerMask = ~(1 << _shopLayer);
 
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
@@ -59,7 +61,7 @@ public class DragManager : MonoBehaviour
         }
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        _hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, layerMask);
+        _hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, _layerMask);
         if (Input.GetMouseButtonDown(0) && !_isDragging)
         {
 
@@ -131,9 +133,11 @@ public class DragManager : MonoBehaviour
         {
             case GamePhase.Preparation:
                 _isEnable = true;
+                _layerMask = ~(1 << _shopLayer);
                 break;
             case GamePhase.Battle:
                 //_isEnable = false;
+                _layerMask = ~(1 << _shopLayer) & ~(1 << _boardLayer);
                 break;
         }
     }

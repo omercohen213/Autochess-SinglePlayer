@@ -96,36 +96,4 @@ public class UIManager : MonoBehaviour
             _boardLimitText.color = Color.green;
         }
     }
-
-    public static void UpdateUnitHPBar(GameUnit gameUnit)
-    {
-        Slider fill = gameUnit.transform.Find("Bars").Find("HpBar").GetComponent<Slider>();
-        if (fill != null)
-        {
-            int maxHp = gameUnit.MaxHp;
-            int currentHp = gameUnit.Hp;
-            float fillAmount = (float)currentHp / maxHp;
-            fill.value = fillAmount;
-        }
-        else
-        {
-            Debug.LogWarning("Missing HP bar objects");
-        }  
-    }
-
-    public static void UpdateUnitMPBar(GameUnit gameUnit)
-    {
-        Slider fill = gameUnit.transform.Find("Bars").Find("MpBar").GetComponent<Slider>();
-        if (fill != null)
-        {
-            int maxMp = gameUnit.MaxMp;
-            int currentMp = gameUnit.Mp;
-            float fillAmount = (float)currentMp / + maxMp;
-            fill.value = fillAmount;
-        }
-        else
-        {
-            Debug.LogWarning("Missing MP bar objects");
-        }
-    }
 }

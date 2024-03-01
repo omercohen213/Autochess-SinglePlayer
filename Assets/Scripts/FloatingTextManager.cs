@@ -26,7 +26,7 @@ public class FloatingTextManager : MonoBehaviour
         txt.color = color;
 
         if (animTrigger != null)
-            floatingText.gameObject.GetComponentInChildren<Animator>().SetTrigger(animTrigger);
+            floatingText.GetComponentInChildren<Animator>().SetTrigger(animTrigger);
 
         Destroy(floatingText, destroyTimer);
     }

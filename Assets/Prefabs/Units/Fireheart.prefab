@@ -26553,7 +26553,7 @@ GameObject:
   - component: {fileID: 3620453934707972817}
   - component: {fileID: 3673793731095658333}
   m_Layer: 0
-  m_Name: Animation
+  m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27346,6 +27346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
   _hp: 0
   _maxMp: 0
@@ -27357,6 +27358,7 @@ MonoBehaviour:
   _range: 0
   _rangeSpeed: 0
   _weapon: 0
+  _weaponProjectilePrefab: {fileID: 0}
 --- !u!61 &1509189479234021291
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -27407,6 +27409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isAttacking: 0
 --- !u!1 &3705941194928310209
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,12 +1,13 @@
 Game Mechanics:
-- abilities
-- projectiles
+- abilities(maplestory)
 - opponent levels
 - enable bench units drag on battle
+- items
+- items shop
 
 Animations & UI:
+- game phases: hide attack button on buttle, remove all from board on results
 - opponent/player units bench to hex animation
-- units animations
 - trait hover
 - unit hover
 - shop unit hover
@@ -14,14 +15,10 @@ Animations & UI:
 - menu
 
 Bugs:
-*** fix distance to target by changing hexes coordinates***
-- gameUnit behavior
+- traits update with knight
 - fix shopUnit on parent instead of children
 - fix unsubscribe onPhaseChanged
-- fix tasks cancel on unit destroy 
 - OBJECT POOLING
 
-- hp and damage to units
-- ui hp and mp change
-- star lvl base stats
-
+- units animations: ideal/ready, drag, death
+- projectiles

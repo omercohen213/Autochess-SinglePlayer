@@ -426,6 +426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
   _hp: 0
   _maxMp: 0
@@ -437,6 +438,7 @@ MonoBehaviour:
   _range: 0
   _rangeSpeed: 0
   _weapon: 0
+  _weaponProjectilePrefab: {fileID: 0}
 --- !u!114 &114665035497984656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -781,6 +783,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isAttacking: 0
 --- !u!1 &1148429388143190
 GameObject:
   m_ObjectHideFlags: 0
@@ -3617,7 +3620,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: bed9ccb083aa04d488c603682dfe16b2, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -4960,7 +4963,7 @@ GameObject:
   - component: {fileID: 95570845481603582}
   - component: {fileID: 114289189406438514}
   m_Layer: 0
-  m_Name: Animation
+  m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -52,6 +52,7 @@ public class Board : MonoBehaviour
                 GameObject hexGo = Instantiate(_hexPrefab, pos, Quaternion.identity, transform);
                 Hex hex = hexGo.GetComponent<Hex>();
                 hex.Initialize(i, j);
+                hex.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = $"({i},{j})";
                 _hexes.Add(hex);
 
                 pos += new Vector3(0f, HEX_SPACING_Y); // Space out the hexes in the Y axis
@@ -78,7 +79,7 @@ public class Board : MonoBehaviour
     }
 
     // Place the unit on an hex on board
-    public void PlaceUnitOnBoard(GameUnit gameUnit, Hex hex)
+    public static void PlaceUnitOnBoard(GameUnit gameUnit, Hex hex)
     {
         // Unit is already on board
         if (gameUnit.IsOnBoard)
@@ -108,8 +109,6 @@ public class Board : MonoBehaviour
                 gameUnitToSwap.Owner.Bench.PlaceOnBenchSlot(gameUnitToSwap, currBenchSlot);
                 gameUnit.Owner.BoardUnits.Add(gameUnit);
                 gameUnit.PlaceOnHex(hex);
-                //UpdateBoardTraits(gameUnit);
-                //PlaceUnitOnBoard(gameUnit, hex);
             }
             // Hex is not taken, Remove it from bench and add it to board on given hex
             else
@@ -124,16 +123,15 @@ public class Board : MonoBehaviour
     }
 
     // Remove a unit from board
-    public void RemoveUnitFromBoard(GameUnit gameUnit)
+    public static void RemoveUnitFromBoard(GameUnit gameUnit)
     {
         gameUnit.RemoveFromBoard();
         UpdateBoardTraits(gameUnit);
     }
 
     // Update traits to owner's board
-    private void UpdateBoardTraits(GameUnit gameUnit)
+    private static void UpdateBoardTraits(GameUnit gameUnit)
     {
-        Debug.Log("updated " + gameUnit.UnitName);
         // Update traits only if there is no same unit on board
         if (!gameUnit.Owner.IsSameUnitOnBoard(gameUnit))
         {
@@ -153,7 +151,7 @@ public class Board : MonoBehaviour
     }
 
     // Get the stage of the trait according to how many units are on board
-    public int GetBoardTraitStage(Trait trait, int unitCount)
+    public static int GetBoardTraitStage(Trait trait, int unitCount)
     {
         int traitStage = 0;
         for (int i = 0; i < trait.UnitNumNeeded.Length; i++)
@@ -179,7 +177,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    internal void OnUnitDragStopped()
+    public void OnUnitDragStopped()
     {
         foreach (Hex hex in _hexes.Where(hex => hex.X < 4))
         {

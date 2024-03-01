@@ -9,12 +9,11 @@ using Random = UnityEngine.Random;
 public class GameUnitBehavior : MonoBehaviour
 {
     private GameUnit _gameUnit;
-    private Animator _animator;
     private GameUnit _currentTarget;
 
     private List<Hex> _currentPath;
     private int _distanceToTarget = int.MaxValue;
-    private readonly float _moveSpeed = 1.2415f; // 1.2415f is movement speed of 1 hex per second
+    private readonly float _moveSpeed = 1.2415f * 1.5f ; // 1.2415f is movement speed of 1 hex per second
 
     private GameUnitAttack _gameUnitAttack;
     private CancellationTokenSource _moveUnitCancellationTokenSource;
@@ -24,15 +23,6 @@ public class GameUnitBehavior : MonoBehaviour
         _gameUnit = GetComponent<GameUnit>();
         _gameUnitAttack = GetComponent<GameUnitAttack>();
 
-        Transform animationTransform = transform.Find("Animation");
-        if (animationTransform != null)
-        {
-            _animator = animationTransform.GetComponent<Animator>();
-        }
-        else
-        {
-            Debug.LogWarning("Missing animation transform on game unit " + _gameUnit.UnitName);
-        }
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
@@ -66,6 +56,7 @@ public class GameUnitBehavior : MonoBehaviour
         }
     }
 
+    // Given the current path, move towards enemy checking after each move if there is one to attack
     public async Task MoveTowardsEnemy()
     {
         CheckForEnemy();
@@ -74,10 +65,11 @@ public class GameUnitBehavior : MonoBehaviour
         {
             Hex nextHex = _currentPath[0];
 
-            // Create a new CancellationTokenSource for the MoveUnit task
-            _moveUnitCancellationTokenSource = new CancellationTokenSource();
             // Move the unit to the next hex
+            _moveUnitCancellationTokenSource = new CancellationTokenSource();
+            _gameUnit.AnimateMovement();
             await MoveUnit(nextHex, _moveUnitCancellationTokenSource);
+            _gameUnit.StopAnimateMovement();
 
             // Check if enemy was found and update path after reaching the next hex
             CheckForEnemy();
@@ -141,7 +133,6 @@ public class GameUnitBehavior : MonoBehaviour
         List<Hex> newPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex);
         _currentPath = newPath;
         _currentTarget = newTargetHex.UnitOnHex;
-        //Debug.Log(_gameUnit.UnitName + " " + pathfinding.Distance(_gameUnit.CurrentHex, newTargetHex) + " " + newTargetHex);
         if (_currentPath != null)
         {
             _distanceToTarget = _currentPath.Count;

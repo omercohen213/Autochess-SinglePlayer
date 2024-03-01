@@ -6,8 +6,8 @@ using UnityEngine;
 public class Hex : MonoBehaviour
 {
     // Hex properties
-    private int _x;
-    private int _y;
+    [SerializeField] private int _x;
+    [SerializeField] private int _y;
 
     public int X { get => _x; }
     public int Y { get => _y; }
@@ -77,7 +77,7 @@ public class Hex : MonoBehaviour
             if (Board.Instance.GetHex(_x - 1, _y) != null)
             {
                 _adjacentHexes.Add(Board.Instance.GetHex(_x - 1, _y));
-            }           
+            }
             // Upper left hex
             if (Board.Instance.GetHex(_x - 1, _y - 1) != null)
             {
@@ -94,15 +94,15 @@ public class Hex : MonoBehaviour
             }
 
             // Bottom right hex
-            if (Board.Instance.GetHex(_x + 1, _y+1) != null)
+            if (Board.Instance.GetHex(_x + 1, _y + 1) != null)
             {
                 _adjacentHexes.Add(Board.Instance.GetHex(_x + 1, _y + 1));
             }
 
             // Bottom left hex
-            if (Board.Instance.GetHex(_x - 1, _y+1) != null)
+            if (Board.Instance.GetHex(_x - 1, _y + 1) != null)
             {
-                _adjacentHexes.Add(Board.Instance.GetHex(_x - 1, _y+1));
+                _adjacentHexes.Add(Board.Instance.GetHex(_x - 1, _y + 1));
             }
             // Upper left hex
             if (Board.Instance.GetHex(_x - 1, _y) != null)

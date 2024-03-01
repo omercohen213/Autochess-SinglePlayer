@@ -54,7 +54,13 @@ public class Shop : MonoBehaviour
         }
 
         _shopUnitsProbabilities = new() { LVL1_PROBABILITIES, LVL2_PROBABILITIES, LVL3_PROBABILITIES, LVL4_PROBABILITIES, LVL5_PROBABILITIES };
-        _shopUnitsDatabase = ShopUnitsDatabase.Instance.UnitDatas;
+
+        // Create a copy of the database to override
+        foreach (UnitData unitData in ShopUnitsDatabase.Instance.UnitDatas)
+        {
+            _shopUnitsDatabase.Add(unitData);
+        }
+        
     }
 
     private void Start()
@@ -342,7 +348,7 @@ public class Shop : MonoBehaviour
     {
         if (gameUnit.IsOnBoard)
         {
-            Board.Instance.RemoveUnitFromBoard(gameUnit);
+            Board.RemoveUnitFromBoard(gameUnit);
         }
         else
         {

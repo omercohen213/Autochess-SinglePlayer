@@ -33,6 +33,7 @@ public class UnitData : ScriptableObject
     public int BaseArmor;
     public int Range;
     public Weapon Weapon;
+    public GameObject WeaponProjectile;
 
     [Header("Traits Data")]
     public List<Trait> Traits;

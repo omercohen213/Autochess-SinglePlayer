@@ -717,6 +717,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
   _hp: 0
   _maxMp: 0
@@ -728,6 +729,7 @@ MonoBehaviour:
   _range: 0
   _rangeSpeed: 0
   _weapon: 0
+  _weaponProjectilePrefab: {fileID: 0}
 --- !u!95 &6052668832958664579
 Animator:
   serializedVersion: 5

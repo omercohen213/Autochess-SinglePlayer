@@ -28,18 +28,4 @@ public class ShopUnitsDatabase : UnitsDatabase
             _instance = value;
         }
     }
-
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
