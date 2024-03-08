@@ -15,7 +15,7 @@ MonoBehaviour:
   UnitName: Knight
   Cost: 2
   Rarity: 1
-  ShopImage: {fileID: 21300000, guid: c79bde9d05e3d9143bdf08d5e818c52c, type: 3}
+  UnitImage: {fileID: 21300000, guid: c79bde9d05e3d9143bdf08d5e818c52c, type: 3}
   UnitPrefab: {fileID: 1109986417982920, guid: a9c081fd28abd81438fe6bd7b21646ea, type: 3}
   MaxHp: 1
   MaxMp: 100

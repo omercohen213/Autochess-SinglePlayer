@@ -12,8 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 072c25c0c0a69b24087c5f9ca38950e3, type: 3}
   m_Name: Beast
   m_EditorClassIdentifier: 
-  traitName: Beast
-  traitDescription: 
+  TraitName: Beast
+  Description: Each beast unit recieve an attack damage buff
+  UnitsWithTrait:
+  - {fileID: 8213460557682643511, guid: 7c8886214e6d70e4f944979af0440931, type: 3}
+  - {fileID: 4796883749224880408, guid: 0aeb5fc2164f4a6419e5ef19e2ade6f1, type: 3}
+  - {fileID: 4796883749224880408, guid: a9c081fd28abd81438fe6bd7b21646ea, type: 3}
+  - {fileID: 4796883749701327428, guid: 7382d3f4af36d684fb6d307f6c1e6795, type: 3}
+  - {fileID: 4796883749224880408, guid: 0a2c735fc0da778428f9d136af1dc43d, type: 3}
+  Stage1Text: +5 attack damage
+  Stage2Text: +10 attack damage
+  Stage3Text: +20 attack damage
+  Stage4Text: 
   BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  traitSprite: {fileID: 21300000, guid: 1d9ccbee9c2314c418886c47cc8ca433, type: 3}
+  TraitSprite: {fileID: 21300000, guid: 2ada0fd3c2efb4aed8d6741b7a5ce60c, type: 3}
   _unitNumNeeded: 020000000400000006000000

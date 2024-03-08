@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    void OnDamageTaken(int damage);
+    void OnDamageTaken(int damage, bool isCritical);
     //void GetStun(float duration);
     void Die();
 }

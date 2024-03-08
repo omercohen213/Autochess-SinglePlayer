@@ -15,7 +15,7 @@ MonoBehaviour:
   UnitName: Icewing
   Cost: 4
   Rarity: 3
-  ShopImage: {fileID: 21300000, guid: 4751d93293a7938469050c809955e836, type: 3}
+  UnitImage: {fileID: 21300000, guid: 4751d93293a7938469050c809955e836, type: 3}
   UnitPrefab: {fileID: 1109986417982920, guid: 0aeb5fc2164f4a6419e5ef19e2ade6f1, type: 3}
   MaxHp: 100
   MaxMp: 10
@@ -24,4 +24,6 @@ MonoBehaviour:
   BaseArmor: 0
   Range: 2
   Weapon: 3
-  Traits: []
+  WeaponProjectile: {fileID: 0}
+  Traits:
+  - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}

@@ -64,7 +64,6 @@ public class DragManager : MonoBehaviour
         _hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, _layerMask);
         if (Input.GetMouseButtonDown(0) && !_isDragging)
         {
-
             // Loop through all hits
             foreach (RaycastHit2D hit in _hits)
             {

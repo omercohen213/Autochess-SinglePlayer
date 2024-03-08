@@ -1,24 +1,21 @@
 Game Mechanics:
-- abilities(maplestory)
+- abilities
 - opponent levels
 - enable bench units drag on battle
 - items
 - items shop
 
 Animations & UI:
-- game phases: hide attack button on buttle, remove all from board on results
+- game phases: hide attack button on buttle, remove all from board on results, show title
 - opponent/player units bench to hex animation
 - trait hover
 - unit hover
 - shop unit hover
-- floating text
 - menu
 
 Bugs:
-- traits update with knight
+- attack after death
+- traits update?
 - fix shopUnit on parent instead of children
 - fix unsubscribe onPhaseChanged
 - OBJECT POOLING
-
-- units animations: ideal/ready, drag, death
-- projectiles

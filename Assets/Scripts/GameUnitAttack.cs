@@ -13,7 +13,7 @@ public class GameUnitAttack : MonoBehaviour
     private bool _firstAttack = true;
     private GameUnit _currentTarget;
 
-    private GameUnitBehavior _gameUnitBehavior;
+    private GameUnitMovement _gameUnitBehavior;
 
     public bool IsAttacking { get => _isAttacking; set => _isAttacking = value; }
 
@@ -23,7 +23,7 @@ public class GameUnitAttack : MonoBehaviour
     private void Awake()
     {
         _gameUnit = GetComponent<GameUnit>();
-        _gameUnitBehavior = GetComponent<GameUnitBehavior>();
+        _gameUnitBehavior = GetComponent<GameUnitMovement>();
     }
 
     public void Attack(GameUnit target)
@@ -39,16 +39,7 @@ public class GameUnitAttack : MonoBehaviour
                 return;
             }
             _isAttacking = true;
-
-            // If it's the first attack, immediately invoke the attack event without waiting
-            if (_firstAttack)
-            {
-                _firstAttack = false;
-                OnAttack?.Invoke(_gameUnit, _currentTarget, _gameUnit.AttackDamage); // task?
-            }
-
             StartCoroutine(AttackCoroutine());
-
         }
         else
         {
@@ -58,23 +49,23 @@ public class GameUnitAttack : MonoBehaviour
 
     private IEnumerator AttackCoroutine()
     {
-        while (_currentTarget.Hp > 0)
+        // If it's the first attack, immediately invoke the attack event without waiting
+        if (_firstAttack)
+        {
+            _firstAttack = false;
+            OnAttack?.Invoke(_gameUnit, _currentTarget, _gameUnit.AttackDamage); // task?
+        }
+
+        while (!_currentTarget.IsDead() && !_gameUnit.IsDead())
         {
             yield return new WaitForSeconds(1f / _gameUnit.AttackSpeed);
-
-            //Debug.Log(_gameUnit.UnitName + " attacked " + _currentTarget.UnitName + " -" + _gameUnit.AttackDamage);
-            if (_currentTarget.IsDead() || _gameUnit.IsDead())
-            {
-                Debug.Log("enemy killed: " + _currentTarget);
-                _isAttacking = false;
-                _firstAttack = true;
-                _gameUnitBehavior.UpdatePathfinding();
-                break;
-            }
-            else
-            {
-                OnAttack?.Invoke(_gameUnit, _currentTarget, _gameUnit.AttackDamage);
-            }
+            OnAttack?.Invoke(_gameUnit, _currentTarget, _gameUnit.AttackDamage);
         }
+        if (!_gameUnit.IsDead())
+        {
+            _gameUnitBehavior.UpdatePathfinding();
+        }
+        _isAttacking = false;
+        _firstAttack = true;
     }
 }

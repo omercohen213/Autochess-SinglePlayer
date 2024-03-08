@@ -15,7 +15,7 @@ MonoBehaviour:
   UnitName: Fireheart
   Cost: 2
   Rarity: 0
-  ShopImage: {fileID: 21300000, guid: 6eb81a2d33b7cfc4fb5956dc10f65089, type: 3}
+  UnitImage: {fileID: 21300000, guid: 6eb81a2d33b7cfc4fb5956dc10f65089, type: 3}
   UnitPrefab: {fileID: 3705924833248917223, guid: 7c8886214e6d70e4f944979af0440931, type: 3}
   MaxHp: 10000
   MaxMp: 50

@@ -9,9 +9,6 @@ using UnityEngine.UI;
 
 public class ShopUnit : Unit, IPointerDownHandler
 {
-    private Sprite _shopImage;
-    public Sprite ShopImage { get => _shopImage; set => _shopImage = value; }
-
     public void OnPointerDown(PointerEventData eventData)
     {
         //Debug.Log("OnPointerDown");
@@ -36,6 +33,6 @@ public class ShopUnit : Unit, IPointerDownHandler
      public override void SetUnitData(UnitData unitData)
     {
         base.SetUnitData(unitData);
-        _shopImage = _unitData.ShopImage;
+        _unitImage = _unitData.UnitImage;
     }
 }

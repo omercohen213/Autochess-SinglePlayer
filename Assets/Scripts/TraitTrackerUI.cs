@@ -1,3 +1,4 @@
+using Assets.HeroEditor.Common.Scripts.CharacterScripts.Firearms.Enums;
 using Assets.HeroEditor.Common.Scripts.Common;
 using System;
 using System.Collections;
@@ -109,24 +110,25 @@ public class TraitTrackerUI : MonoBehaviour
         UpdateVisuals(trait, traitTransform, currentStage, unitCount);
     }
 
+
     private void UpdateVisuals(Trait trait, Transform traitTransform, int currentStage, int unitCount)
     {
         if (traitTransform != null)
         {
-            traitTransform.gameObject.name = trait.traitName;
+            traitTransform.gameObject.name = trait.TraitName;
 
             // Set trait name
             Transform nameTransform = traitTransform.Find("Name");
             if (nameTransform.TryGetComponent<TextMeshProUGUI>(out var nameText))
             {
-                nameText.text = trait.traitName;
+                nameText.text = trait.TraitName;
             }
 
             // Set trait image
             Transform imageTransform = traitTransform.Find("Icon");
             if (imageTransform.TryGetComponent<Image>(out var image))
             {
-                image.sprite = trait.traitSprite;
+                image.sprite = trait.TraitSprite;
             }
 
             Transform currentStageTransform = traitTransform.Find("CurrentStage").Find("Text");
@@ -152,7 +154,7 @@ public class TraitTrackerUI : MonoBehaviour
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            Transform traitTransfrom = transform.GetChild(i).Find(trait.traitName);
+            Transform traitTransfrom = transform.GetChild(i).Find(trait.TraitName);
             if (traitTransfrom != null)
             {
                 traitTransfrom.gameObject.SetActive(false);

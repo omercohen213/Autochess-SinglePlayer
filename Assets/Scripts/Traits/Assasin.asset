@@ -7,13 +7,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a958faebb30f7cb4db3112972aa30d0e, type: 3}
   m_Name: Assasin
   m_EditorClassIdentifier: 
-  traitName: Assasin
-  traitDescription: 
+  TraitName: Assasin
+  Description: All units recieve an attack damage buff
+  UnitsWithTrait:
+  - {fileID: 4796883749224880408, guid: feca73e862c53b94599c1e4f4ce23745, type: 3}
+  - {fileID: 8213460557682643511, guid: 7c8886214e6d70e4f944979af0440931, type: 3}
+  Stage1Text: +5 attack damage
+  Stage2Text: +5 attack damage
+  Stage3Text: +5 attack damage
+  Stage4Text: +5 attack damage
   BackgroundColor: {r: 1, g: 0.8163534, b: 0, a: 0}
-  traitSprite: {fileID: 21300000, guid: 163c4b743344846f78b764bc3070cf25, type: 3}
+  TraitSprite: {fileID: 21300000, guid: 88fd51c1af9dd4127a0795114270cf32, type: 3}
   _unitNumNeeded: 01000000030000000500000007000000

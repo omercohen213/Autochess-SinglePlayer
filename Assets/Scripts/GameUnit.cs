@@ -12,6 +12,7 @@ using TMPro.EditorUtilities;
 using TMPro;
 using Assets.HeroEditor.Common.Scripts.ExampleScripts;
 using UnityEditor;
+using Random = UnityEngine.Random;
 
 public class GameUnit : Unit, IDamageable
 {
@@ -27,6 +28,8 @@ public class GameUnit : Unit, IDamageable
     [SerializeField] private float _baseAttackSpeed;
     [SerializeField] private float _attackSpeed;
     [SerializeField] private int _range;
+    [SerializeField] private float _critChance;
+    [SerializeField] private float _critDamage;
     [SerializeField] private float _rangeSpeed;
     [SerializeField] private Weapon _weapon;
     [SerializeField] private GameObject _weaponProjectilePrefab;
@@ -35,6 +38,9 @@ public class GameUnit : Unit, IDamageable
     private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
     private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
     private Dictionary<Trait, int> _traitStages = new(); // Each trait the unit has and its current stage
+
+    public delegate void DeathEventHandler(GameUnit gameUnit);
+    public static event DeathEventHandler OnDeath;
 
     private int _starLevel;
     public readonly int MAX_STAR_LEVEL = 3;
@@ -56,11 +62,8 @@ public class GameUnit : Unit, IDamageable
     public float BaseAttackSpeed { get => _baseAttackSpeed; set => _baseAttackSpeed = value; }
     public float AttackSpeed { get => _attackSpeed; set => _attackSpeed = value; }
     public Weapon Weapon { get => _weapon; set => _weapon = value; }
-
-    private void Awake()
-    {
-
-    }
+    public float CritChance { get => _critChance; set => _critChance = value; }
+    public float CritDamage { get => _critDamage; set => _critDamage = value; }
 
     private void OnEnable()
     {
@@ -80,10 +83,13 @@ public class GameUnit : Unit, IDamageable
         SetUnitData(unitData, starLevel);
         ShowStars(starLevel);
 
+        // Starting stats
         _hp = _maxHp;
         _mp = 0;
         _attackDamage = _baseAttackDamage;
         _attackSpeed = _baseAttackSpeed;
+        _critChance = 0.2f; // base should be 0f
+        _critDamage = 2f; // base should be 1f
 
         // Initialize all traits with stage 0
         foreach (var trait in Traits)
@@ -356,6 +362,13 @@ public class GameUnit : Unit, IDamageable
     {
         if (attacker == this)
         {
+            bool isCritical = IsCriticalAttack();
+            if (isCritical)
+            {
+                damage = Mathf.RoundToInt(damage * _critDamage);
+            }
+
+
             if (_mp == _maxMp)
             {
                 UseAbility(target);
@@ -370,14 +383,19 @@ public class GameUnit : Unit, IDamageable
             // Meele - no projectile
             if ((_weapon == Weapon.MeeleOneHanded) || (_weapon == Weapon.MeeleTwoHanded) || (_weapon == Weapon.NoWeapon))
             {
-                target.OnDamageTaken(damage);
+                target.OnDamageTaken(damage, isCritical);
             }
             else
             {
-                ShootProjectile(target);
+                ShootProjectile(target, damage, isCritical);
             }
             AnimateAttack();
         }
+    }
+
+    private bool IsCriticalAttack()
+    {
+        return Random.value < _critChance;
     }
 
     private void AnimateAttack()
@@ -411,14 +429,14 @@ public class GameUnit : Unit, IDamageable
         }
     }
 
-    private void ShootProjectile(GameUnit target)
+    private void ShootProjectile(GameUnit target, int damage, bool isCritical)
     {
         if (_weaponProjectilePrefab != null)
         {
             Vector3 startingPosition = transform.position + new Vector3(0, 0.5f);
             GameObject projectileGo = Instantiate(_weaponProjectilePrefab, startingPosition, Quaternion.identity, transform);
             Projectile projectile = projectileGo.GetComponent<Projectile>();
-            projectile.MoveProjectile(target, _attackDamage);
+            projectile.MoveProjectile(target, damage, isCritical);
         }
         else
         {
@@ -426,8 +444,9 @@ public class GameUnit : Unit, IDamageable
         }
     }
 
-    public void OnDamageTaken(int damage)
+    public void OnDamageTaken(int damage, bool isCritical)
     {
+        DynamicTextManager.CreateDamageText(transform.position, damage.ToString(), isCritical);
         _hp -= damage;
         if (IsDead())
         {
@@ -447,7 +466,7 @@ public class GameUnit : Unit, IDamageable
 
     private void UseAbility(GameUnit target)
     {
-        Debug.Log("ability Used " + _unitName);
+        //Debug.Log("ability Used " + _unitName);
     }
 
     public void Die()
@@ -456,10 +475,12 @@ public class GameUnit : Unit, IDamageable
         {
             _animator.SetTrigger("Death");
         }
+        OnDeath?.Invoke(this);
         RemoveFromBoard();
         StartCoroutine(DieCoroutine());
     }
 
+    // Fade the character over time and then destroy it
     private IEnumerator DieCoroutine()
     {
         float initialAlpha = 1f;
@@ -478,12 +499,24 @@ public class GameUnit : Unit, IDamageable
             yield return null;
         }
         SetAlphaColor(0);
-
+        Destroy(gameObject);
     }
 
+    // Set alpha colors of all body parts of the character
     private void SetAlphaColor(float alphaColor)
     {
-        Transform characterTransform = transform.Find("Character");
+        // fix for monsters
+        Transform characterTransform;
+        if (_owner == LocalPlayer.Instance)
+        {
+            characterTransform = transform.Find("Character");
+
+        }
+        else
+        {
+            characterTransform = transform.Find("Body");
+
+        }
         SpriteRenderer[] bodyParts = characterTransform.GetComponentsInChildren<SpriteRenderer>();
         foreach (SpriteRenderer bodyPart in bodyParts)
         {

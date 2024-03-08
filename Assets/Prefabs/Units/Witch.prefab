@@ -387,6 +387,7 @@ GameObject:
   - component: {fileID: 2172088888501568419}
   - component: {fileID: 8289921216606171798}
   - component: {fileID: -8900899496739039505}
+  - component: {fileID: 2466206016383715764}
   m_Layer: 6
   m_Name: Witch
   m_TagString: DraggableObject
@@ -425,7 +426,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _traits: []
+  _unitData: {fileID: 11400000, guid: 76327c5567961544487b10d8de7f9bf6, type: 2}
+  _traits:
+  - {fileID: 11400000, guid: edeb88cd39de9ff4292f92a75f2278f4, type: 2}
   _owner: {fileID: 0}
   _maxHp: 0
   _hp: 0
@@ -436,6 +439,8 @@ MonoBehaviour:
   _baseAttackSpeed: 0
   _attackSpeed: 0
   _range: 0
+  _critChance: 0
+  _critDamage: 0
   _rangeSpeed: 0
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
@@ -784,6 +789,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isAttacking: 0
+--- !u!114 &2466206016383715764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47326b4ab5f0c1f4faae19ba35b9bd62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unitInfo: {fileID: 0}
 --- !u!1 &1148429388143190
 GameObject:
   m_ObjectHideFlags: 0

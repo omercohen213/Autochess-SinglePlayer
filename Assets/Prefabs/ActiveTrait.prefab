@@ -755,11 +755,11 @@ GameObject:
   - component: {fileID: 5680395253258101488}
   - component: {fileID: 3711618665766877420}
   - component: {fileID: 1876294675603031426}
-  - component: {fileID: 1338215277743471302}
   - component: {fileID: 7035924775510951668}
+  - component: {fileID: 2685556861401249430}
   m_Layer: 5
   m_Name: ActiveTrait
-  m_TagString: Untagged
+  m_TagString: Trait
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -828,19 +828,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1338215277743471302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6777195323060101724}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c3b32e7d870ace439b4eaf24ee0fdbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _traitInfo: {fileID: 0}
 --- !u!58 &7035924775510951668
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -854,9 +841,21 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 2.5}
+  m_Offset: {x: -0.29166412, y: 3.499939}
   serializedVersion: 2
-  m_Radius: 69
+  m_Radius: 53.83364
+--- !u!114 &2685556861401249430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777195323060101724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b6e29792452a4dbbd856b24bc98ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7234328647340570806
 GameObject:
   m_ObjectHideFlags: 0

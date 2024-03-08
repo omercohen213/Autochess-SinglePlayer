@@ -387,6 +387,7 @@ GameObject:
   - component: {fileID: 6852682343588001112}
   - component: {fileID: 6962507392464666632}
   - component: {fileID: -7949186364616828609}
+  - component: {fileID: -6320394802761088779}
   m_Layer: 6
   m_Name: Ninja
   m_TagString: DraggableObject
@@ -719,7 +720,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _traits: []
+  _unitData: {fileID: 11400000, guid: 29c5282592df1074597e88445df582af, type: 2}
+  _traits:
+  - {fileID: 11400000, guid: ceb29ad378042744eaa8a06ec19db335, type: 2}
   _owner: {fileID: 0}
   _maxHp: 0
   _hp: 0
@@ -730,6 +733,8 @@ MonoBehaviour:
   _baseAttackSpeed: 0
   _attackSpeed: 0
   _range: 0
+  _critChance: 0
+  _critDamage: 0
   _rangeSpeed: 0
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
@@ -784,6 +789,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isAttacking: 0
+--- !u!114 &-6320394802761088779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47326b4ab5f0c1f4faae19ba35b9bd62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unitInfo: {fileID: 0}
 --- !u!1 &1148429388143190
 GameObject:
   m_ObjectHideFlags: 0

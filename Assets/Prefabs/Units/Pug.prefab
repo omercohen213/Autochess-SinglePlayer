@@ -448,6 +448,7 @@ GameObject:
   - component: {fileID: 8749646274830892866}
   - component: {fileID: 7223323766738933057}
   - component: {fileID: -178278008552349858}
+  - component: {fileID: -5235407044963106823}
   m_Layer: 0
   m_Name: Pug
   m_TagString: Untagged
@@ -567,6 +568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _unitData: {fileID: 11400000, guid: ed9694e3951334c42ae346de136788c8, type: 2}
   _traits: []
   _owner: {fileID: 0}
   _maxHp: 0
@@ -626,6 +628,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isAttacking: 0
+--- !u!114 &-5235407044963106823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47326b4ab5f0c1f4faae19ba35b9bd62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unitInfo: {fileID: 9100672195998030155, guid: dd9b18b3d76c52b4d8286d93f777c74f, type: 3}
 --- !u!1 &1785783350246851850
 GameObject:
   m_ObjectHideFlags: 0

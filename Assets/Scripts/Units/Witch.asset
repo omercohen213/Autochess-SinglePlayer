@@ -15,7 +15,7 @@ MonoBehaviour:
   UnitName: Witch
   Cost: 1
   Rarity: 0
-  ShopImage: {fileID: 21300000, guid: 3d48f8658b8782b46ae0f8c691c6d26d, type: 3}
+  UnitImage: {fileID: 21300000, guid: 3d48f8658b8782b46ae0f8c691c6d26d, type: 3}
   UnitPrefab: {fileID: 1109986417982920, guid: 0a2c735fc0da778428f9d136af1dc43d, type: 3}
   MaxHp: 100
   MaxMp: 50

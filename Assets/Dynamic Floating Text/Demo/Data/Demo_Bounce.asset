@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcff3a5a705644c4e9a3068b0236a108, type: 3}
+  m_Name: Demo_Bounce
+  m_EditorClassIdentifier: 
+  id: 4
+  colours:
+  - {r: 1, g: 0.50980395, b: 0, a: 1}
+  - {r: 1, g: 0.09474844, b: 0, a: 1}
+  sizes: []
+  font: {fileID: 11400000, guid: 0b51dbee9f2f047cebc9e85675fb05d5, type: 2}
+  bold: 0
+  italic: 0
+  underline: 0
+  strikethrough: 0
+  lifetime: 1
+  numberOfColourAlternations: 0
+  numberOfSizeAlternations: 0
+  colourAlternationDuration: 0
+  sizeAlternationDuration: 0
+  enterDuration: 0.1
+  exitDuration: 0.5
+  maxDrift: 0.5
+  maxHeight: 0.5
+  popModifier: 0
+  colourAlternationMode: 0
+  sizeAlternationMode: 0
+  enterType: 03000000
+  exitType: 0

@@ -616,6 +616,7 @@ GameObject:
   - component: {fileID: -3877063333731831994}
   - component: {fileID: 2017791139440907835}
   - component: {fileID: -2048272093239851786}
+  - component: {fileID: -731500924443054734}
   m_Layer: 0
   m_Name: Watchdog
   m_TagString: Untagged
@@ -736,6 +737,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _unitData: {fileID: 11400000, guid: 9a99ebbbfc980744b946b0572e81247d, type: 2}
   _traits: []
   _owner: {fileID: 0}
   _maxHp: 0
@@ -795,6 +797,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isAttacking: 0
+--- !u!114 &-731500924443054734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117150395161187363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47326b4ab5f0c1f4faae19ba35b9bd62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _unitInfo: {fileID: 0}
 --- !u!1 &188064519148664878
 GameObject:
   m_ObjectHideFlags: 0

@@ -178,7 +178,7 @@ public class Shop : MonoBehaviour
 
         // Shop unit image
         Image shopUnitImage = shopUnit.transform.Find("UnitImage").GetComponent<Image>();
-        shopUnitImage.sprite = shopUnit.ShopImage;
+        shopUnitImage.sprite = shopUnit.UnitImage;
 
         // Traits
         Transform traitsParent = shopUnit.transform.Find("Traits");
@@ -200,7 +200,7 @@ public class Shop : MonoBehaviour
                 {
                     if (iconTransform.TryGetComponent(out Image iconImage))
                     {
-                        iconImage.sprite = shopUnit.Traits[i].traitSprite;
+                        iconImage.sprite = shopUnit.Traits[i].TraitSprite;
                     }
                     else
                     {

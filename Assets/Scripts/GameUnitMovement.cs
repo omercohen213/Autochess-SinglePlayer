@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -6,33 +7,31 @@ using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(GameUnit))]
 [RequireComponent(typeof(GameUnitAttack))]
-public class GameUnitBehavior : MonoBehaviour
+public class GameUnitMovement : MonoBehaviour
 {
     private GameUnit _gameUnit;
     private GameUnit _currentTarget;
 
     private List<Hex> _currentPath;
     private int _distanceToTarget = int.MaxValue;
-    private readonly float _moveSpeed = 1.2415f * 1.5f ; // 1.2415f is movement speed of 1 hex per second
+    private readonly float _moveSpeed = 1.2415f * 1.5f; // 1.2415f is movement speed of 1 hex per second
 
     private GameUnitAttack _gameUnitAttack;
-    private CancellationTokenSource _moveUnitCancellationTokenSource;
+    private CancellationTokenSource _moveTowardsEnemyCTS;
+    private CancellationTokenSource _moveUnitCTS;
 
     private void Awake()
     {
         _gameUnit = GetComponent<GameUnit>();
         _gameUnitAttack = GetComponent<GameUnitAttack>();
-
+        GameUnit.OnDeath += OnDeath;
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
     private void OnDestroy()
     {
-        // Cancel the MoveUnit task when the GameUnitBehavior is destroyed
-        if (_moveUnitCancellationTokenSource != null)
-        {
-            _moveUnitCancellationTokenSource.Cancel();
-        }
+        _moveUnitCTS?.Cancel();
+        _moveTowardsEnemyCTS?.Cancel();
         //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
     }
 
@@ -54,31 +53,45 @@ public class GameUnitBehavior : MonoBehaviour
         {
             UpdatePathfinding();
         }
+        _moveUnitCTS = new();
+        _moveTowardsEnemyCTS = new();
     }
 
     // Given the current path, move towards enemy checking after each move if there is one to attack
     public async Task MoveTowardsEnemy()
     {
+        if (_moveTowardsEnemyCTS.IsCancellationRequested)
+        {
+            return;
+        }
+
         CheckForEnemy();
 
-        if (_currentPath != null && !_gameUnitAttack.IsAttacking)
+        if (_currentPath != null)
         {
-            Hex nextHex = _currentPath[0];
+            if (!_gameUnitAttack.IsAttacking)
+            {
+                Hex nextHex = _currentPath[0];
 
-            // Move the unit to the next hex
-            _moveUnitCancellationTokenSource = new CancellationTokenSource();
-            _gameUnit.AnimateMovement();
-            await MoveUnit(nextHex, _moveUnitCancellationTokenSource);
-            _gameUnit.StopAnimateMovement();
+                // Move the unit to the next hex
+                _gameUnit.AnimateMovement();
+                await MoveUnit(nextHex);
+                _gameUnit.StopAnimateMovement();
 
-            // Check if enemy was found and update path after reaching the next hex
-            CheckForEnemy();
+                // Check if enemy was found and update path after reaching the next hex
+                CheckForEnemy();
+            }
+            else
+            {
+                return;
+            }
         }
         UpdatePathfinding();
+
     }
 
     // Move the unit object from current hex to target hex 
-    private async Task MoveUnit(Hex targetHex, CancellationTokenSource cancellationToken)
+    private async Task MoveUnit(Hex targetHex)
     {
         // Instantly change the unit's hex to allow other units to interact with it directly 
         // or calculate paths accodingly
@@ -96,8 +109,9 @@ public class GameUnitBehavior : MonoBehaviour
             // Allow other tasks to run before continuing execution
             await Task.Yield();
 
+            //cancellationToken.ThrowIfCancellationRequested();
             // Check if the task has been canceled
-            if (cancellationToken.IsCancellationRequested)
+            if (_moveUnitCTS.IsCancellationRequested)
             {
                 return;
             }
@@ -143,6 +157,11 @@ public class GameUnitBehavior : MonoBehaviour
     // Attack if there is an enemy unit in adjacent hexes or in range
     private void CheckForEnemy()
     {
+        if (_moveTowardsEnemyCTS.IsCancellationRequested)
+        {
+            return;
+        }
+
         List<GameUnit> enemyUnits = _gameUnit.GetEnemyUnits();
         foreach (GameUnit enemyUnit in enemyUnits)
         {
@@ -150,6 +169,16 @@ public class GameUnitBehavior : MonoBehaviour
             {
                 _gameUnitAttack.Attack(_currentTarget);
             }
+        }
+    }
+
+    // Called when the unit dies
+    private void OnDeath(GameUnit gameUnit)
+    {
+        if (gameUnit == _gameUnit)
+        {
+            _moveUnitCTS?.Cancel();
+            _moveTowardsEnemyCTS?.Cancel();
         }
     }
 }

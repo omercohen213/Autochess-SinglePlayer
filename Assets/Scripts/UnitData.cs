@@ -20,9 +20,7 @@ public class UnitData : ScriptableObject
     public string UnitName;
     public int Cost;
     public UnitRarity Rarity;
-
-    [Header("ShopUnit Data")]
-    public Sprite ShopImage;
+    public Sprite UnitImage;
 
     [Header("GameUnit Data")]
     public GameObject UnitPrefab;
