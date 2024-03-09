@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UnitName: Icewing
   Cost: 4
-  Rarity: 3
+  Rarity: 4
   UnitImage: {fileID: 21300000, guid: 4751d93293a7938469050c809955e836, type: 3}
   UnitPrefab: {fileID: 1109986417982920, guid: 0aeb5fc2164f4a6419e5ef19e2ade6f1, type: 3}
   MaxHp: 100

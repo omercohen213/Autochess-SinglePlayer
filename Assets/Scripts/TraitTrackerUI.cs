@@ -107,9 +107,23 @@ public class TraitTrackerUI : MonoBehaviour
                 break;
             }
         }
+        SetTraitData(trait, traitTransform);
         UpdateVisuals(trait, traitTransform, currentStage, unitCount);
     }
 
+    private void SetTraitData(Trait trait, Transform traitTransform)
+    {
+        if (traitTransform.TryGetComponent(out TraitData traitData))
+        {
+            traitData.TraitName = trait.TraitName;
+            traitData.Description= trait.Description;
+            traitData.UnitsWithTrait = trait.UnitsWithTrait;
+            traitData.Stage1Text= trait.Stage1Text;
+            traitData.Stage2Text= trait.Stage2Text;
+            traitData.Stage3Text= trait.Stage3Text;
+            traitData.Stage4Text= trait.Stage4Text;
+        }
+    }
 
     private void UpdateVisuals(Trait trait, Transform traitTransform, int currentStage, int unitCount)
     {

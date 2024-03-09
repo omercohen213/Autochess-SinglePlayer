@@ -67,7 +67,7 @@ public class DragManager : MonoBehaviour
             // Loop through all hits
             foreach (RaycastHit2D hit in _hits)
             {
-                if (hit.collider != null && hit.collider.gameObject.CompareTag("DraggableObject"))
+                if (hit.collider != null && hit.collider.gameObject.CompareTag("GameUnit"))
                 {
                     _draggedObject = hit.collider.gameObject;
                     StartDragging();

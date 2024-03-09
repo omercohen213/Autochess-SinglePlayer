@@ -27014,7 +27014,7 @@ GameObject:
   - component: {fileID: 1442018664819075122}
   m_Layer: 6
   m_Name: Fireheart
-  m_TagString: DraggableObject
+  m_TagString: GameUnit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27428,7 +27428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47326b4ab5f0c1f4faae19ba35b9bd62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitInfo: {fileID: 0}
+  _unitInfo: {fileID: 9100672195998030155, guid: dd9b18b3d76c52b4d8286d93f777c74f, type: 3}
 --- !u!1 &3705941194928310209
 GameObject:
   m_ObjectHideFlags: 0

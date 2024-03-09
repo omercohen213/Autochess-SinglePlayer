@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class TraitData : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public string TraitName;
+    public string Description;
+    public List<GameUnit> UnitsWithTrait;
+    public string Stage1Text;
+    public string Stage2Text;
+    public string Stage3Text;
+    public string Stage4Text;
 }
