@@ -53,11 +53,11 @@ namespace Assets.HeroEditor.Common.Scripts.ExampleScripts
             }
         }
 
-        public void MoveProjectile(GameUnit target, int damage, bool isCritical)
+        public void MoveProjectile(GameUnit target, int damage, bool isMagic, bool isCritical)
         {
-            StartCoroutine(MoveProjectileCoroutine(target, damage, isCritical));
+            StartCoroutine(MoveProjectileCoroutine(target, damage, isMagic, isCritical));
         }
-        private IEnumerator MoveProjectileCoroutine(GameUnit target, int damage, bool isCritical)
+        private IEnumerator MoveProjectileCoroutine(GameUnit target, int damage,bool isMagic, bool isCritical)
         {
             if (target == null)
             {
@@ -94,7 +94,7 @@ namespace Assets.HeroEditor.Common.Scripts.ExampleScripts
             // Ensure the projectile reaches the target's position precisely
             transform.position = targetPosition;
 
-            target.OnDamageTaken(damage, isCritical);
+            target.OnDamageTaken(damage, isMagic, isCritical);
 
             // Perform the impact actions
             Bang(target.gameObject);

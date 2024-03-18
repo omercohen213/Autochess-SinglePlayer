@@ -27,8 +27,10 @@ public class UnitData : ScriptableObject
     public int MaxHp;
     public int MaxMp;
     public int BaseAttackDamage;
+    public int BaseAbilityPower;
     public float BaseAttackSpeed;
     public int BaseArmor;
+    public int BaseMagicResist;
     public int Range;
     public Weapon Weapon;
     public GameObject WeaponProjectile;

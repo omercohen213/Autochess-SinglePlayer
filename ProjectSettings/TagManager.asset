@@ -8,6 +8,8 @@ TagManager:
   - BenchSlot
   - SellField
   - DraggableObject
+  - Trait
+  - GameUnit
   layers:
   - Default
   - TransparentFX

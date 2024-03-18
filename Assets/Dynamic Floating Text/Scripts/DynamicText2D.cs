@@ -109,7 +109,7 @@ public class DynamicText2D : MonoBehaviour
     }
 
     // function required to initialise the object, taking the desired text and date object as parameters
-    public void Initialize(string _text, bool isCritical)
+    public void Initialize(string _text,Color color)
     {
         // change the placeholder text
         textObject = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
@@ -125,19 +125,8 @@ public class DynamicText2D : MonoBehaviour
         if (data.underline) textObject.fontStyle = FontStyles.Underline;
         if (data.strikethrough) textObject.fontStyle = FontStyles.Strikethrough;
 
-        if (data.colours.Length > 0)
-        {
-            if (isCritical)
-            {
-                textObject.color = data.colours[1];
+        textObject.color = color;
 
-            }
-            else
-            {
-                textObject.color = data.colours[0];
-
-            }
-        }
         if (data.sizes.Length > 0) textObject.transform.localScale = data.sizes[0] * Vector2.one;
 
         // assign start colour, scale and position

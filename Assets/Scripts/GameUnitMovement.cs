@@ -47,6 +47,7 @@ public class GameUnitMovement : MonoBehaviour
         }
     }
 
+    // Start fighting when battle begins
     private void StartBattle()
     {
         if (_gameUnit.IsOnBoard)
@@ -60,6 +61,7 @@ public class GameUnitMovement : MonoBehaviour
     // Given the current path, move towards enemy checking after each move if there is one to attack
     public async Task MoveTowardsEnemy()
     {
+        // Stop the task if it was cancelled
         if (_moveTowardsEnemyCTS.IsCancellationRequested)
         {
             return;
@@ -127,6 +129,8 @@ public class GameUnitMovement : MonoBehaviour
         // Small delay to make sure not all units search for a path at the same time
         int rnd = Random.Range(100, 200);
         await Task.Delay(rnd);
+
+        // Unit is attacking, no need to search for a new enemy
         if (_gameUnitAttack.IsAttacking)
         {
             return;
@@ -137,6 +141,7 @@ public class GameUnitMovement : MonoBehaviour
 
         Hex newTargetHex = pathfinding.FindClosestEnemy(enemyUnits, _gameUnit.CurrentHex);
 
+        // No enemies left- battle phase has ended
         if (newTargetHex == null)
         {
             Debug.Log("No enemies left");
@@ -144,13 +149,16 @@ public class GameUnitMovement : MonoBehaviour
             return;
         }
 
-        List<Hex> newPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex);
+        // Get the path without ignoring obstacles
+        List<Hex> newPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex, false);
         _currentPath = newPath;
         _currentTarget = newTargetHex.UnitOnHex;
-        if (_currentPath != null)
-        {
-            _distanceToTarget = _currentPath.Count;
-        }
+
+        // Ignore obstacles to get the heuristic path and the distance
+        pathfinding = new();
+        List<Hex> heuristicPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex, true);
+        _distanceToTarget = heuristicPath.Count;
+
         await MoveTowardsEnemy();
     }
 

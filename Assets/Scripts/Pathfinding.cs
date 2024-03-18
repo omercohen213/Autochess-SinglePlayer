@@ -21,8 +21,9 @@ public class Pathfinding
         processed = new();
     }
 
+
     // Find the shortest path from starting hex to a target hex using A* algorithm
-    public List<Hex> FindShortestPath(Hex startHex, Hex targetHex)
+    public List<Hex> FindShortestPath(Hex startHex, Hex targetHex, bool ignoreObstacles)
     {
         if (startHex == null || targetHex == null)
         {
@@ -66,6 +67,7 @@ public class Pathfinding
                 return path;
             }
 
+            // Check the cost for each adjacend hex that has not been processed already
             foreach (Hex adjacentHex in currentHex.AdjacentHexes.Where(hex => !processed.Contains(hex)))
             {
                 bool inSearch = toSearch.Contains(adjacentHex);
@@ -73,8 +75,25 @@ public class Pathfinding
 
                 if (!inSearch || costToAdjacentHex < adjacentHex.GCost)
                 {
-                    bool ignoreIsTaken = adjacentHex == targetHex && adjacentHex.IsTaken;
-                    if (!adjacentHex.IsTaken || ignoreIsTaken)
+                    // If we want just the heuristic path, we ignore obstacles and we dont need to
+                    // check if hexes are taken
+                    if (!ignoreObstacles)
+                    {
+                        // Ignore if hex is taken for the target hex
+                        bool ignoreIsTaken = adjacentHex == targetHex && adjacentHex.IsTaken;
+                        if (!adjacentHex.IsTaken || ignoreIsTaken)
+                        {
+                            adjacentHex.GCost = costToAdjacentHex;
+                            adjacentHex.ConnectedHex = currentHex;
+
+                            if (!inSearch)
+                            {
+                                adjacentHex.HCost = GetHeuristicDistance(adjacentHex, targetHex);
+                                toSearch.Add(adjacentHex);
+                            }
+                        }
+                    }
+                    else
                     {
                         adjacentHex.GCost = costToAdjacentHex;
                         adjacentHex.ConnectedHex = currentHex;

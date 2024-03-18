@@ -725,6 +725,12 @@ MonoBehaviour:
   _mp: 0
   _baseAttackDamage: 0
   _attackDamage: 0
+  _baseAbilityPower: 0
+  _abilityPower: 0
+  _baseArmor: 0
+  _armor: 0
+  _magicResist: 0
+  _baseMagicResist: 0
   _baseAttackSpeed: 0
   _attackSpeed: 0
   _range: 0
@@ -733,6 +739,7 @@ MonoBehaviour:
   _rangeSpeed: 0
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
+  _ability: {fileID: 0}
 --- !u!95 &6052668832958664579
 Animator:
   serializedVersion: 5

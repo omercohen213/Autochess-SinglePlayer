@@ -47,13 +47,13 @@ public class Bench : MonoBehaviour
     }
 
     // Create an instance of a unit on scene and initialize it
-    public void CreateGameUnitByName(Player owner, string unitName, int starLevel)
+    public void CreateEnemyUnitByName(string unitName, int starLevel)
     {
         UnitData unitData = GameUnitsDatabase.Instance.FindUnitByName(unitName);
         GameObject unitGo = Instantiate(unitData.UnitPrefab);
         if (unitGo.TryGetComponent(out GameUnit gameUnit))
         {
-            gameUnit.Initialize(owner, unitData, starLevel);
+            gameUnit.Initialize(Opponent.Instance, unitData, starLevel);
         }
         else
         {
@@ -96,7 +96,7 @@ public class Bench : MonoBehaviour
             CreateGameUnit(gameUnit.Owner, gameUnit.UnitData, starLevel + 1);
 
             // If unit reaches max star level, remove from database
-            if (starLevel + 1 == gameUnit.MAX_STAR_LEVEL)
+            if (starLevel + 1 == GameUnit.MAX_STAR_LEVEL)
             {
                 Shop.Instance.RemoveUnitFromShopDB(gameUnit);
             }

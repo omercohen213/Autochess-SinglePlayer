@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyGameUnit : MonoBehaviour
+public class EnemyGameUnit : GameUnit
 {
-    // Start is called before the first frame update
-    void Start()
+    public void DropItem()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        throw new System.NotImplementedException();
     }
 }

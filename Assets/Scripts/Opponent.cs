@@ -66,8 +66,8 @@ public class Opponent : Player
 
     public void CreateEnemyUnits()
     {
-        _bench.CreateGameUnitByName(this, "Pug", 1);
-        _bench.CreateGameUnitByName(this, "Dog", 1);
+        _bench.CreateEnemyUnitByName("Pug", 1);
+        _bench.CreateEnemyUnitByName("Dog", 1);
     }
 
     // Update is called once per frame

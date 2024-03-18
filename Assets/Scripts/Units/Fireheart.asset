@@ -20,8 +20,10 @@ MonoBehaviour:
   MaxHp: 10000
   MaxMp: 50
   BaseAttackDamage: 5
+  BaseAbilityPower: 0
   BaseAttackSpeed: 2
   BaseArmor: 0
+  BaseMagicResist: 0
   Range: 4
   Weapon: 4
   WeaponProjectile: {fileID: 1846010953453456, guid: f2568acf67fff95408687d6beb77b6db, type: 3}

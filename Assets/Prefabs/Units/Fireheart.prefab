@@ -27012,6 +27012,7 @@ GameObject:
   - component: {fileID: -8845763197816792325}
   - component: {fileID: 7511910753546943888}
   - component: {fileID: 1442018664819075122}
+  - component: {fileID: 3784785532419706501}
   m_Layer: 6
   m_Name: Fireheart
   m_TagString: GameUnit
@@ -27357,6 +27358,12 @@ MonoBehaviour:
   _mp: 0
   _baseAttackDamage: 0
   _attackDamage: 0
+  _baseAbilityPower: 0
+  _abilityPower: 0
+  _baseArmor: 0
+  _armor: 0
+  _magicResist: 0
+  _baseMagicResist: 0
   _baseAttackSpeed: 0
   _attackSpeed: 0
   _range: 0
@@ -27365,6 +27372,7 @@ MonoBehaviour:
   _rangeSpeed: 0
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
+  _ability: {fileID: 3784785532419706501}
 --- !u!61 &1509189479234021291
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -27428,7 +27436,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47326b4ab5f0c1f4faae19ba35b9bd62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitInfo: {fileID: 9100672195998030155, guid: dd9b18b3d76c52b4d8286d93f777c74f, type: 3}
+--- !u!114 &3784785532419706501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abdfbd9833930f841a84f7c2e681f63a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 0}
+  _fireArrowPrefab: {fileID: 8455194272104766564, guid: d5b8f191dbf91c640b0946a2cabe609b, type: 3}
+  _fireBowPrefab: {fileID: 5945721137898767062, guid: b0958fcfe6f284b41a8c246ef1872dcc, type: 3}
 --- !u!1 &3705941194928310209
 GameObject:
   m_ObjectHideFlags: 0
@@ -27889,7 +27911,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 1037250653
-  m_SortingOrder: 2
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!1 &4574728963852274732
 GameObject:

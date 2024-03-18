@@ -355,7 +355,7 @@ public class Shop : MonoBehaviour
             _player.Bench.RemoveUnitFromBench(gameUnit);
         }
 
-        if (gameUnit.StarLevel == gameUnit.MAX_STAR_LEVEL)
+        if (gameUnit.StarLevel == GameUnit.MAX_STAR_LEVEL)
         {
             AddUnitToShopDB(gameUnit);
         }

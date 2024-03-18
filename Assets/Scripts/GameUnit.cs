@@ -25,6 +25,12 @@ public class GameUnit : Unit, IDamageable
     [SerializeField] private int _mp;
     [SerializeField] private int _baseAttackDamage;
     [SerializeField] private int _attackDamage;
+    [SerializeField] private int _baseAbilityPower;
+    [SerializeField] private int _abilityPower;
+    [SerializeField] private int _baseArmor;
+    [SerializeField] private int _armor;
+    [SerializeField] private int _magicResist;
+    [SerializeField] private int _baseMagicResist;
     [SerializeField] private float _baseAttackSpeed;
     [SerializeField] private float _attackSpeed;
     [SerializeField] private int _range;
@@ -33,6 +39,8 @@ public class GameUnit : Unit, IDamageable
     [SerializeField] private float _rangeSpeed;
     [SerializeField] private Weapon _weapon;
     [SerializeField] private GameObject _weaponProjectilePrefab;
+
+    [SerializeField] private Ability _ability;
 
     private bool _isOnBoard;
     private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
@@ -43,7 +51,7 @@ public class GameUnit : Unit, IDamageable
     public static event DeathEventHandler OnDeath;
 
     private int _starLevel;
-    public readonly int MAX_STAR_LEVEL = 3;
+    public static readonly int MAX_STAR_LEVEL = 3;
     public readonly float DEATH_FADE_DURATION = 2f;
 
     public Player Owner { get => _owner; set => _owner = value; }
@@ -64,6 +72,12 @@ public class GameUnit : Unit, IDamageable
     public Weapon Weapon { get => _weapon; set => _weapon = value; }
     public float CritChance { get => _critChance; set => _critChance = value; }
     public float CritDamage { get => _critDamage; set => _critDamage = value; }
+    public int AbilityPower { get => _abilityPower; set => _abilityPower = value; }
+    public int BaseAbilityPower { get => _baseAbilityPower; set => _baseAbilityPower = value; }
+    public int Armor { get => _armor; set => _armor = value; }
+    public int BaseArmor { get => _baseArmor; set => _baseArmor = value; }
+    public int MagicResist { get => _magicResist; set => _magicResist = value; }
+    public int BaseMagicResist { get => _baseMagicResist; set => _baseMagicResist = value; }
 
     private void OnEnable()
     {
@@ -87,6 +101,9 @@ public class GameUnit : Unit, IDamageable
         _hp = _maxHp;
         _mp = 0;
         _attackDamage = _baseAttackDamage;
+        _abilityPower = _baseAbilityPower;
+        _armor = _baseArmor;
+        _magicResist = _baseMagicResist;
         _attackSpeed = _baseAttackSpeed;
         _critChance = 0.2f; // base should be 0f
         _critDamage = 2f; // base should be 1f
@@ -368,10 +385,12 @@ public class GameUnit : Unit, IDamageable
                 damage = Mathf.RoundToInt(damage * _critDamage);
             }
 
-
             if (_mp == _maxMp)
             {
-                UseAbility(target);
+                if (_ability != null)
+                {
+                    _ability.CastAbility(this, target);
+                }
                 _mp = 0;
             }
             else
@@ -383,11 +402,11 @@ public class GameUnit : Unit, IDamageable
             // Meele - no projectile
             if ((_weapon == Weapon.MeeleOneHanded) || (_weapon == Weapon.MeeleTwoHanded) || (_weapon == Weapon.NoWeapon))
             {
-                target.OnDamageTaken(damage, isCritical);
+                target.OnDamageTaken(damage, false, isCritical);
             }
             else
             {
-                ShootProjectile(target, damage, isCritical);
+                ShootProjectile(_weaponProjectilePrefab, target, damage, false, isCritical);
             }
             AnimateAttack();
         }
@@ -405,7 +424,6 @@ public class GameUnit : Unit, IDamageable
             _animator.SetFloat("Speed", _attackSpeed);
             switch (_weapon)
             {
-
                 case Weapon.MeeleOneHanded:
                     _animator.SetTrigger("Slash1H");
                     break;
@@ -429,14 +447,14 @@ public class GameUnit : Unit, IDamageable
         }
     }
 
-    private void ShootProjectile(GameUnit target, int damage, bool isCritical)
+    public void ShootProjectile(GameObject projectilePrefab, GameUnit target, int damage, bool isMagic, bool isCritical)
     {
-        if (_weaponProjectilePrefab != null)
+        if (projectilePrefab != null)
         {
             Vector3 startingPosition = transform.position + new Vector3(0, 0.5f);
-            GameObject projectileGo = Instantiate(_weaponProjectilePrefab, startingPosition, Quaternion.identity, transform);
+            GameObject projectileGo = Instantiate(projectilePrefab, startingPosition, Quaternion.identity, transform);
             Projectile projectile = projectileGo.GetComponent<Projectile>();
-            projectile.MoveProjectile(target, damage, isCritical);
+            projectile.MoveProjectile(target, damage, isMagic, isCritical);
         }
         else
         {
@@ -444,10 +462,30 @@ public class GameUnit : Unit, IDamageable
         }
     }
 
-    public void OnDamageTaken(int damage, bool isCritical)
+    public void OnDamageTaken(int damage, bool isMagic, bool isCritical)
     {
-        DynamicTextManager.CreateDamageText(transform.position, damage.ToString(), isCritical);
-        _hp -= damage;
+        int damageTaken;
+        if (isMagic)
+        {
+            damageTaken = damage - _armor;
+        }
+        else
+        {
+            damageTaken = damage - _magicResist;
+        }
+
+        TextType textType = TextType.Normal;
+        if (isMagic)
+        {
+            textType = TextType.Magic;
+        }
+        else if (isCritical)
+        {
+            textType = TextType.Critical;
+        }
+
+        DynamicTextManager.CreateFloatingText(transform.position, damageTaken.ToString(), textType);
+        _hp -= damageTaken;
         if (IsDead())
         {
             _hp = 0;
@@ -464,11 +502,6 @@ public class GameUnit : Unit, IDamageable
         return _hp <= 0;
     }
 
-    private void UseAbility(GameUnit target)
-    {
-        //Debug.Log("ability Used " + _unitName);
-    }
-
     public void Die()
     {
         if (_animator != null)
@@ -477,6 +510,10 @@ public class GameUnit : Unit, IDamageable
         }
         OnDeath?.Invoke(this);
         RemoveFromBoard();
+        if (_owner == Opponent.Instance)
+        {
+            ItemDropManager.Instance.CreateItemOrb(transform.position);
+        }
         StartCoroutine(DieCoroutine());
     }
 
@@ -564,6 +601,20 @@ public class GameUnit : Unit, IDamageable
         {
             starsParent.gameObject.SetActive(false);
         }
+    }
+
+    public void OnHealRecieved(int healAmount)
+    {
+        DynamicTextManager.CreateFloatingText(transform.position, healAmount.ToString(), TextType.Heal);
+        if (_hp + healAmount > _maxHp)
+        {
+            _hp = _maxHp;
+        }
+        else
+        {
+            _hp += healAmount;
+        }
+        UpdateUnitHPBar();
     }
 
     public void UpdateUnitHPBar()
