@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class Opponent : Player
@@ -16,7 +12,7 @@ public class Opponent : Player
             Destroy(gameObject);
         }
         Instance = this;
-        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
+        RoundManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
     protected override void OnPhaseChanged(GamePhase newPhase)
@@ -26,7 +22,7 @@ public class Opponent : Player
             case GamePhase.Preparation:
                 PrepareEnemy();
                 break;
-            case GamePhase.Battle:
+            case GamePhase.RoundStart:
                 BattleEnemy();
                 break;
         }

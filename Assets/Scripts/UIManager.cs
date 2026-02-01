@@ -16,9 +16,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _goldText;
     [SerializeField] private TextMeshProUGUI _xpText;
     [SerializeField] private Slider _xpBar;
-    [SerializeField] private TextMeshProUGUI _lvlText;
+    [SerializeField] private TextMeshProUGUI _playerLvlText;
+    [SerializeField] private TextMeshProUGUI _roundLvlText;
     [SerializeField] private TextMeshProUGUI _boardLimitText;
     [SerializeField] private TraitTrackerUI _traitTracker;
+    [SerializeField] private GameObject _attackButton;
 
     private static UIManager _instance;
     public static UIManager Instance
@@ -39,6 +41,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        RoundManager.Instance.OnPhaseChanged += OnPhaseChanged;
+    }
+
+    private void OnDisable()
+    {
+        RoundManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+    }
+
     private void Start()
     {
         _player = LocalPlayer.Instance;
@@ -46,6 +58,19 @@ public class UIManager : MonoBehaviour
         UpdateXpUI();
         UpdatePlayerLvlUI();
         UpdateBoardLimit();
+    }
+
+    public void OnPhaseChanged(GamePhase newPhase)
+    {
+        switch (newPhase)
+        {
+            case GamePhase.Preparation:
+                ShowUIElement(_attackButton);
+                break;
+            case GamePhase.RoundStart:
+                HideUIElement(_attackButton);
+                break;
+        }
     }
 
     // Update current gold text
@@ -74,7 +99,7 @@ public class UIManager : MonoBehaviour
     // Update current lvl text
     public void UpdatePlayerLvlUI()
     {
-        _lvlText.text = _player.Lvl.ToString();
+        _playerLvlText.text = _player.Lvl.ToString();
         UpdateXpUI();
     }
 
@@ -95,5 +120,17 @@ public class UIManager : MonoBehaviour
         {
             _boardLimitText.color = Color.green;
         }
+    }
+
+    // Hide given UI element gameobject
+    public void HideUIElement(GameObject elementToHide)
+    {
+        elementToHide.SetActive(false);
+    }
+
+    // Show given hidden UI element gameobject
+    public void ShowUIElement(GameObject elementToHide)
+    {
+        elementToHide.SetActive(true);
     }
 }

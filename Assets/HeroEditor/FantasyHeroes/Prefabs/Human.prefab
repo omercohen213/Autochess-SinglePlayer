@@ -385,6 +385,8 @@ GameObject:
   - component: {fileID: 1793250967599767188}
   - component: {fileID: -4426488288076552786}
   - component: {fileID: 6052668832958664579}
+  - component: {fileID: 7348930797816665001}
+  - component: {fileID: 2200351911256725346}
   m_Layer: 0
   m_Name: Human
   m_TagString: DraggableObject
@@ -761,6 +763,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7348930797816665001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd9891e111b32f9499b27ccc83590120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2200351911256725346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1148429461579488
 GameObject:
   m_ObjectHideFlags: 0

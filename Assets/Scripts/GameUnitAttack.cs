@@ -2,70 +2,94 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-
+[RequireComponent(typeof(GameUnit))]
 public class GameUnitAttack : MonoBehaviour
 {
     private GameUnit _gameUnit;
 
-    [SerializeField] private bool _isAttacking = false;
     private bool _firstAttack = true;
-    private GameUnit _currentTarget;
 
-    private GameUnitMovement _gameUnitBehavior;
 
-    public bool IsAttacking { get => _isAttacking; set => _isAttacking = value; }
-
+    // Keep coroutine reference so we don't start duplicates and can stop on disable
+    private Coroutine _attackCoroutine;
     public delegate void AttackEventHandler(GameUnit attacker, GameUnit target, int damage);
     public static event AttackEventHandler OnAttack;
+    public static event Action<GameUnit> OnAttackFinished; // fired when this unit finishes attacking
+
 
     private void Awake()
     {
         _gameUnit = GetComponent<GameUnit>();
-        _gameUnitBehavior = GetComponent<GameUnitMovement>();
     }
 
     public void Attack(GameUnit target)
     {
-        if (target != null)
+        if (target == null)
         {
-            _currentTarget = target;
-            if (_currentTarget.IsDead() || _gameUnit.IsDead())
-            {
-                _isAttacking = false;
-                _firstAttack = true;
-                _gameUnitBehavior.UpdatePathfinding();
-                return;
-            }
-            _isAttacking = true;
-            StartCoroutine(AttackCoroutine());
+            Debug.LogWarning("GameUnitAttack.Attack: target is null");
+            return;
         }
-        else
+
+        // If already attacking, ignore new requests
+        if (_gameUnit.CurrentState == GameUnit.UnitState.Attacking) return;
+
+        _gameUnit.CurrentTarget= target;
+
+        // Unit is dead, finish immediately
+        if (_gameUnit.CurrentTarget.IsDead() || _gameUnit.IsDead())
         {
-            Debug.Log("target is null");
+            _firstAttack = true;
+            return;
         }
+
+        _gameUnit.ChangeState(GameUnit.UnitState.Attacking);
+        _attackCoroutine = StartCoroutine(AttackCoroutine());
     }
 
     private IEnumerator AttackCoroutine()
     {
-        // If it's the first attack, immediately invoke the attack event without waiting
         if (_firstAttack)
         {
             _firstAttack = false;
-            OnAttack?.Invoke(_gameUnit, _currentTarget, _gameUnit.AttackDamage); // task?
+            OnAttack?.Invoke(_gameUnit, _gameUnit.CurrentTarget, _gameUnit.AttackDamage);
         }
 
-        while (!_currentTarget.IsDead() && !_gameUnit.IsDead())
+        while (!_gameUnit.CurrentTarget.IsDead() && !_gameUnit.IsDead())
         {
             yield return new WaitForSeconds(1f / _gameUnit.AttackSpeed);
-            OnAttack?.Invoke(_gameUnit, _currentTarget, _gameUnit.AttackDamage);
+
+            // Target or attacker may die while waiting
+            if (_gameUnit.CurrentTarget.IsDead() || _gameUnit.IsDead()) break;
+
+            OnAttack?.Invoke(_gameUnit, _gameUnit.CurrentTarget, _gameUnit.AttackDamage);
         }
-        if (!_gameUnit.IsDead())
-        {
-            _gameUnitBehavior.UpdatePathfinding();
-        }
-        _isAttacking = false;
+
+        // Attack loop finished
+        _gameUnit.ChangeState(GameUnit.UnitState.None);
+
         _firstAttack = true;
+        _attackCoroutine = null;
+    }
+
+    private void OnDisable()
+    {
+        if (_attackCoroutine != null)
+        {
+            StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
+        }
+
+        _gameUnit.ChangeState(GameUnit.UnitState.None);
+        _firstAttack = true;
+    }
+
+    private void OnDestroy()
+    {
+        if (_attackCoroutine != null)
+        {
+            StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent (typeof (Animator))]
 public class PlayerCharacter : MonoBehaviour
 {
     private readonly float SPEED = 4f;

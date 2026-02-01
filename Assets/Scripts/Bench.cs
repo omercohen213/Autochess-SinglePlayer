@@ -62,7 +62,7 @@ public class Bench : MonoBehaviour
         AddUnitToBench(gameUnit);
     }
 
-    // Create the gameUnit object
+    // Create an instance of a unit on scene and initialize it
     public void CreateGameUnit(Player owner, UnitData unitData, int starLevel)
     {
         GameObject unitGo = Instantiate(unitData.UnitPrefab);
@@ -77,7 +77,7 @@ public class Bench : MonoBehaviour
         AddUnitToBench(gameUnit);
     }
 
-    // Create a gameUnit and add it to the bench
+    // Add a unit to an empty bench slot
     public void AddUnitToBench(GameUnit gameUnit)
     {
         _benchUnits.Add(gameUnit);

@@ -746,6 +746,12 @@ MonoBehaviour:
   _mp: 0
   _baseAttackDamage: 0
   _attackDamage: 0
+  _baseAbilityPower: 0
+  _abilityPower: 0
+  _baseArmor: 0
+  _armor: 0
+  _magicResist: 0
+  _baseMagicResist: 0
   _baseAttackSpeed: 0
   _attackSpeed: 0
   _range: 0
@@ -754,6 +760,7 @@ MonoBehaviour:
   _rangeSpeed: 0
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
+  _ability: {fileID: 0}
 --- !u!114 &-3877063333731831994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -807,12 +814,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 117150395161187363}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 47326b4ab5f0c1f4faae19ba35b9bd62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitInfo: {fileID: 9100672195998030155, guid: dd9b18b3d76c52b4d8286d93f777c74f, type: 3}
 --- !u!1 &188064519148664878
 GameObject:
   m_ObjectHideFlags: 0

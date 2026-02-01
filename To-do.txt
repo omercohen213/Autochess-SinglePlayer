@@ -1,3 +1,13 @@
+-fix unit movement and attack after refactoring code
+- fit code to work with gameUnit.CurrentState (instead of isDead etc.)
+
+
+game phases:
+	1. instead of destroying a game unit on death, disable it, add it to a list to return to bench at the end of round
+	2. each unit notifies round manager when finished attacking, the board counts if no units left and then round is over
+		
+- show level
+
 Game Mechanics:
 - abilities- fireheart stun arrow
 - traits logic - assassin invis backline
@@ -6,6 +16,7 @@ Game Mechanics:
 - items - monsters item orb drops
 - items shop
 - armor and magic resist
+- every unit must be an attacker and a mover. To create units that don't move or attack, change to interfaced based Iattacker, Imover
 
 Animations & UI:
 - on unit click, show unitinfo / start drag only when moving unit
@@ -14,6 +25,8 @@ Animations & UI:
 - unit hover
 - shop unit hover
 - menu
+- separate UiManager code
+- hide attack button on round start
 
 Bugs:
 - fireheart had -attack power 2 star?
@@ -25,6 +38,7 @@ Bugs:
 - fix unsubscribe onPhaseChanged
 - OBJECT POOLING
 
-fixed attack when no path
+fixed attack when no path (maybe?) 
 added player character
 added heal ability
+changed unit movment

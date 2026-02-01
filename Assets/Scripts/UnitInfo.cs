@@ -8,48 +8,95 @@ using UnityEngine.EventSystems;
 
 public class UnitInfo : MonoBehaviour
 {
-    private GameObject _unitInfo;
-    private RaycastHit2D[] _hits;
+    [SerializeField] private GameObject _unitInfo;
+    private Collider2D[] _hits;
     private int _shopLayer;
     private int _benchLayer;
     private int _boardLayer;
     private int _layerMask;
 
+    private Camera _mainCam;
+    private GameUnit _currentUnit;
+
     private void Awake()
     {
-        _unitInfo = FindInActiveObjectByName("UnitInfo");
+        //_unitInfo = FindInActiveObjectByName("UnitInfo");
     }
-
-
 
     private void Start()
     {
+
+        _mainCam = Camera.main;
+
         _boardLayer = LayerMask.NameToLayer("Board");
         _shopLayer = LayerMask.NameToLayer("Shop");
         _benchLayer = LayerMask.NameToLayer("Bench");
-        _layerMask = ~(1 << _shopLayer) & ~(1 << _benchLayer) & ~(1 << _boardLayer);
+        int excluded = (1 << _shopLayer) | (1 << _benchLayer) | (1 << _boardLayer);
+        _layerMask = ~excluded; //include everything except excluded
     }
 
     private void Update()
     {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        /*Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         _hits = Physics2D.RaycastAll(mousePosition, Vector2.zero, Mathf.Infinity, _layerMask);
 
         foreach (RaycastHit2D hit in _hits)
         {
             if (hit.collider != null && hit.collider.gameObject.CompareTag("GameUnit"))
             {
-                Debug.Log(hit.collider);
                 if (hit.collider.TryGetComponent(out GameUnit gameUnit))
                 {
-                    //ShowUnitInfo(gameUnit);
+                    Debug.Log(hit.collider);
+                    ShowUnitInfo(gameUnit);
                 }
                 else
                 {
+                    Debug.Log("sss");
                     HideUnitInfo();
                 }
             }
-           
+        }*/
+
+        // React on left mouse button DOWN
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Ignore clicks over UI (buttons, panels, etc.)
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                return;
+
+            if (_mainCam == null)
+                _mainCam = Camera.main;
+
+            Vector2 mouseWorld = _mainCam.ScreenToWorldPoint(Input.mousePosition);
+
+            // Overlap point is perfect for "click on a sprite/collider"
+            _hits = Physics2D.OverlapPointAll(mouseWorld, _layerMask);
+
+            GameUnit clickedUnit = null;
+
+            foreach (var col in _hits)
+            {
+                if (col != null && col.CompareTag("GameUnit"))
+                {
+                    if (col.TryGetComponent<GameUnit>(out GameUnit gu))
+                    {
+                        clickedUnit = gu;
+                        break;
+                    }
+                }
+            }
+
+            if (clickedUnit != null)
+            {
+                ShowUnitInfo(clickedUnit);
+                _currentUnit = clickedUnit;
+            }
+            else
+            {
+                // Clicked empty space or other object -> hide
+                HideUnitInfo();
+                _currentUnit = null;
+            }
         }
     }
 
@@ -62,7 +109,6 @@ public class UnitInfo : MonoBehaviour
 
     public void HideUnitInfo()
     {
-        Debug.Log("s");
         _unitInfo.SetActive(false);
     }
 
@@ -92,8 +138,8 @@ public class UnitInfo : MonoBehaviour
         TextMeshProUGUI CritChanceText = statsTransform.Find("CritChance").Find("Text").GetComponent<TextMeshProUGUI>();
         CritChanceText.text = (gameUnit.CritChance * 100).ToString() + "%";
 
-        TextMeshProUGUI CritDamageText= statsTransform.Find("CritDamage").Find("Text").GetComponent<TextMeshProUGUI>();
-        CritDamageText.text = (gameUnit.CritDamage *100).ToString() + "%";
+        TextMeshProUGUI CritDamageText = statsTransform.Find("CritDamage").Find("Text").GetComponent<TextMeshProUGUI>();
+        CritDamageText.text = (gameUnit.CritDamage * 100).ToString() + "%";
     }
 
     GameObject FindInActiveObjectByName(string name)

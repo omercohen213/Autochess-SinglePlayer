@@ -2,37 +2,64 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(GameUnit))]
-[RequireComponent(typeof(GameUnitAttack))]
 public class GameUnitMovement : MonoBehaviour
 {
     private GameUnit _gameUnit;
-    private GameUnit _currentTarget;
 
     private List<Hex> _currentPath;
     private int _distanceToTarget = int.MaxValue;
     private readonly float _moveSpeed = 1.2415f * 1.5f; // 1.2415f is movement speed of 1 hex per second
 
-    private GameUnitAttack _gameUnitAttack;
+    private Task _movingLoopTask;
+    private CancellationTokenSource _lifetimeCTS; // “alive or dead” token for this unit.
     private CancellationTokenSource _moveTowardsEnemyCTS;
-    private CancellationTokenSource _moveUnitCTS;
+    private CancellationTokenSource _moveCTS; // Only for movement of this unit from one hex to another.
+
+    private RoundManager _roundManager;
 
     private void Awake()
     {
         _gameUnit = GetComponent<GameUnit>();
-        _gameUnitAttack = GetComponent<GameUnitAttack>();
         GameUnit.OnDeath += OnDeath;
-        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
     private void OnDestroy()
     {
-        _moveUnitCTS?.Cancel();
+        // Additional tokens cancallation
+        _lifetimeCTS?.Cancel();
+        _moveCTS?.Cancel();
         _moveTowardsEnemyCTS?.Cancel();
-        //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+        //RoundManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+    }
+
+    private void OnEnable()
+    {
+        _lifetimeCTS = new CancellationTokenSource();
+
+        _roundManager = RoundManager.Instance;
+
+        if (_roundManager != null)
+        {
+            _roundManager.OnPhaseChanged += OnPhaseChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Every async operation that was using this token will now stop.
+        _lifetimeCTS?.Cancel();
+        _lifetimeCTS?.Dispose();
+        _lifetimeCTS = null;
+
+        if (_roundManager != null)
+        {
+            _roundManager.OnPhaseChanged -= OnPhaseChanged;
+        }
     }
 
     private void OnPhaseChanged(GamePhase newPhase)
@@ -41,7 +68,7 @@ public class GameUnitMovement : MonoBehaviour
         {
             case GamePhase.Preparation:
                 break;
-            case GamePhase.Battle:
+            case GamePhase.RoundStart:
                 StartBattle();
                 break;
         }
@@ -50,51 +77,142 @@ public class GameUnitMovement : MonoBehaviour
     // Start fighting when battle begins
     private void StartBattle()
     {
+        // Reset movement
+        _moveCTS?.Cancel();
+        _moveCTS?.Dispose();
+        _moveCTS = new CancellationTokenSource();
+        _moveTowardsEnemyCTS?.Cancel();
+        _moveTowardsEnemyCTS?.Dispose();
+        _moveTowardsEnemyCTS = new CancellationTokenSource();
+
         if (_gameUnit.IsOnBoard)
         {
-            UpdatePathfinding();
+            StartMovingLoopIfNotRunning();
         }
-        _moveUnitCTS = new();
-        _moveTowardsEnemyCTS = new();
     }
 
-    // Given the current path, move towards enemy checking after each move if there is one to attack
-    public async Task MoveTowardsEnemy()
+    // If pathfinding is already running, don’t start another one
+    private void StartMovingLoopIfNotRunning()
     {
-        // Stop the task if it was cancelled
-        if (_moveTowardsEnemyCTS.IsCancellationRequested)
-        {
+        if (_movingLoopTask != null && !_movingLoopTask.IsCompleted)
             return;
+
+        CancellationToken token = _lifetimeCTS != null ? _lifetimeCTS.Token : CancellationToken.None;
+        if (!token.IsCancellationRequested)
+        {
+            _movingLoopTask = MoveTowardsEnemyLoop();
         }
 
-        CheckForEnemy();
+    }
 
-        if (_currentPath != null)
+    private async Task MoveTowardsEnemyLoop()
+    {
+        // Token for both being alive and moving
+        CancellationToken token = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeCTS.Token, _moveTowardsEnemyCTS.Token).Token;
+
+        // Check if the unit is alive and movement is not cancelled
+        while (!token.IsCancellationRequested)
         {
-            if (!_gameUnitAttack.IsAttacking)
+            // Find closest enemy and update the path
+            bool foundPath = await UpdatePathfinding(token);
+            if (!foundPath)
             {
-                Hex nextHex = _currentPath[0];
-
-                // Move the unit to the next hex
-                _gameUnit.AnimateMovement();
-                await MoveUnit(nextHex);
-                _gameUnit.StopAnimateMovement();
-
-                // Check if enemy was found and update path after reaching the next hex
-                CheckForEnemy();
+                _gameUnit.ChangeState(GameUnit.UnitState.Idle);
             }
             else
             {
-                return;
+                _gameUnit.ChangeState(GameUnit.UnitState.Moving);
+
+                // found path & target
+                bool canAttack = CheckForEnemyAttack(token);
+                if (canAttack)
+                {
+                    _gameUnit.ChangeState(GameUnit.UnitState.Attacking);
+                    await WaitUntilFinishedAttack();
+                    continue;
+                }
+
+                // not in range yet -> move one hex
+                await MoveOneHexInPath(token);
             }
         }
-        UpdatePathfinding();
+    }
 
+    // Find a path to closest enemy and update the current path
+    // Return true if found
+    private async Task<bool> UpdatePathfinding(CancellationToken token)
+    {
+        // Small randomized delay to make sure not all units search for a path at the same time
+        int rnd = Random.Range(100, 200);
+        await Task.Delay(rnd, token);
+
+        // No need for pathfinding while attacking.
+        if (_gameUnit.CurrentState == GameUnit.UnitState.Attacking)
+            return false;
+
+        List<GameUnit> enemyUnits = _gameUnit.GetEnemyUnits();
+        Pathfinding pathfinding = new();
+
+        Hex newTargetHex = pathfinding.FindClosestEnemy(enemyUnits, _gameUnit.CurrentHex);
+
+        if (newTargetHex == null)
+        {
+            return false; // The unit finds no enemy to attack
+        }
+
+        // Get the path without ignoring obstacles
+        List<Hex> newPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex, false);
+        _currentPath = newPath;
+        _gameUnit.CurrentTarget = newTargetHex.UnitOnHex;
+
+        // Ignore obstacles to get the heuristic path and the distance
+        pathfinding = new();
+        List<Hex> heuristicPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex, true);
+        _distanceToTarget = heuristicPath.Count;
+
+        return true;
+    }
+
+    // Start the Unit movement to next hex in the path
+    private async Task MoveOneHexInPath(CancellationToken token)
+    {
+        if (token.IsCancellationRequested || _currentPath == null)
+        {
+            return;
+        }
+        Hex nextHex = _currentPath[0];
+
+
+        // Move the unit to the next hex
+        _gameUnit.AnimateMovement();
+
+        using (var linkedMoveCts = CancellationTokenSource.CreateLinkedTokenSource(token))
+        {
+            // cancel previous move if exists
+            _moveCTS?.Cancel();
+            _moveCTS?.Dispose();
+            _moveCTS = linkedMoveCts;
+
+            try
+            {
+                // Move unit one hex
+                Debug.Log("moved one hex");
+
+                await MoveUnit(nextHex, linkedMoveCts.Token);
+            }
+            catch (TaskCanceledException) { /* movement canceled */ }
+        }
+
+        _gameUnit.StopAnimateMovement();
     }
 
     // Move the unit object from current hex to target hex 
-    private async Task MoveUnit(Hex targetHex)
+    private async Task MoveUnit(Hex targetHex, CancellationToken token)
     {
+
+        if (token.IsCancellationRequested) return;
+        await Task.Yield();
+
         // Instantly change the unit's hex to allow other units to interact with it directly 
         // or calculate paths accodingly
         _gameUnit.ChangeHex(targetHex);
@@ -104,79 +222,67 @@ public class GameUnitMovement : MonoBehaviour
         Vector3 targetPosition = targetHex.transform.position;
         while (Vector3.Distance(transform.position, targetPosition) > 0.1f)
         {
+            if (token.IsCancellationRequested) return;
+
             // Calculate the next position to move towards
             Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
             transform.position = newPosition;
 
             // Allow other tasks to run before continuing execution
             await Task.Yield();
-
-            //cancellationToken.ThrowIfCancellationRequested();
-            // Check if the task has been canceled
-            if (_moveUnitCTS.IsCancellationRequested)
-            {
-                return;
-            }
         }
 
         // Snap the unit to the exact position of the hex
         transform.position = targetHex.transform.position;
     }
 
-    // Calculate a new path from current hex to closest enemy
-    public async void UpdatePathfinding()
-    {
-        // Small delay to make sure not all units search for a path at the same time
-        int rnd = Random.Range(100, 200);
-        await Task.Delay(rnd);
-
-        // Unit is attacking, no need to search for a new enemy
-        if (_gameUnitAttack.IsAttacking)
-        {
-            return;
-        }
-
-        List<GameUnit> enemyUnits = _gameUnit.GetEnemyUnits();
-        Pathfinding pathfinding = new();
-
-        Hex newTargetHex = pathfinding.FindClosestEnemy(enemyUnits, _gameUnit.CurrentHex);
-
-        // No enemies left- battle phase has ended
-        if (newTargetHex == null)
-        {
-            Debug.Log("No enemies left");
-            GameManager.Instance.SwitchToPhase(GamePhase.BattleResult);
-            return;
-        }
-
-        // Get the path without ignoring obstacles
-        List<Hex> newPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex, false);
-        _currentPath = newPath;
-        _currentTarget = newTargetHex.UnitOnHex;
-
-        // Ignore obstacles to get the heuristic path and the distance
-        pathfinding = new();
-        List<Hex> heuristicPath = pathfinding.FindShortestPath(_gameUnit.CurrentHex, newTargetHex, true);
-        _distanceToTarget = heuristicPath.Count;
-
-        await MoveTowardsEnemy();
-    }
-
     // Attack if there is an enemy unit in adjacent hexes or in range
-    private void CheckForEnemy()
+    private bool CheckForEnemyAttack(CancellationToken token)
     {
-        if (_moveTowardsEnemyCTS.IsCancellationRequested)
+        if (token.IsCancellationRequested)
         {
-            return;
+            return false;
         }
 
         List<GameUnit> enemyUnits = _gameUnit.GetEnemyUnits();
         foreach (GameUnit enemyUnit in enemyUnits)
         {
-            if (_distanceToTarget <= _gameUnit.Range && _currentTarget == enemyUnit)
+            if (_distanceToTarget <= _gameUnit.Range && _gameUnit.CurrentTarget == enemyUnit)
             {
-                _gameUnitAttack.Attack(_currentTarget);
+                _gameUnit.CurrentTarget = enemyUnit;
+                return true;
             }
+        }
+        return false;
+    }
+
+    private async Task WaitUntilFinishedAttack()
+    {
+        // Safety: if something already canceled, bail out immediately
+        if (_lifetimeCTS == null || _lifetimeCTS.IsCancellationRequested) return;
+        if (_moveTowardsEnemyCTS == null || _moveTowardsEnemyCTS.IsCancellationRequested) return;
+
+        // Wait until either:
+        // - GameUnit state is no longer Attacking, OR
+        // - GameUnitAttack reports it is not attacking, OR
+        // - the unit died, OR
+        // - the movement/lifetime tokens are canceled
+        while (true)
+        {
+            // stop waiting if unit died or cancellation requested
+            if (_gameUnit.IsDead()) break;
+            if (_lifetimeCTS == null || _lifetimeCTS.IsCancellationRequested) break;
+            if (_moveTowardsEnemyCTS == null || _moveTowardsEnemyCTS.IsCancellationRequested) break;
+
+            // if GameUnit state left attacking, stop waiting
+            if (_gameUnit.CurrentState != GameUnit.UnitState.Attacking) break;
+
+            // If attack component itself says it finished, stop waiting
+            // (keeps logic resilient in case GameUnitAttack doesn't change GameUnit.State)
+            if (!(_gameUnit.CurrentState ==  GameUnit.UnitState.Attacking)) break;
+
+            // yield to the next frame / allow cancellation to be observed
+            await Task.Yield();
         }
     }
 
@@ -185,8 +291,8 @@ public class GameUnitMovement : MonoBehaviour
     {
         if (gameUnit == _gameUnit)
         {
-            _moveUnitCTS?.Cancel();
-            _moveTowardsEnemyCTS?.Cancel();
+            _lifetimeCTS?.Cancel();
+            _moveCTS?.Cancel();
         }
     }
 }

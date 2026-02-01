@@ -14,6 +14,11 @@ using Assets.HeroEditor.Common.Scripts.ExampleScripts;
 using UnityEditor;
 using Random = UnityEngine.Random;
 
+
+
+// currently every unit must attack and move
+[RequireComponent(typeof(GameUnitMovement))]
+[RequireComponent(typeof(GameUnitAttack))]
 public class GameUnit : Unit, IDamageable
 {
     private Animator _animator;
@@ -45,7 +50,9 @@ public class GameUnit : Unit, IDamageable
     private bool _isOnBoard;
     private Hex _currentHex; // Current hex spot if unit is on board. Null otherwise
     private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
-    private Dictionary<Trait, int> _traitStages = new(); // Each trait the unit has and its current stage
+    private Dictionary<Trait, int> _traitStages = new(); // Each trait the unit has and its current stage   
+    private RoundManager _roundManager;
+    private GameManager _gameManager;
 
     public delegate void DeathEventHandler(GameUnit gameUnit);
     public static event DeathEventHandler OnDeath;
@@ -78,24 +85,50 @@ public class GameUnit : Unit, IDamageable
     public int BaseArmor { get => _baseArmor; set => _baseArmor = value; }
     public int MagicResist { get => _magicResist; set => _magicResist = value; }
     public int BaseMagicResist { get => _baseMagicResist; set => _baseMagicResist = value; }
+    public UnitState CurrentState { get => _currentState; set => _currentState = value; }
+    public GameUnit CurrentTarget { get => _currentTarget; set => _currentTarget = value; }
+    private void Awake()
+    {
+        _attack = GetComponent<GameUnitAttack>();
+        _movement = GetComponent<GameUnitMovement>();
+    }
 
     private void OnEnable()
     {
-        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
-        GameUnitAttack.OnAttack += OnAttack;
+        _roundManager = RoundManager.Instance;
+        _gameManager = GameManager.Instance;
+        if (_roundManager != null)
+        {
+            _roundManager.OnPhaseChanged += OnPhaseChanged;
+        }
+        if (_gameManager != null)
+        {
+            GameUnitAttack.OnAttack += OnAttack;
+        }
     }
-
     private void OnDisable()
     {
-        //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
-        //GameUnitAttack.OnAttack -= OnAttack;
+        if (_roundManager != null)
+        {
+            _roundManager.OnPhaseChanged -= OnPhaseChanged;
+        }
+        if (_gameManager != null)
+        {
+            GameUnitAttack.OnAttack -= OnAttack;
+        }
     }
+    /*    private void OnDisable()
+        {
+            //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+            //GameUnitAttack.OnAttack -= OnAttack;
+        }*/
 
     public void Initialize(Player owner, UnitData unitData, int starLevel)
     {
         _owner = owner;
         SetUnitData(unitData, starLevel);
         ShowStars(starLevel);
+        _currentState = UnitState.Idle;
 
         // Starting stats
         _hp = _maxHp;
@@ -165,9 +198,9 @@ public class GameUnit : Unit, IDamageable
         {
             case GamePhase.Preparation:
                 break;
-            case GamePhase.Battle:
+            case GamePhase.RoundStart:
                 break;
-            case GamePhase.BattleResult:
+            case GamePhase.RoundOver:
                 break;
         }
     }
@@ -509,6 +542,7 @@ public class GameUnit : Unit, IDamageable
             _animator.SetTrigger("Death");
         }
         OnDeath?.Invoke(this);
+        _currentState = UnitState.Dead;
         RemoveFromBoard();
         if (_owner == Opponent.Instance)
         {
@@ -537,6 +571,7 @@ public class GameUnit : Unit, IDamageable
         }
         SetAlphaColor(0);
         Destroy(gameObject);
+
     }
 
     // Set alpha colors of all body parts of the character
@@ -661,5 +696,32 @@ public class GameUnit : Unit, IDamageable
         {
             _animator.SetBool("Walk", false);
         }
+    }
+
+    public void ChangeState(UnitState newState)
+    {
+        _currentState = newState;
+
+        switch (newState)
+        {
+            case UnitState.Attacking:
+                _attack.Attack(_currentTarget);
+                break;
+
+            case UnitState.Moving:
+             //   _movement.BeginMoveState();
+                break;
+
+            case UnitState.Idle:
+                //_movement.StopAllMovement();
+                break;
+
+            case UnitState.Dead:
+               // _movement.StopAllMovement();
+             //   _attack.StopAllAttacks();
+                break;
+        }
+
+
     }
 }

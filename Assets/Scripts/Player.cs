@@ -22,10 +22,27 @@ public class Player : MonoBehaviour
     public int Lives { get => _lives; set => _lives = value; }
 
     private readonly int[] _xpTable = new int[] { 0, 2, 6, 10, 20, 36, 56, 80, 100 };
+    private RoundManager _roundManager;
 
     protected virtual void Awake()
     {
-        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
+    }
+    
+    private void OnEnable()
+    {
+        _roundManager = RoundManager.Instance;
+        if (_roundManager != null)
+        {
+            _roundManager.OnPhaseChanged += OnPhaseChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_roundManager != null)
+        {
+            _roundManager.OnPhaseChanged -= OnPhaseChanged;
+        }
     }
 
     private void Start()
@@ -40,10 +57,10 @@ public class Player : MonoBehaviour
         {
             case GamePhase.Preparation:
                 break;
-            case GamePhase.Battle:
+            case GamePhase.RoundStart:
                 ShowBoardUnitsBars();
                 break;
-            case GamePhase.BattleResult:
+            case GamePhase.RoundOver:
                 break;
         }
     }

@@ -41,6 +41,18 @@ public class DragManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        DontDestroyOnLoad(gameObject);
+
+    }
+
+    private void OnEnable()
+    {
+        RoundManager.Instance.OnPhaseChanged += OnPhaseChanged;
+    }
+
+    private void OnDisable()
+    {
+        RoundManager.Instance.OnPhaseChanged -= OnPhaseChanged;
     }
 
     private void Start()
@@ -49,8 +61,6 @@ public class DragManager : MonoBehaviour
         _boardLayer = LayerMask.NameToLayer("Board");
         //benchLayer = LayerMask.NameToLayer("Bench");
         _layerMask = ~(1 << _shopLayer);
-
-        GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
     void Update()
@@ -134,7 +144,7 @@ public class DragManager : MonoBehaviour
                 _isEnable = true;
                 _layerMask = ~(1 << _shopLayer);
                 break;
-            case GamePhase.Battle:
+            case GamePhase.RoundStart:
                 //_isEnable = false;
                 _layerMask = ~(1 << _shopLayer) & ~(1 << _boardLayer);
                 break;
