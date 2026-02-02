@@ -8,19 +8,24 @@ public class GameUnitAttack : MonoBehaviour
 {
     private GameUnit _gameUnit;
 
-    private bool _firstAttack = true;
+    private bool _firstAttack;
 
 
     // Keep coroutine reference so we don't start duplicates and can stop on disable
     private Coroutine _attackCoroutine;
     public delegate void AttackEventHandler(GameUnit attacker, GameUnit target, int damage);
     public static event AttackEventHandler OnAttack;
-    public static event Action<GameUnit> OnAttackFinished; // fired when this unit finishes attacking
+    public event Action OnAttackFinished;
 
 
     private void Awake()
     {
         _gameUnit = GetComponent<GameUnit>();
+    }
+
+    private void Start()
+    {
+        _firstAttack = true;
     }
 
     public void Attack(GameUnit target)
@@ -31,8 +36,6 @@ public class GameUnitAttack : MonoBehaviour
             return;
         }
 
-        // If already attacking, ignore new requests
-        if (_gameUnit.CurrentState == GameUnit.UnitState.Attacking) return;
 
         _gameUnit.CurrentTarget= target;
 
@@ -43,7 +46,6 @@ public class GameUnitAttack : MonoBehaviour
             return;
         }
 
-        _gameUnit.ChangeState(GameUnit.UnitState.Attacking);
         _attackCoroutine = StartCoroutine(AttackCoroutine());
     }
 
@@ -66,7 +68,7 @@ public class GameUnitAttack : MonoBehaviour
         }
 
         // Attack loop finished
-        _gameUnit.ChangeState(GameUnit.UnitState.None);
+         OnAttackFinished?.Invoke();
 
         _firstAttack = true;
         _attackCoroutine = null;
@@ -80,7 +82,7 @@ public class GameUnitAttack : MonoBehaviour
             _attackCoroutine = null;
         }
 
-        _gameUnit.ChangeState(GameUnit.UnitState.None);
+        OnAttackFinished?.Invoke();
         _firstAttack = true;
     }
 

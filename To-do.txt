@@ -1,7 +1,3 @@
--fix unit movement and attack after refactoring code
-- fit code to work with gameUnit.CurrentState (instead of isDead etc.)
-
-
 game phases:
 	1. instead of destroying a game unit on death, disable it, add it to a list to return to bench at the end of round
 	2. each unit notifies round manager when finished attacking, the board counts if no units left and then round is over

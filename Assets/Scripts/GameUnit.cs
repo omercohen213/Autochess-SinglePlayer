@@ -19,6 +19,7 @@ using Random = UnityEngine.Random;
 // currently every unit must attack and move
 [RequireComponent(typeof(GameUnitMovement))]
 [RequireComponent(typeof(GameUnitAttack))]
+[RequireComponent(typeof(GameUnitStateManager))]
 public class GameUnit : Unit, IDamageable
 {
     private Animator _animator;
@@ -53,6 +54,7 @@ public class GameUnit : Unit, IDamageable
     private Dictionary<Trait, int> _traitStages = new(); // Each trait the unit has and its current stage   
     private RoundManager _roundManager;
     private GameManager _gameManager;
+    private GameUnitStateManager _stateManager;
 
     public delegate void DeathEventHandler(GameUnit gameUnit);
     public static event DeathEventHandler OnDeath;
@@ -60,6 +62,8 @@ public class GameUnit : Unit, IDamageable
     private int _starLevel;
     public static readonly int MAX_STAR_LEVEL = 3;
     public readonly float DEATH_FADE_DURATION = 2f;
+
+    private GameUnit _currentTarget;
 
     public Player Owner { get => _owner; set => _owner = value; }
     public int MaxHp { get => _maxHp; private set => _maxHp = value; }
@@ -85,12 +89,12 @@ public class GameUnit : Unit, IDamageable
     public int BaseArmor { get => _baseArmor; set => _baseArmor = value; }
     public int MagicResist { get => _magicResist; set => _magicResist = value; }
     public int BaseMagicResist { get => _baseMagicResist; set => _baseMagicResist = value; }
-    public UnitState CurrentState { get => _currentState; set => _currentState = value; }
+    public GameUnitStateManager StateManager { get => _stateManager; set => _stateManager = value; }
     public GameUnit CurrentTarget { get => _currentTarget; set => _currentTarget = value; }
     private void Awake()
     {
-        _attack = GetComponent<GameUnitAttack>();
-        _movement = GetComponent<GameUnitMovement>();
+
+        _stateManager = GetComponent<GameUnitStateManager>();
     }
 
     private void OnEnable()
@@ -101,10 +105,7 @@ public class GameUnit : Unit, IDamageable
         {
             _roundManager.OnPhaseChanged += OnPhaseChanged;
         }
-        if (_gameManager != null)
-        {
-            GameUnitAttack.OnAttack += OnAttack;
-        }
+        GameUnitAttack.OnAttack += OnAttack;
     }
     private void OnDisable()
     {
@@ -128,7 +129,6 @@ public class GameUnit : Unit, IDamageable
         _owner = owner;
         SetUnitData(unitData, starLevel);
         ShowStars(starLevel);
-        _currentState = UnitState.Idle;
 
         // Starting stats
         _hp = _maxHp;
@@ -542,7 +542,7 @@ public class GameUnit : Unit, IDamageable
             _animator.SetTrigger("Death");
         }
         OnDeath?.Invoke(this);
-        _currentState = UnitState.Dead;
+        _stateManager.RequestDead();
         RemoveFromBoard();
         if (_owner == Opponent.Instance)
         {
@@ -696,32 +696,5 @@ public class GameUnit : Unit, IDamageable
         {
             _animator.SetBool("Walk", false);
         }
-    }
-
-    public void ChangeState(UnitState newState)
-    {
-        _currentState = newState;
-
-        switch (newState)
-        {
-            case UnitState.Attacking:
-                _attack.Attack(_currentTarget);
-                break;
-
-            case UnitState.Moving:
-             //   _movement.BeginMoveState();
-                break;
-
-            case UnitState.Idle:
-                //_movement.StopAllMovement();
-                break;
-
-            case UnitState.Dead:
-               // _movement.StopAllMovement();
-             //   _attack.StopAllAttacks();
-                break;
-        }
-
-
     }
 }
