@@ -70,7 +70,7 @@ public class Player : MonoBehaviour
     {
         foreach (GameUnit gameUnit in _boardUnits)
         {
-            gameUnit.ShowBars();
+            gameUnit.GameUnitUI.ShowBars();
         }
     }
 

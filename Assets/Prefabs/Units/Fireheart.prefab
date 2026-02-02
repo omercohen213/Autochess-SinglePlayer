@@ -27013,6 +27013,9 @@ GameObject:
   - component: {fileID: 7511910753546943888}
   - component: {fileID: 1442018664819075122}
   - component: {fileID: 3784785532419706501}
+  - component: {fileID: 242191212929973007}
+  - component: {fileID: 1629627848593210419}
+  - component: {fileID: 1469530648456835043}
   m_Layer: 6
   m_Name: Fireheart
   m_TagString: GameUnit
@@ -27451,6 +27454,43 @@ MonoBehaviour:
   _animator: {fileID: 0}
   _fireArrowPrefab: {fileID: 8455194272104766564, guid: d5b8f191dbf91c640b0946a2cabe609b, type: 3}
   _fireBowPrefab: {fileID: 5945721137898767062, guid: b0958fcfe6f284b41a8c246ef1872dcc, type: 3}
+--- !u!114 &242191212929973007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37e982d373a21544f86cc8682900fa76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1629627848593210419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 354047beca1e25a44a8a290e0d66b860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemOrbPrefab: {fileID: 1651856383599588646, guid: 26032025a02228041aa6482441e05df6, type: 3}
+--- !u!114 &1469530648456835043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f64920112157d6a429367956d2a110a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3705941194928310209
 GameObject:
   m_ObjectHideFlags: 0

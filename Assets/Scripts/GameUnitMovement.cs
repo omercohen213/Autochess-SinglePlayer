@@ -27,7 +27,7 @@ public class GameUnitMovement : MonoBehaviour
     private void Awake()
     {
         _gameUnit = GetComponent<GameUnit>();
-        GameUnit.OnDeath += OnDeath;
+        _gameUnit.OnDeath += OnDeath;
     }
 
     private void OnDestroy()
@@ -183,7 +183,7 @@ public class GameUnitMovement : MonoBehaviour
 
         await MoveUnit(nextHex, _moveCTS.Token);
 
-        _gameUnit.StopAnimateMovement();
+        _gameUnit.AnimationController.StopAnimateMovement();
     }
 
     // Move the unit object visually from current hex to target hex 

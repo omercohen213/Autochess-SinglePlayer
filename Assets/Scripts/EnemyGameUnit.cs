@@ -6,6 +6,6 @@ public class EnemyGameUnit : GameUnit
 {
     public void DropItem()
     {
-        ItemDropManager.Instance.CreateItemOrb(transform.position);
+        ItemDropManager.CreateItemOrb(transform.position);
     }
 }

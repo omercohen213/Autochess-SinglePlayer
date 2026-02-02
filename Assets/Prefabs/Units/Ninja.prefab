@@ -388,6 +388,9 @@ GameObject:
   - component: {fileID: 6962507392464666632}
   - component: {fileID: -7949186364616828609}
   - component: {fileID: -6320394802761088779}
+  - component: {fileID: 4109441294762372654}
+  - component: {fileID: 1232721126104469985}
+  - component: {fileID: 1493671701510316222}
   m_Layer: 6
   m_Name: Ninja
   m_TagString: GameUnit
@@ -808,6 +811,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitInfo: {fileID: 0}
+--- !u!114 &4109441294762372654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37e982d373a21544f86cc8682900fa76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1232721126104469985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 354047beca1e25a44a8a290e0d66b860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemOrbPrefab: {fileID: 1651856383599588646, guid: 26032025a02228041aa6482441e05df6, type: 3}
+--- !u!114 &1493671701510316222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986417982920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f64920112157d6a429367956d2a110a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1148429388143190
 GameObject:
   m_ObjectHideFlags: 0

@@ -387,6 +387,9 @@ GameObject:
   - component: {fileID: 6052668832958664579}
   - component: {fileID: 7348930797816665001}
   - component: {fileID: 2200351911256725346}
+  - component: {fileID: 4477226463242510426}
+  - component: {fileID: 7593570690601056593}
+  - component: {fileID: 4643807289577710472}
   m_Layer: 0
   m_Name: Human
   m_TagString: DraggableObject
@@ -785,6 +788,43 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4477226463242510426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37e982d373a21544f86cc8682900fa76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7593570690601056593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 354047beca1e25a44a8a290e0d66b860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemOrbPrefab: {fileID: 0}
+--- !u!114 &4643807289577710472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f64920112157d6a429367956d2a110a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1148429461579488

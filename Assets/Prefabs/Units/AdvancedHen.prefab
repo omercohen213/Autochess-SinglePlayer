@@ -359,6 +359,11 @@ GameObject:
   - component: {fileID: 1423470163212545531}
   - component: {fileID: 8829033274029990554}
   - component: {fileID: 3869271952748512641}
+  - component: {fileID: 6554497448218099263}
+  - component: {fileID: 6636209924955716794}
+  - component: {fileID: 4101813074725509738}
+  - component: {fileID: 552301065055154190}
+  - component: {fileID: 7263473662940836863}
   m_Layer: 0
   m_Name: AdvancedHen
   m_TagString: DraggableObject
@@ -498,21 +503,92 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dadb1684d96c44ba1caaae6a56b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitName: 
-  unitData: {fileID: 0}
+  _unitData: {fileID: 0}
+  _traits: []
+  _owner: {fileID: 0}
   _maxHp: 0
+  _hp: 0
   _maxMp: 0
+  _mp: 0
   _baseAttackDamage: 0
-  _starPrefab: {fileID: 0}
-  _starsParent: {fileID: 0}
-  _isOnBoard: 0
-  _currentHex: {fileID: 0}
-  _currentBenchSlot: {fileID: 0}
-  _Stages: 
-  StarLevel: 0
-  AttackDamage: 0
-  moveSpeed: 4
-  Range: 0
+  _attackDamage: 0
+  _baseAbilityPower: 0
+  _abilityPower: 0
+  _baseArmor: 0
+  _armor: 0
+  _magicResist: 0
+  _baseMagicResist: 0
+  _baseAttackSpeed: 0
+  _attackSpeed: 0
+  _range: 0
+  _critChance: 0
+  _critDamage: 0
+  _rangeSpeed: 0
+  _weapon: 0
+  _weaponProjectilePrefab: {fileID: 0}
+  _ability: {fileID: 0}
+--- !u!114 &6554497448218099263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd9891e111b32f9499b27ccc83590120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6636209924955716794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19f680767c3ba264c9f4e8c51a57cfaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4101813074725509738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37e982d373a21544f86cc8682900fa76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &552301065055154190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 354047beca1e25a44a8a290e0d66b860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gameUnit: {fileID: 0}
+  _itemOrbPrefab: {fileID: 1651856383599588646, guid: 26032025a02228041aa6482441e05df6, type: 3}
+--- !u!114 &7263473662940836863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423470163212545534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f64920112157d6a429367956d2a110a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1785783350246851850
 GameObject:
   m_ObjectHideFlags: 0

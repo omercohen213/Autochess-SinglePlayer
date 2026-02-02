@@ -12,7 +12,7 @@ public enum UnitState
     Dead
 }
 
-
+// Class to store and change the state of a unit during the battle phase
 public class GameUnitStateManager : MonoBehaviour
 {
     private GameUnit _gameUnit;
@@ -46,7 +46,7 @@ public class GameUnitStateManager : MonoBehaviour
     {
         if (_currentState != UnitState.Idle)
         {
-            Debug.Log("cant change to requested state from current state");
+            Debug.Log("Cannot change to requested state from current state");
             return false;
         }
         _currentState = UnitState.Attacking;
@@ -58,7 +58,7 @@ public class GameUnitStateManager : MonoBehaviour
     {
         if (_currentState != UnitState.Idle && _currentState != UnitState.Moving)
         {
-            Debug.Log("cant change to requested state from current state");
+            Debug.Log("Cannot change to requested state from current state");
             return false;
         }
         _currentState = UnitState.Moving;

@@ -14,16 +14,14 @@ using Assets.HeroEditor.Common.Scripts.ExampleScripts;
 using UnityEditor;
 using Random = UnityEngine.Random;
 
-
-
-// currently every unit must attack and move
 [RequireComponent(typeof(GameUnitMovement))]
 [RequireComponent(typeof(GameUnitAttack))]
 [RequireComponent(typeof(GameUnitStateManager))]
+[RequireComponent(typeof(ItemDropManager))]
+[RequireComponent(typeof(GameUnitAnimation))]
+[RequireComponent(typeof(GameUnitUI))]
 public class GameUnit : Unit, IDamageable
 {
-    private Animator _animator;
-
     [SerializeField] private Player _owner;
     [SerializeField] private int _maxHp;
     [SerializeField] private int _hp;
@@ -55,9 +53,13 @@ public class GameUnit : Unit, IDamageable
     private RoundManager _roundManager;
     private GameManager _gameManager;
     private GameUnitStateManager _stateManager;
+    private ItemDropManager _itemDropManager;
+    private GameUnitAnimation _animationController;
+    private GameUnitUI _gameUnitUI;
 
+    // remove delegate?
     public delegate void DeathEventHandler(GameUnit gameUnit);
-    public static event DeathEventHandler OnDeath;
+    public event DeathEventHandler OnDeath;
 
     private int _starLevel;
     public static readonly int MAX_STAR_LEVEL = 3;
@@ -90,11 +92,16 @@ public class GameUnit : Unit, IDamageable
     public int MagicResist { get => _magicResist; set => _magicResist = value; }
     public int BaseMagicResist { get => _baseMagicResist; set => _baseMagicResist = value; }
     public GameUnitStateManager StateManager { get => _stateManager; set => _stateManager = value; }
+    public ItemDropManager ItemDropManager { get => _itemDropManager; set => _itemDropManager = value; }
+    public GameUnitAnimation AnimationController { get => _animationController; set => _animationController = value; }
+    public GameUnitUI GameUnitUI { get => _gameUnitUI; set => _gameUnitUI = value; }
     public GameUnit CurrentTarget { get => _currentTarget; set => _currentTarget = value; }
     private void Awake()
     {
-
+        _animationController = GetComponent<GameUnitAnimation>();
         _stateManager = GetComponent<GameUnitStateManager>();
+        _itemDropManager= GetComponent<ItemDropManager>();
+        _gameUnitUI = GetComponent<GameUnitUI>();
     }
 
     private void OnEnable()
@@ -147,23 +154,8 @@ public class GameUnit : Unit, IDamageable
             _traitStages.Add(trait, 0);
         }
 
-        if (_owner == LocalPlayer.Instance)
-        {
-            Transform animationTransform = transform.Find("Character");
-            if (animationTransform != null)
-            {
-                _animator = animationTransform.GetComponent<Animator>();
-            }
-            else
-            {
-                Debug.LogWarning("Missing animation transform on game unit " + _unitName);
-            }
-        }
-        // Monster animation
-        else
-        {
-            _animator = GetComponent<Animator>();
-        }
+        _animationController.InitializeAnimator();
+
     }
 
     public void SetUnitData(UnitData unitData, int starLevel)
@@ -430,7 +422,7 @@ public class GameUnit : Unit, IDamageable
             {
                 _mp += 10;
             }
-            UpdateUnitMPBar();
+            _gameUnitUI.UpdateUnitMPBar();
 
             // Meele - no projectile
             if ((_weapon == Weapon.MeeleOneHanded) || (_weapon == Weapon.MeeleTwoHanded) || (_weapon == Weapon.NoWeapon))
@@ -441,7 +433,7 @@ public class GameUnit : Unit, IDamageable
             {
                 ShootProjectile(_weaponProjectilePrefab, target, damage, false, isCritical);
             }
-            AnimateAttack();
+            _animationController.AnimateAttack();
         }
     }
 
@@ -450,35 +442,6 @@ public class GameUnit : Unit, IDamageable
         return Random.value < _critChance;
     }
 
-    private void AnimateAttack()
-    {
-        if (_animator != null)
-        {
-            _animator.SetFloat("Speed", _attackSpeed);
-            switch (_weapon)
-            {
-                case Weapon.MeeleOneHanded:
-                    _animator.SetTrigger("Slash1H");
-                    break;
-                case Weapon.MeeleTwoHanded:
-                    _animator.SetTrigger("Slash2H");
-                    break;
-                case Weapon.Staff:
-                    // todo: change to jab if close range
-                    _animator.SetTrigger("Cast");
-                    break;
-                case Weapon.Bow:
-                    _animator.SetTrigger("SimpleBowShot");
-                    // BowShotAnimation();
-                    break;
-                case Weapon.Gun:
-                    break;
-                case Weapon.NoWeapon:
-                    _animator.SetTrigger("Attack");
-                    break;
-            }
-        }
-    }
 
     public void ShootProjectile(GameObject projectilePrefab, GameUnit target, int damage, bool isMagic, bool isCritical)
     {
@@ -526,7 +489,7 @@ public class GameUnit : Unit, IDamageable
         }
         else
         {
-            UpdateUnitHPBar();
+            _gameUnitUI.UpdateUnitHPBar();
         }
     }
 
@@ -537,28 +500,20 @@ public class GameUnit : Unit, IDamageable
 
     public void Die()
     {
-        if (_animator != null)
-        {
-            _animator.SetTrigger("Death");
-        }
         OnDeath?.Invoke(this);
         _stateManager.RequestDead();
         RemoveFromBoard();
-        if (_owner == Opponent.Instance)
-        {
-            ItemDropManager.Instance.CreateItemOrb(transform.position);
-        }
         StartCoroutine(DieCoroutine());
     }
 
-    // Fade the character over time and then destroy it
+    // Fade tche haracter over time and then destroy it
     private IEnumerator DieCoroutine()
     {
         float initialAlpha = 1f;
         float elapsedTime = 0f;
 
-        HideBars();
-        HideStars();
+        _gameUnitUI.HideBars();
+        _gameUnitUI.HideStars();
 
         // Loop until the fade duration is reached
         while (elapsedTime < DEATH_FADE_DURATION)
@@ -571,7 +526,6 @@ public class GameUnit : Unit, IDamageable
         }
         SetAlphaColor(0);
         Destroy(gameObject);
-
     }
 
     // Set alpha colors of all body parts of the character
@@ -599,44 +553,7 @@ public class GameUnit : Unit, IDamageable
                 bodyPart.color = color;
             }
         }
-    }
-
-    public void ShowBars()
-    {
-        Transform bars = transform.Find("Bars");
-        if (bars != null)
-        {
-            bars.gameObject.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning("Missing bars object");
-        }
-        UpdateUnitHPBar();
-        UpdateUnitMPBar();
-    }
-
-    private void HideBars()
-    {
-        Transform bars = transform.Find("Bars");
-        if (bars != null)
-        {
-            bars.gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("Missing bars object");
-        }
-    }
-
-    private void HideStars()
-    {
-        Transform starsParent = transform.Find("Stars");
-        if (starsParent != null)
-        {
-            starsParent.gameObject.SetActive(false);
-        }
-    }
+    } 
 
     public void OnHealRecieved(int healAmount)
     {
@@ -649,52 +566,7 @@ public class GameUnit : Unit, IDamageable
         {
             _hp += healAmount;
         }
-        UpdateUnitHPBar();
+        _gameUnitUI.UpdateUnitHPBar();
     }
 
-    public void UpdateUnitHPBar()
-    {
-        if (transform.Find("Bars").Find("HpBar").TryGetComponent<Slider>(out var fill))
-        {
-            int maxHp = _maxHp;
-            int currentHp = _hp;
-            float fillAmount = (float)currentHp / maxHp;
-            fill.value = fillAmount;
-        }
-        else
-        {
-            Debug.LogWarning("Missing HP bar objects");
-        }
-    }
-
-    public void UpdateUnitMPBar()
-    {
-        if (transform.Find("Bars").Find("MpBar").TryGetComponent<Slider>(out var fill))
-        {
-            int maxMp = _maxMp;
-            int currentMp = _mp;
-            float fillAmount = (float)currentMp / +maxMp;
-            fill.value = fillAmount;
-        }
-        else
-        {
-            Debug.LogWarning("Missing MP bar objects");
-        }
-    }
-
-    public void AnimateMovement()
-    {
-        if (_animator != null)
-        {
-            _animator.SetBool("Walk", true);
-        }
-    }
-
-    public void StopAnimateMovement()
-    {
-        if (_animator != null)
-        {
-            _animator.SetBool("Walk", false);
-        }
-    }
 }
