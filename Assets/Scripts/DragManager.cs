@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using TMPro;
 using UnityEngine;
 
@@ -47,12 +48,12 @@ public class DragManager : MonoBehaviour
 
     private void OnEnable()
     {
-        RoundManager.Instance.OnPhaseChanged += OnPhaseChanged;
+        RoundManager.Instance.OnRoundStateChanged += OnRoundStateChanged;
     }
 
     private void OnDisable()
     {
-        RoundManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+        RoundManager.Instance.OnRoundStateChanged -= OnRoundStateChanged;
     }
 
     private void Start()
@@ -136,15 +137,15 @@ public class DragManager : MonoBehaviour
         }
     }
 
-    public void OnPhaseChanged(GamePhase newPhase)
+    public void OnRoundStateChanged(RoundState newPhase)
     {
         switch (newPhase)
         {
-            case GamePhase.Preparation:
+            case RoundState.Preparation:
                 _isEnable = true;
                 _layerMask = ~(1 << _shopLayer);
                 break;
-            case GamePhase.RoundStart:
+            case RoundState.Battle:
                 //_isEnable = false;
                 _layerMask = ~(1 << _shopLayer) & ~(1 << _boardLayer);
                 break;

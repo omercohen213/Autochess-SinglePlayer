@@ -1,14 +1,11 @@
 game phases:
-	1. instead of destroying a game unit on death, disable it, add it to a list to return to bench at the end of round
-	2. each unit notifies round manager when finished attacking, the board counts if no units left and then round is over
-		
-- show level
+1.2 on round over, enable disabled units
 
 Game Mechanics:
 - abilities- fireheart stun arrow
 - traits logic - assassin invis backline
 - opponent levels
-- enable bench units drag on battle
+- enable bench units drag on battle / disable board
 - items - monsters item orb drops
 - items shop
 - armor and magic resist
@@ -16,25 +13,17 @@ Game Mechanics:
 
 Animations & UI:
 - on unit click, show unitinfo / start drag only when moving unit
-- game phases: hide attack button on buttle, remove all from board on results, show title
 - opponent/player units bench to hex animation
 - unit hover
 - shop unit hover
 - menu
-- separate UiManager code
-- hide attack button on round start
 
 Bugs:
 - fireheart had -attack power 2 star?
 - attack after death
 - kill after death
-- traits update?
 - monsters alpha color on death
 - fix shopUnit on parent instead of children
 - fix unsubscribe onPhaseChanged
 - OBJECT POOLING
-
-fixed attack when no path (maybe?) 
-added player character
-added heal ability
-changed unit movment
+- fix star up during battle

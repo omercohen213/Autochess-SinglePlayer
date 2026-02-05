@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -11,9 +13,10 @@ public class Player : MonoBehaviour
     public int Xp;
     public int Lvl;
     public string PlayerName { get; protected set; }
-    
+
     [SerializeField] protected Bench _bench;
     [SerializeField] protected List<GameUnit> _boardUnits = new();
+
     public int boardLimit;
     public List<Trait> ActiveTraits = new();
 
@@ -26,41 +29,36 @@ public class Player : MonoBehaviour
 
     protected virtual void Awake()
     {
-    }
-    
-    private void OnEnable()
-    {
-        _roundManager = RoundManager.Instance;
-        if (_roundManager != null)
-        {
-            _roundManager.OnPhaseChanged += OnPhaseChanged;
-        }
+
     }
 
-    private void OnDisable()
+    protected virtual void OnEnable()
     {
-        if (_roundManager != null)
-        {
-            _roundManager.OnPhaseChanged -= OnPhaseChanged;
-        }
+        RoundManager.Instance.OnRoundStateChanged += OnRoundStateChanged;
+    }
+
+    protected virtual void OnDisable()
+    {
+        RoundManager.Instance.OnRoundStateChanged -= OnRoundStateChanged;
     }
 
     private void Start()
     {
+        _roundManager = RoundManager.Instance;
         boardLimit = 10;
         _lives = 3;
     }
 
-    protected virtual void OnPhaseChanged(GamePhase newPhase)
+    protected virtual void OnRoundStateChanged(RoundState newPhase)
     {
         switch (newPhase)
         {
-            case GamePhase.Preparation:
+            case RoundState.Preparation:
                 break;
-            case GamePhase.RoundStart:
+            case RoundState.Battle:
                 ShowBoardUnitsBars();
                 break;
-            case GamePhase.RoundOver:
+            case RoundState.RoundOver:
                 break;
         }
     }
@@ -80,7 +78,6 @@ public class Player : MonoBehaviour
         Gold -= amount;
         UIManager.Instance.UpdateGoldUI();
     }
-
 
     // Add gold by amount
     public void GainGold(int amount)
@@ -146,7 +143,7 @@ public class Player : MonoBehaviour
                     return true;
                 }
             }
-        }     
+        }
         return false;
     }
 
@@ -178,11 +175,39 @@ public class Player : MonoBehaviour
 
     public bool IsBoardLimitReached()
     {
-        return _boardUnits.Count >= boardLimit; 
+        return _boardUnits.Count >= boardLimit;
     }
 
     public int GetXpToLevelUp(int lvl)
     {
         return _xpTable[lvl];
+    }
+
+    // Return a list with each unit on board and its hex
+    public List<(GameUnit Unit, Hex Hex)> GetBoardUnitsHexes()
+    {
+        List<(GameUnit, Hex)> result = new();
+
+        foreach (GameUnit gameUnit in _boardUnits)
+        {
+            result.Add((gameUnit, gameUnit.CurrentHex));
+        }
+
+        return result;
+    }
+
+    public virtual void RemoveUnitFromBoard(GameUnit gameUnit)
+    {
+        _boardUnits.Remove(gameUnit);
+
+        if (_boardUnits.Count == 0)
+        {
+            RoundManager.Instance.HandleNoUnitsLeft(this);
+        }
+    }
+
+    public void ReenableUnits(List<(GameUnit Unit, Hex Hex)> playerUnitsHexes)
+    {
+        
     }
 }

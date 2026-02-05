@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _xpText;
     [SerializeField] private Slider _xpBar;
     [SerializeField] private TextMeshProUGUI _playerLvlText;
-    [SerializeField] private TextMeshProUGUI _roundLvlText;
+    [SerializeField] private TextMeshProUGUI _roundText;
     [SerializeField] private TextMeshProUGUI _boardLimitText;
     [SerializeField] private TraitTrackerUI _traitTracker;
     [SerializeField] private GameObject _attackButton;
@@ -43,12 +43,12 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        RoundManager.Instance.OnPhaseChanged += OnPhaseChanged;
+        RoundManager.Instance.OnRoundStateChanged += OnRoundStateChanged;
     }
 
     private void OnDisable()
     {
-        RoundManager.Instance.OnPhaseChanged -= OnPhaseChanged;
+        RoundManager.Instance.OnRoundStateChanged -= OnRoundStateChanged;
     }
 
     private void Start()
@@ -58,16 +58,17 @@ public class UIManager : MonoBehaviour
         UpdateXpUI();
         UpdatePlayerLvlUI();
         UpdateBoardLimit();
+        UpdateRoundText();
     }
 
-    public void OnPhaseChanged(GamePhase newPhase)
+    public void OnRoundStateChanged(RoundState newPhase)
     {
         switch (newPhase)
         {
-            case GamePhase.Preparation:
+            case RoundState.Preparation:
                 ShowUIElement(_attackButton);
                 break;
-            case GamePhase.RoundStart:
+            case RoundState.Battle:
                 HideUIElement(_attackButton);
                 break;
         }
@@ -132,5 +133,13 @@ public class UIManager : MonoBehaviour
     public void ShowUIElement(GameObject elementToHide)
     {
         elementToHide.SetActive(true);
+    }
+
+    private void UpdateRoundText()
+    {
+        RoundManager roundManager = RoundManager.Instance;
+        int currentPhase = roundManager.CurrentPhase;
+        int currentStage = roundManager.CurrentStage;
+        _roundText.text = currentPhase + "-" + currentStage;
     }
 }

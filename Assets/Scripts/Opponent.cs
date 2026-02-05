@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -5,32 +6,36 @@ public class Opponent : Player
 {
     public static Opponent Instance { get; private set; }
 
+
     protected override void Awake()
     {
+        base.Awake();
+
         if (Instance != null)
         {
             Destroy(gameObject);
         }
         Instance = this;
-        RoundManager.Instance.OnPhaseChanged += OnPhaseChanged;
     }
 
-    protected override void OnPhaseChanged(GamePhase newPhase)
+    protected override void OnRoundStateChanged(RoundState newState)
     {
-        switch (newPhase)
+        base.OnRoundStateChanged(newState);
+        switch (newState)
         {
-            case GamePhase.Preparation:
-                PrepareEnemy();
+            case RoundState.Preparation:
+                PrepareEnemyUnits();
                 break;
-            case GamePhase.RoundStart:
+            case RoundState.Battle:
                 BattleEnemy();
                 break;
         }
-        base.OnPhaseChanged(newPhase);
+        base.OnRoundStateChanged(newState);
     }
 
     private void BattleEnemy()
     {
+        Debug.Log(_bench.BenchUnits.Count);
         foreach (GameUnit gameUnit in _bench.BenchUnits)
         {
             if (gameUnit.UnitName == "Pug")
@@ -55,7 +60,7 @@ public class Opponent : Player
         return Board.Instance.GetHex(x, y);
     }
 
-    private void PrepareEnemy()
+    private void PrepareEnemyUnits()
     {
         CreateEnemyUnits();
     }
@@ -64,11 +69,5 @@ public class Opponent : Player
     {
         _bench.CreateEnemyUnitByName("Pug", 1);
         _bench.CreateEnemyUnitByName("Dog", 1);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

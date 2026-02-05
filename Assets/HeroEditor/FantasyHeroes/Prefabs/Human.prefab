@@ -390,6 +390,7 @@ GameObject:
   - component: {fileID: 4477226463242510426}
   - component: {fileID: 7593570690601056593}
   - component: {fileID: 4643807289577710472}
+  - component: {fileID: 510462283908848678}
   m_Layer: 0
   m_Name: Human
   m_TagString: DraggableObject
@@ -745,6 +746,7 @@ MonoBehaviour:
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
   _ability: {fileID: 0}
+  _disabledGameUnitsTransform: {fileID: 0}
 --- !u!95 &6052668832958664579
 Animator:
   serializedVersion: 5
@@ -825,6 +827,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f64920112157d6a429367956d2a110a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &510462283908848678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109986072035710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb68d11166ae0744aa5ecaef7d3b37bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1148429461579488

@@ -24,7 +24,7 @@ public class Shop : MonoBehaviour
     private readonly int REROLL_COST = 1;
     private readonly int SHOP_UNITS = 5;
     private readonly int XP_COST = 4;
-    private Player _player;
+    private Player _localPlayer;
 
     private static Shop _instance;
     public static Shop Instance
@@ -65,7 +65,7 @@ public class Shop : MonoBehaviour
 
     private void Start()
     {
-        _player = LocalPlayer.Instance;
+        _localPlayer = LocalPlayer.Instance;
 
         if (_unitSellField != null)
         {
@@ -80,7 +80,7 @@ public class Shop : MonoBehaviour
     {
         if (CanAfford(REROLL_COST))
         {
-            _player.PayGold(REROLL_COST);
+            _localPlayer.PayGold(REROLL_COST);
             RerollUnits();
         }
     }
@@ -90,20 +90,20 @@ public class Shop : MonoBehaviour
     {
         if (CanAfford(XP_COST))
         {
-            _player.PayGold(XP_COST);
-            _player.GainXp(4);
+            _localPlayer.PayGold(XP_COST);
+            _localPlayer.GainXp(4);
         }
     }
 
     // Check if player can afford paying goldToPay
     private bool CanAfford(int goldToPay)
     {
-        if (_player.Gold >= goldToPay)
+        if (_localPlayer.Gold >= goldToPay)
             return true;
         else
         {
             Debug.Log("Cannot afford!");
-            Debug.Log("Player gold: " + _player.Gold + " Unit cost: " + goldToPay);
+            Debug.Log("Player gold: " + _localPlayer.Gold + " Unit cost: " + goldToPay);
             return false;
         }
     }
@@ -275,7 +275,7 @@ public class Shop : MonoBehaviour
     // Returns the current level probabilities based on player's level
     private int[] GetCurrentLevelProbabilities()
     {
-        return _shopUnitsProbabilities[_player.Lvl - 1];
+        return _shopUnitsProbabilities[_localPlayer.Lvl - 1];
     }
 
     // Remove a unit from shop database
@@ -293,10 +293,10 @@ public class Shop : MonoBehaviour
     // Buy unit from the shop destroy the gameObject
     public void BuyUnit(ShopUnit shopUnit)
     {
-        if (CanAfford(shopUnit.Cost) && !_player.Bench.IsFull())
+        if (CanAfford(shopUnit.Cost) && !_localPlayer.Bench.IsFull())
         {
-            _player.PayGold(shopUnit.Cost);
-            _player.Bench.CreateGameUnit(LocalPlayer.Instance, shopUnit.UnitData, 1);
+            _localPlayer.PayGold(shopUnit.Cost);
+            _localPlayer.Bench.CreateGameUnit(LocalPlayer.Instance, shopUnit.UnitData, 1);
             shopUnit.gameObject.SetActive(false);
             Button buyButton = shopUnit.transform.parent.gameObject.GetComponent<Button>();
             buyButton.interactable = false;
@@ -316,7 +316,7 @@ public class Shop : MonoBehaviour
                 if (currShopUnit != null)
                 {
                     Transform highlighTransform = _shopUnitsTransform.GetChild(i).Find("Highlight");
-                    if (_player.HasUnit(shopUnit.UnitData.UnitName) && shopUnit.UnitName == currShopUnit.UnitName)
+                    if (_localPlayer.HasUnit(shopUnit.UnitData.UnitName) && shopUnit.UnitName == currShopUnit.UnitName)
                     {
                         highlighTransform.gameObject.SetActive(true);
                         break;
@@ -352,7 +352,7 @@ public class Shop : MonoBehaviour
         }
         else
         {
-            _player.Bench.RemoveUnitFromBench(gameUnit);
+            _localPlayer.Bench.RemoveUnitFromBench(gameUnit);
         }
 
         if (gameUnit.StarLevel == GameUnit.MAX_STAR_LEVEL)
@@ -360,7 +360,7 @@ public class Shop : MonoBehaviour
             AddUnitToShopDB(gameUnit);
         }
 
-        _player.GainGold(gameUnit.Cost);
+        _localPlayer.GainGold(gameUnit.Cost);
     }
 
     // Set unit sell field active

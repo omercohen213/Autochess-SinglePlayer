@@ -57,9 +57,7 @@ public class GameUnit : Unit, IDamageable
     private GameUnitAnimation _animationController;
     private GameUnitUI _gameUnitUI;
 
-    // remove delegate?
-    public delegate void DeathEventHandler(GameUnit gameUnit);
-    public event DeathEventHandler OnDeath;
+    public event Action<GameUnit> OnDeath;
 
     private int _starLevel;
     public static readonly int MAX_STAR_LEVEL = 3;
@@ -100,7 +98,7 @@ public class GameUnit : Unit, IDamageable
     {
         _animationController = GetComponent<GameUnitAnimation>();
         _stateManager = GetComponent<GameUnitStateManager>();
-        _itemDropManager= GetComponent<ItemDropManager>();
+        _itemDropManager = GetComponent<ItemDropManager>();
         _gameUnitUI = GetComponent<GameUnitUI>();
     }
 
@@ -110,7 +108,7 @@ public class GameUnit : Unit, IDamageable
         _gameManager = GameManager.Instance;
         if (_roundManager != null)
         {
-            _roundManager.OnPhaseChanged += OnPhaseChanged;
+            _roundManager.OnRoundStateChanged += OnRoundStateChanged;
         }
         GameUnitAttack.OnAttack += OnAttack;
     }
@@ -118,18 +116,13 @@ public class GameUnit : Unit, IDamageable
     {
         if (_roundManager != null)
         {
-            _roundManager.OnPhaseChanged -= OnPhaseChanged;
+            _roundManager.OnRoundStateChanged -= OnRoundStateChanged;
         }
         if (_gameManager != null)
         {
             GameUnitAttack.OnAttack -= OnAttack;
         }
     }
-    /*    private void OnDisable()
-        {
-            //GameManager.Instance.OnPhaseChanged -= OnPhaseChanged;
-            //GameUnitAttack.OnAttack -= OnAttack;
-        }*/
 
     public void Initialize(Player owner, UnitData unitData, int starLevel)
     {
@@ -184,15 +177,15 @@ public class GameUnit : Unit, IDamageable
         _starLevel = starLevel;
     }
 
-    private void OnPhaseChanged(GamePhase newPhase)
+    private void OnRoundStateChanged(RoundState newPhase)
     {
         switch (newPhase)
         {
-            case GamePhase.Preparation:
+            case RoundState.Preparation:
                 break;
-            case GamePhase.RoundStart:
+            case RoundState.Battle:
                 break;
-            case GamePhase.RoundOver:
+            case RoundState.RoundOver:
                 break;
         }
     }
@@ -385,7 +378,7 @@ public class GameUnit : Unit, IDamageable
             _currentHex = null;
         }
         _isOnBoard = false;
-        _owner.BoardUnits.Remove(this);
+        _owner.RemoveUnitFromBoard(this);
     }
 
     public List<GameUnit> GetEnemyUnits()
@@ -525,7 +518,10 @@ public class GameUnit : Unit, IDamageable
             yield return null;
         }
         SetAlphaColor(0);
-        Destroy(gameObject);
+
+        Transform disabledGameUnitsTransform = Board.Instance.transform.Find("DisabledGameUnits");
+        transform.SetParent(disabledGameUnitsTransform);
+        gameObject.SetActive(false);
     }
 
     // Set alpha colors of all body parts of the character
@@ -553,7 +549,7 @@ public class GameUnit : Unit, IDamageable
                 bodyPart.color = color;
             }
         }
-    } 
+    }
 
     public void OnHealRecieved(int healAmount)
     {

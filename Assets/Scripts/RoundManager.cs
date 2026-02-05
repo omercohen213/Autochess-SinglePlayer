@@ -1,27 +1,41 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 
-public enum GamePhase
+public enum RoundState
 {
     Preparation,
-    RoundStart,
-    RoundOver,
-    GameOver
+    Battle,
+    RoundOver
 }
 
 public class RoundManager : MonoBehaviour
 {
     private Player _localPlayer;
-    private bool _roundOverTriggered;
+    private Player _opponent;
 
-    public GamePhase currentPhase;
-    public event Action<GamePhase> OnPhaseChanged;
+    private List<(GameUnit Unit, Hex Hex)> _playerUnitsHexes;
+    private List<(GameUnit Unit, Hex Hex)> _opponentUnitsHexes;
+
+    private RoundState _currentRoundState;
+    private int _currentPhase;
+    private int _currentStage;
+    private readonly int STAGES_PER_PHASE = 4;
 
     private static RoundManager _instance;
     public static RoundManager Instance => _instance;
+
+    public int CurrentStage { get => _currentStage; set => _currentStage = value; }
+    public int CurrentPhase { get => _currentPhase; set => _currentPhase = value; }
+    public RoundState CurrentRoundState { get => _currentRoundState; set => _currentRoundState = value; }
+
+    public RoundState _currentState;
+
+    public event Action<RoundState> OnRoundStateChanged;
 
     private void Awake()
     {
@@ -39,27 +53,33 @@ public class RoundManager : MonoBehaviour
     void Start()
     {
         _localPlayer = LocalPlayer.Instance;
-        SwitchToPhase(GamePhase.Preparation);
+        _opponent = Opponent.Instance;
+        _currentPhase = 1;
+        _currentStage = 0;
+        ChangeRoundState(RoundState.Preparation);
     }
 
     // Switch to given game phase and invoke the event
-    public void SwitchToPhase(GamePhase gamePhase)
+    public void ChangeRoundState(RoundState roundState)
     {
-        currentPhase = gamePhase;
-        OnPhaseChanged?.Invoke(currentPhase);
+        _currentState = roundState;
+        OnRoundStateChanged?.Invoke(_currentState);
 
-        switch (currentPhase)
+        switch (_currentState)
         {
-            case GamePhase.Preparation:
+            case RoundState.Preparation:
+                UpdateRoundNumber();
                 break;
-            case GamePhase.RoundStart:
-                //Debug.Log("Starting battle...");
+            case RoundState.Battle:
+                GetFightingUnits();
                 break;
-            case GamePhase.RoundOver:
-                ShowBattleResult();
-                break;
-            case GamePhase.GameOver:
-                GameManager.Instance.EndGame();
+            case RoundState.RoundOver:
+                if (!CheckForGameOver())
+                {
+                    ShowBattleResult();
+                    CreateNextStage();
+                    ReplaceUnitsOnBoard();
+                }
                 break;
             default:
                 Debug.LogError("Unknown game phase!");
@@ -67,18 +87,57 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-    // Overload method to change phase with string (for UI elements click)
-    public void SwitchToPhase(string phaseStr)
+
+    public void HandleNoUnitsLeft(Player player)
     {
-        if (phaseStr == GamePhase.RoundStart.ToString())
+        Debug.Log(_currentRoundState);
+        if (_currentRoundState == RoundState.Battle)
         {
-            SwitchToPhase(GamePhase.RoundStart);
-            return;
+            ChangeRoundState(RoundState.RoundOver);
         }
+    }
 
-        // Warn if string name is wrong
-        Debug.LogWarning("Unkown game phase ");
+    private bool CheckForGameOver()
+    {
+        return false;
+    }
 
+    private void CreateNextStage()
+    {
+    }
+
+    // Place units that fought back on board 
+    private void ReplaceUnitsOnBoard()
+    {
+        _localPlayer.ReenableUnits(_playerUnitsHexes);
+        Board.PlaceUnitsOnBoard(_playerUnitsHexes);
+    }
+
+    // Get the fighting units and their initial hex on board
+    private void GetFightingUnits()
+    {
+        _playerUnitsHexes = new(_localPlayer.GetBoardUnitsHexes());
+        _opponentUnitsHexes = new(_opponent.GetBoardUnitsHexes());
+    }
+
+    private void UpdateRoundNumber()
+    {
+        // Phase is over, start new one
+        if (_currentStage >= STAGES_PER_PHASE)
+        {
+            _currentPhase += 1;
+            _currentStage = 1;
+        }
+        else
+        {
+            _currentStage += 1;
+        }
+    }
+
+    public void SwitchToBattleState()
+    {
+        _currentRoundState = RoundState.Battle;
+        ChangeRoundState(RoundState.Battle);
     }
 
     // Shows battle result after each battle
@@ -87,7 +146,6 @@ public class RoundManager : MonoBehaviour
         if (_localPlayer.HasAnyUnitOnBoard())
         {
             Debug.Log("Player won!");
-            SwitchToPhase(GamePhase.Preparation);
         }
         else
         {
@@ -96,25 +154,10 @@ public class RoundManager : MonoBehaviour
 
             if (_localPlayer.Lives <= 0)
             {
-                SwitchToPhase(GamePhase.GameOver);
-            }
-            else
-            {
-                SwitchToPhase(GamePhase.Preparation);
+                // Game is over
+                return;
             }
         }
-    }
-
-    // When a unit finished attacking 
-    public void NotifyUnitFinished()
-    {
-        if (_roundOverTriggered)
-            return;
-
-        /*if (NoEnemiesRemaining())
-        {
-            _roundOverTriggered = true;
-            SwitchToPhase(GamePhase.RoundOver);
-        }*/
+        ChangeRoundState(RoundState.Preparation);
     }
 }

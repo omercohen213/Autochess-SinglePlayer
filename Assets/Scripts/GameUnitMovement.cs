@@ -46,7 +46,7 @@ public class GameUnitMovement : MonoBehaviour
 
         if (_roundManager != null)
         {
-            _roundManager.OnPhaseChanged += OnPhaseChanged;
+            _roundManager.OnRoundStateChanged += OnPhaseChanged;
         }
     }
 
@@ -59,17 +59,17 @@ public class GameUnitMovement : MonoBehaviour
 
         if (_roundManager != null)
         {
-            _roundManager.OnPhaseChanged -= OnPhaseChanged;
+            _roundManager.OnRoundStateChanged -= OnPhaseChanged;
         }
     }
 
-    private void OnPhaseChanged(GamePhase newPhase)
+    private void OnPhaseChanged(RoundState newPhase)
     {
         switch (newPhase)
         {
-            case GamePhase.Preparation:
+            case RoundState.Preparation:
                 break;
-            case GamePhase.RoundStart:
+            case RoundState.Battle:
                 StartBattle();
                 break;
         }

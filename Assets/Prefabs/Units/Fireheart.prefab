@@ -27016,6 +27016,7 @@ GameObject:
   - component: {fileID: 242191212929973007}
   - component: {fileID: 1629627848593210419}
   - component: {fileID: 1469530648456835043}
+  - component: {fileID: 1995805146154070647}
   m_Layer: 6
   m_Name: Fireheart
   m_TagString: GameUnit
@@ -27376,6 +27377,7 @@ MonoBehaviour:
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
   _ability: {fileID: 3784785532419706501}
+  _disabledGameUnitsTransform: {fileID: 0}
 --- !u!61 &1509189479234021291
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -27489,6 +27491,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f64920112157d6a429367956d2a110a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1995805146154070647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705924833248917223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb68d11166ae0744aa5ecaef7d3b37bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3705941194928310209

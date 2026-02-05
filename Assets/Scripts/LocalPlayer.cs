@@ -8,12 +8,13 @@ public class LocalPlayer : Player
 
     protected override void Awake()
     {
+        base.Awake();
+
         if (Instance != null)
         {
             Destroy(gameObject);
         }
         Instance = this;
-        base.Awake();
 
         Lives = 100;
         Gold = 100;

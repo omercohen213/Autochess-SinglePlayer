@@ -189,4 +189,12 @@ public class Board : MonoBehaviour
             }
         }
     }
+
+    public static void PlaceUnitsOnBoard(List<(GameUnit Unit, Hex Hex)> unitToHex)
+    {
+        foreach (var (unit, hex) in unitToHex)
+        {
+            PlaceUnitOnBoard(unit, hex);
+        }
+    }
 }
