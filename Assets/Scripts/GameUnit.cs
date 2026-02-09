@@ -51,7 +51,6 @@ public class GameUnit : Unit, IDamageable
     private BenchSlot _currentBenchSlot; // Bench spot if unit is on bench. Null otherwise.
     private Dictionary<Trait, int> _traitStages = new(); // Each trait the unit has and its current stage   
     private RoundManager _roundManager;
-    private GameManager _gameManager;
     private GameUnitStateManager _stateManager;
     private ItemDropManager _itemDropManager;
     private GameUnitAnimation _animationController;
@@ -94,6 +93,9 @@ public class GameUnit : Unit, IDamageable
     public GameUnitAnimation AnimationController { get => _animationController; set => _animationController = value; }
     public GameUnitUI GameUnitUI { get => _gameUnitUI; set => _gameUnitUI = value; }
     public GameUnit CurrentTarget { get => _currentTarget; set => _currentTarget = value; }
+    public Ability Ability { get => _ability; set => _ability = value; }
+    public GameObject WeaponProjectilePrefab { get => _weaponProjectilePrefab; set => _weaponProjectilePrefab = value; }
+
     private void Awake()
     {
         _animationController = GetComponent<GameUnitAnimation>();
@@ -105,22 +107,16 @@ public class GameUnit : Unit, IDamageable
     private void OnEnable()
     {
         _roundManager = RoundManager.Instance;
-        _gameManager = GameManager.Instance;
         if (_roundManager != null)
         {
             _roundManager.OnRoundStateChanged += OnRoundStateChanged;
         }
-        GameUnitAttack.OnAttack += OnAttack;
     }
     private void OnDisable()
     {
         if (_roundManager != null)
         {
             _roundManager.OnRoundStateChanged -= OnRoundStateChanged;
-        }
-        if (_gameManager != null)
-        {
-            GameUnitAttack.OnAttack -= OnAttack;
         }
     }
 
@@ -138,8 +134,8 @@ public class GameUnit : Unit, IDamageable
         _armor = _baseArmor;
         _magicResist = _baseMagicResist;
         _attackSpeed = _baseAttackSpeed;
-        _critChance = 0.2f; // base should be 0f
-        _critDamage = 2f; // base should be 1f
+        _critChance = 0.2f;
+        _critDamage = 2f;
 
         // Initialize all traits with stage 0
         foreach (var trait in Traits)
@@ -392,50 +388,7 @@ public class GameUnit : Unit, IDamageable
             return LocalPlayer.Instance.BoardUnits;
         }
     }
-
-    public void OnAttack(GameUnit attacker, GameUnit target, int damage)
-    {
-        if (attacker == this)
-        {
-            bool isCritical = IsCriticalAttack();
-            if (isCritical)
-            {
-                damage = Mathf.RoundToInt(damage * _critDamage);
-            }
-
-            if (_mp == _maxMp)
-            {
-                if (_ability != null)
-                {
-                    _ability.CastAbility(this, target);
-                }
-                _mp = 0;
-            }
-            else
-            {
-                _mp += 10;
-            }
-            _gameUnitUI.UpdateUnitMPBar();
-
-            // Meele - no projectile
-            if ((_weapon == Weapon.MeeleOneHanded) || (_weapon == Weapon.MeeleTwoHanded) || (_weapon == Weapon.NoWeapon))
-            {
-                target.OnDamageTaken(damage, false, isCritical);
-            }
-            else
-            {
-                ShootProjectile(_weaponProjectilePrefab, target, damage, false, isCritical);
-            }
-            _animationController.AnimateAttack();
-        }
-    }
-
-    private bool IsCriticalAttack()
-    {
-        return Random.value < _critChance;
-    }
-
-
+     
     public void ShootProjectile(GameObject projectilePrefab, GameUnit target, int damage, bool isMagic, bool isCritical)
     {
         if (projectilePrefab != null)

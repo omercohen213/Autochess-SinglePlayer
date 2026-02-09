@@ -50,7 +50,7 @@ public class GameUnitStateManager : MonoBehaviour
             return false;
         }
         _currentState = UnitState.Attacking;
-        _attack.Attack(_gameUnit.CurrentTarget);
+        _attack.StartAttack(_gameUnit.CurrentTarget);
         return true;
     }
 

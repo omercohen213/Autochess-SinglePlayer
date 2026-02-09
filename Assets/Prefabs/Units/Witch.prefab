@@ -455,7 +455,6 @@ MonoBehaviour:
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
   _ability: {fileID: 0}
-  _disabledGameUnitsTransform: {fileID: 0}
 --- !u!114 &114665035497984656
 MonoBehaviour:
   m_ObjectHideFlags: 0

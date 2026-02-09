@@ -27377,7 +27377,6 @@ MonoBehaviour:
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
   _ability: {fileID: 3784785532419706501}
-  _disabledGameUnitsTransform: {fileID: 0}
 --- !u!61 &1509189479234021291
 BoxCollider2D:
   m_ObjectHideFlags: 0

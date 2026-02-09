@@ -746,7 +746,6 @@ MonoBehaviour:
   _weapon: 0
   _weaponProjectilePrefab: {fileID: 0}
   _ability: {fileID: 0}
-  _disabledGameUnitsTransform: {fileID: 0}
 --- !u!95 &6052668832958664579
 Animator:
   serializedVersion: 5
